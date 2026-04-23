@@ -111,7 +111,13 @@ export function useDebtStore(): DebtStore & DebtStoreActions {
 
   const updateDebt: DebtStoreActions["updateDebt"] = async (id, patch) => {
     if (!user) return;
-    const dbPatch: Record<string, unknown> = {};
+    const dbPatch: {
+      name?: string;
+      balance?: number;
+      initial_balance?: number;
+      interest_rate?: number;
+      minimum_payment?: number;
+    } = {};
     if (patch.name !== undefined) dbPatch.name = patch.name;
     if (patch.balance !== undefined) dbPatch.balance = patch.balance;
     if (patch.initialBalance !== undefined) dbPatch.initial_balance = patch.initialBalance;
