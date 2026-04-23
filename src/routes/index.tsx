@@ -46,7 +46,7 @@ function Landing() {
           </span>
         </h1>
         <p className="mx-auto mt-5 max-w-xl text-base text-muted-foreground sm:text-lg">
-          See exactly when you'll be debt-free, watch your progress every month, and discover how
+          See exactly when you'll be debt-free, watch your progress over time, and discover how
           small extra payments save you years.
         </p>
         <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
