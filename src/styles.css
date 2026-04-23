@@ -174,4 +174,25 @@
   .bg-gradient-progress { background: var(--gradient-progress); }
   .shadow-soft { box-shadow: var(--shadow-soft); }
   .shadow-glow { box-shadow: var(--shadow-glow); }
+  .bg-warning { background-color: oklch(0.85 0.18 90); }
+}
+
+@keyframes confetti-fall {
+  0% {
+    transform: translateY(-20%) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(180px) rotate(540deg);
+    opacity: 0;
+  }
+}
+
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 0 0 oklch(0.705 0.187 47 / 0.4); }
+  50% { box-shadow: 0 0 0 12px oklch(0.705 0.187 47 / 0); }
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 2s ease-out infinite;
 }
