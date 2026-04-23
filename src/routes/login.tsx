@@ -1,6 +1,6 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
-import { useAppState } from "@/lib/storage";
+import { supabase } from "@/integrations/supabase/client";
 import { AuthShell } from "./signup";
 import { toast } from "sonner";
 
@@ -9,15 +9,21 @@ export const Route = createFileRoute("/login")({
 });
 
 function LoginPage() {
-  const { state, update } = useAppState();
   const navigate = useNavigate();
-  const [email, setEmail] = useState(state.user?.email ?? "");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const submit = (e: React.FormEvent) => {
+  const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email || !password) return;
-    update((s) => ({ ...s, user: { email, name: s.user?.name } }));
+    setLoading(true);
+    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    setLoading(false);
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
     toast.success("Welcome back!");
     navigate({ to: "/app" });
   };
@@ -37,9 +43,9 @@ function LoginPage() {
             className="w-full rounded-xl border border-input bg-background px-4 py-3 text-base outline-none focus:ring-2 focus:ring-ring"
             placeholder="••••••••" />
         </label>
-        <button type="submit"
-          className="w-full rounded-full bg-primary px-5 py-3.5 text-base font-semibold text-primary-foreground shadow-glow hover:-translate-y-0.5 transition-transform">
-          Log in
+        <button type="submit" disabled={loading}
+          className="w-full rounded-full bg-primary px-5 py-3.5 text-base font-semibold text-primary-foreground shadow-glow hover:-translate-y-0.5 transition-transform disabled:opacity-60">
+          {loading ? "Logging in…" : "Log in"}
         </button>
       </form>
       <p className="mt-6 text-center text-sm text-muted-foreground">

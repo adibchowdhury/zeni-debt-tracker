@@ -64,7 +64,7 @@ function Landing() {
             I already have an account
           </Link>
         </div>
-        <p className="mt-4 text-xs text-muted-foreground">No bank connection. Your data stays on your device.</p>
+        <p className="mt-4 text-xs text-muted-foreground">No bank connection. Your data, securely synced across devices.</p>
       </section>
 
       {/* Visual progress preview */}
@@ -162,7 +162,7 @@ function Landing() {
       </section>
 
       <footer className="border-t border-border py-8 text-center text-xs text-muted-foreground">
-        Made with care · Your data stays on your device
+        Made with care · Your debt-free coach
       </footer>
     </div>
   );

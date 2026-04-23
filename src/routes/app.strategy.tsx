@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useMemo } from "react";
 import { Snowflake, Mountain, Check } from "lucide-react";
-import { useAppState, type Strategy } from "@/lib/storage";
+import { useDebtStore, type Strategy } from "@/lib/storage";
 import { simulatePayoff, formatMoney, formatMonths } from "@/lib/debt-math";
 
 export const Route = createFileRoute("/app/strategy")({
@@ -9,8 +9,8 @@ export const Route = createFileRoute("/app/strategy")({
 });
 
 function StrategyPage() {
-  const { state, update } = useAppState();
-  const { debts, strategy, extraMonthly } = state;
+  const store = useDebtStore();
+  const { debts, strategy, extraMonthly } = store;
 
   const compare = useMemo(() => {
     const snow = simulatePayoff(debts, "snowball", extraMonthly);
@@ -22,7 +22,7 @@ function StrategyPage() {
     compare.ava.totalInterest <= compare.snow.totalInterest ? "avalanche" : "snowball";
 
   const choose = (s: Strategy) => {
-    update((st) => ({ ...st, strategy: s }));
+    store.setStrategy(s);
   };
 
   return (

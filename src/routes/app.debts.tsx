@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { Plus, Trash2, Pencil, X } from "lucide-react";
-import { useAppState, uid, type Debt } from "@/lib/storage";
+import { useDebtStore, type Debt } from "@/lib/storage";
 import { formatMoney } from "@/lib/debt-math";
 import { ProgressBar } from "@/components/debt/ProgressBar";
 import { toast } from "sonner";
@@ -11,16 +11,12 @@ export const Route = createFileRoute("/app/debts")({
 });
 
 function DebtsPage() {
-  const { state, update } = useAppState();
+  const store = useDebtStore();
   const [editing, setEditing] = useState<Debt | null>(null);
   const [open, setOpen] = useState(false);
 
-  const remove = (id: string) => {
-    update((s) => ({
-      ...s,
-      debts: s.debts.filter((d) => d.id !== id),
-      payments: s.payments.filter((p) => p.debtId !== id),
-    }));
+  const remove = async (id: string) => {
+    await store.removeDebt(id);
     toast.success("Debt removed");
   };
 
@@ -42,13 +38,13 @@ function DebtsPage() {
         </button>
       </div>
 
-      {state.debts.length === 0 ? (
+      {store.debts.length === 0 ? (
         <div className="rounded-3xl border border-dashed border-border bg-card/50 p-10 text-center">
           <p className="text-muted-foreground">No debts yet. Add one to get started.</p>
         </div>
       ) : (
         <div className="space-y-3">
-          {state.debts.map((d) => {
+          {store.debts.map((d) => {
             const paid = d.initialBalance - d.balance;
             const pct = d.initialBalance > 0 ? Math.min(100, (paid / d.initialBalance) * 100) : 0;
             return (
@@ -97,13 +93,13 @@ function DebtsPage() {
 }
 
 function DebtForm({ debt, onClose }: { debt: Debt | null; onClose: () => void }) {
-  const { update } = useAppState();
+  const store = useDebtStore();
   const [name, setName] = useState(debt?.name ?? "");
   const [balance, setBalance] = useState(debt ? String(debt.balance) : "");
   const [rate, setRate] = useState(debt ? String(debt.interestRate) : "");
   const [minPay, setMinPay] = useState(debt ? String(debt.minPayment) : "");
 
-  const submit = (e: React.FormEvent) => {
+  const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     const b = parseFloat(balance);
     const r = parseFloat(rate);
@@ -112,29 +108,13 @@ function DebtForm({ debt, onClose }: { debt: Debt | null; onClose: () => void })
       toast.error("Please fill in all fields");
       return;
     }
-    update((s) => {
-      if (debt) {
-        return {
-          ...s,
-          debts: s.debts.map((d) =>
-            d.id === debt.id
-              ? { ...d, name, balance: b, interestRate: r, minPayment: m }
-              : d
-          ),
-        };
-      }
-      const newDebt: Debt = {
-        id: uid(),
-        name,
-        balance: b,
-        initialBalance: b,
-        interestRate: r,
-        minPayment: m,
-        createdAt: Date.now(),
-      };
-      return { ...s, debts: [...s.debts, newDebt] };
-    });
-    toast.success(debt ? "Debt updated" : "Debt added!");
+    if (debt) {
+      await store.updateDebt(debt.id, { name, balance: b, interestRate: r, minPayment: m });
+      toast.success("Debt updated");
+    } else {
+      await store.addDebt({ name, balance: b, interestRate: r, minPayment: m });
+      toast.success("Debt added!");
+    }
     onClose();
   };
 

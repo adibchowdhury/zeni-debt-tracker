@@ -1,7 +1,7 @@
 import { createFileRoute, Link, Outlet, useNavigate, useLocation } from "@tanstack/react-router";
 import { useEffect } from "react";
 import { LayoutDashboard, ListPlus, Target, SlidersHorizontal, LogOut, Sparkles, Trophy } from "lucide-react";
-import { useAppState } from "@/lib/storage";
+import { useAuth } from "@/lib/auth";
 
 export const Route = createFileRoute("/app")({
   component: AppLayout,
@@ -16,25 +16,31 @@ const NAV = [
 ] as const;
 
 function AppLayout() {
-  const { state, update } = useAppState();
+  const { user, loading, signOut } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
 
   useEffect(() => {
-    if (state.user === null) {
-      // Allow guest mode — auto create
-      update((s) => (s.user ? s : { ...s, user: { email: "guest@local", name: "Guest" } }));
+    if (!loading && !user) {
+      navigate({ to: "/login" });
     }
-  }, [state.user, update]);
+  }, [loading, user, navigate]);
 
-  const logout = () => {
-    update((s) => ({ ...s, user: null }));
+  const logout = async () => {
+    await signOut();
     navigate({ to: "/" });
   };
 
+  if (loading || !user) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-gradient-hero">
+        <div className="text-sm text-muted-foreground">Loading…</div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gradient-hero pb-24 sm:pb-10">
-      {/* Top bar */}
       <header className="sticky top-0 z-30 border-b border-border/60 bg-background/80 backdrop-blur">
         <div className="mx-auto flex max-w-5xl items-center justify-between px-4 py-3 sm:px-6">
           <Link to="/app" className="flex items-center gap-2">
@@ -44,7 +50,6 @@ function AppLayout() {
             <span className="font-display text-base font-semibold tracking-tight">Debtfree</span>
           </Link>
 
-          {/* Desktop nav */}
           <nav className="hidden items-center gap-1 sm:flex">
             {NAV.map((n) => {
               const active = n.exact
@@ -80,7 +85,6 @@ function AppLayout() {
         <Outlet />
       </main>
 
-      {/* Mobile bottom nav */}
       <nav className="fixed bottom-0 left-0 right-0 z-30 border-t border-border bg-card/95 backdrop-blur sm:hidden">
         <div className="mx-auto flex max-w-md items-center justify-around px-2 py-2">
           {NAV.map((n) => {
