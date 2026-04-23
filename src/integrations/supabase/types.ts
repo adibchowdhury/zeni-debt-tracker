@@ -14,7 +14,233 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      activity_feed: {
+        Row: {
+          amount: number | null
+          created_at: string
+          id: string
+          kind: string
+        }
+        Insert: {
+          amount?: number | null
+          created_at?: string
+          id?: string
+          kind: string
+        }
+        Update: {
+          amount?: number | null
+          created_at?: string
+          id?: string
+          kind?: string
+        }
+        Relationships: []
+      }
+      challenges: {
+        Row: {
+          created_at: string
+          goal_amount: number
+          id: string
+          kind: string
+          progress: number
+          status: string
+          user_id: string
+          week_start: string
+        }
+        Insert: {
+          created_at?: string
+          goal_amount?: number
+          id?: string
+          kind: string
+          progress?: number
+          status?: string
+          user_id: string
+          week_start: string
+        }
+        Update: {
+          created_at?: string
+          goal_amount?: number
+          id?: string
+          kind?: string
+          progress?: number
+          status?: string
+          user_id?: string
+          week_start?: string
+        }
+        Relationships: []
+      }
+      debts: {
+        Row: {
+          balance: number
+          created_at: string
+          id: string
+          initial_balance: number
+          interest_rate: number
+          minimum_payment: number
+          name: string
+          user_id: string
+        }
+        Insert: {
+          balance: number
+          created_at?: string
+          id?: string
+          initial_balance: number
+          interest_rate?: number
+          minimum_payment?: number
+          name: string
+          user_id: string
+        }
+        Update: {
+          balance?: number
+          created_at?: string
+          id?: string
+          initial_balance?: number
+          interest_rate?: number
+          minimum_payment?: number
+          name?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      milestones: {
+        Row: {
+          achieved_at: string
+          id: string
+          milestone_key: string
+          user_id: string
+        }
+        Insert: {
+          achieved_at?: string
+          id?: string
+          milestone_key: string
+          user_id: string
+        }
+        Update: {
+          achieved_at?: string
+          id?: string
+          milestone_key?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      payments: {
+        Row: {
+          amount: number
+          cleared_debt: boolean
+          created_at: string
+          debt_id: string
+          id: string
+          paid_at: string
+          user_id: string
+        }
+        Insert: {
+          amount: number
+          cleared_debt?: boolean
+          created_at?: string
+          debt_id: string
+          id?: string
+          paid_at?: string
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          cleared_debt?: boolean
+          created_at?: string
+          debt_id?: string
+          id?: string
+          paid_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payments_debt_id_fkey"
+            columns: ["debt_id"]
+            isOneToOne: false
+            referencedRelation: "debts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      personal_bests: {
+        Row: {
+          created_at: string
+          id: string
+          period: string
+          period_start: string
+          total_amount: number
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          period: string
+          period_start: string
+          total_amount: number
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          period?: string
+          period_start?: string
+          total_amount?: number
+          user_id?: string
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          created_at: string
+          display_name: string | null
+          extra_monthly: number
+          id: string
+          strategy: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          display_name?: string | null
+          extra_monthly?: number
+          id: string
+          strategy?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          display_name?: string | null
+          extra_monthly?: number
+          id?: string
+          strategy?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      streaks: {
+        Row: {
+          created_at: string
+          has_extra_payment: boolean
+          id: string
+          no_unnecessary_spending: boolean
+          user_id: string
+          week_start: string
+        }
+        Insert: {
+          created_at?: string
+          has_extra_payment?: boolean
+          id?: string
+          no_unnecessary_spending?: boolean
+          user_id: string
+          week_start: string
+        }
+        Update: {
+          created_at?: string
+          has_extra_payment?: boolean
+          id?: string
+          no_unnecessary_spending?: boolean
+          user_id?: string
+          week_start?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
