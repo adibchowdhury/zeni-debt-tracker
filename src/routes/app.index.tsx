@@ -1,33 +1,74 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useMemo } from "react";
-import { ArrowRight, Plus, TrendingDown, Calendar, Wallet, Sparkles, Flame, Trophy, Bell, Zap } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
+import { ArrowRight, Plus, TrendingDown, Wallet, Sparkles, Flame, Trophy, Bell, Zap, Heart } from "lucide-react";
 import { useDebtStore } from "@/lib/storage";
 import { useAuth } from "@/lib/auth";
 import { useEngagement } from "@/lib/engagement";
-import { simulatePayoff, formatMoney, formatDate } from "@/lib/debt-math";
+import { formatMoney } from "@/lib/debt-math";
 import { ProgressBar } from "@/components/debt/ProgressBar";
 import { LogPaymentDialog } from "@/components/debt/LogPaymentDialog";
 import { ActivityFeed } from "@/components/debt/ActivityFeed";
 import { ChallengeCard } from "@/components/debt/ChallengeCard";
+import { CountdownHero } from "@/components/debt/CountdownHero";
+import { InsightCard } from "@/components/debt/InsightCard";
+import {
+  MilestoneCelebration,
+  getCelebrated,
+  markCelebrated,
+} from "@/components/debt/MilestoneCelebration";
+import { buildInsights, useCountdown, bestWeekGap } from "@/lib/insights";
 
 export const Route = createFileRoute("/app/")({
   component: Dashboard,
 });
+
+const CELEBRATABLE: Record<string, { title: string; subtitle: string }> = {
+  "first-payment": { title: "First payment logged 🎉", subtitle: "Momentum begins. You're on your way." },
+  "10pct": { title: "10% paid off", subtitle: "Real progress is showing. Keep stacking." },
+  "500-paid": { title: "$500 paid off", subtitle: "First big chunk down — huge win." },
+  "1k-paid": { title: "$1,000 paid off 💪", subtitle: "Four-figure milestone. You're building real momentum." },
+  halfway: { title: "Halfway there!", subtitle: "More behind you than ahead. Stay focused." },
+  "first-clear": { title: "First debt cleared 🎊", subtitle: "One down — that feeling is freedom." },
+  "all-clear": { title: "You're debt-free! 🏆", subtitle: "You actually did it. Truly." },
+};
 
 function Dashboard() {
   const store = useDebtStore();
   const { user } = useAuth();
   const eng = useEngagement();
   const { debts, payments, strategy, extraMonthly } = store;
+  const countdown = useCountdown(debts, payments, strategy, extraMonthly);
 
-  const stats = useMemo(() => {
-    const totalRemaining = debts.reduce((s, d) => s + d.balance, 0);
-    const totalInitial = debts.reduce((s, d) => s + d.initialBalance, 0);
-    const totalPaid = payments.reduce((s, p) => s + p.amount, 0);
-    const pct = totalInitial > 0 ? Math.min(100, (totalPaid / totalInitial) * 100) : 0;
-    const sim = simulatePayoff(debts, strategy, extraMonthly);
-    return { totalRemaining, totalInitial, totalPaid, pct, sim };
-  }, [debts, payments, strategy, extraMonthly]);
+  const insights = useMemo(
+    () =>
+      buildInsights({
+        debts,
+        payments,
+        strategy,
+        extraMonthly,
+        weekPaid: eng.weekPaid,
+        prevWeekPaid: eng.prevWeekPaid,
+        countdown,
+      }),
+    [debts, payments, strategy, extraMonthly, eng.weekPaid, eng.prevWeekPaid, countdown],
+  );
+
+  // Detect newly unlocked milestones (compare against localStorage celebrated set)
+  const [celebration, setCelebration] = useState<string | null>(null);
+  useEffect(() => {
+    if (eng.unlockedMilestones.size === 0) return;
+    const already = getCelebrated();
+    for (const key of eng.unlockedMilestones) {
+      if (!already.has(key) && CELEBRATABLE[key]) {
+        markCelebrated(key);
+        setCelebration(key);
+        break;
+      } else if (!already.has(key)) {
+        // mark non-celebratable as seen so we don't churn
+        markCelebrated(key);
+      }
+    }
+  }, [eng.unlockedMilestones]);
 
   const displayName = (user?.user_metadata?.display_name as string | undefined) ?? user?.email?.split("@")[0];
   const greeting = displayName ? `Hey ${displayName.split(" ")[0]}` : "Welcome back";
@@ -40,37 +81,51 @@ function Dashboard() {
   }
 
   const motivational =
-    stats.pct < 5
+    countdown.pct < 5
       ? "You've started — that's the hardest part 💪"
-      : stats.pct < 33
-      ? `You're ${stats.pct.toFixed(0)}% closer to being debt-free 🎉`
-      : stats.pct < 66
-      ? `You're ${stats.pct.toFixed(0)}% closer to being debt-free 🎉`
-      : stats.pct < 95
-      ? `${stats.pct.toFixed(0)}% done — the finish line is in sight 🎯`
+      : countdown.pct < 33
+      ? `You're ${countdown.pct.toFixed(0)}% closer to being debt-free 🎉`
+      : countdown.pct < 66
+      ? `You're ${countdown.pct.toFixed(0)}% closer to being debt-free 🎉`
+      : countdown.pct < 95
+      ? `${countdown.pct.toFixed(0)}% done — the finish line is in sight 🎯`
       : "You're almost there. Don't stop now!";
+
+  const nearComplete = countdown.pct >= 80 && countdown.totalRemaining > 0;
 
   return (
     <div className="space-y-6">
-      {/* 1. STREAK — top of dashboard, prominent */}
+      {celebration && CELEBRATABLE[celebration] && (
+        <MilestoneCelebration
+          milestoneKey={celebration}
+          title={CELEBRATABLE[celebration].title}
+          subtitle={CELEBRATABLE[celebration].subtitle}
+          onClose={() => setCelebration(null)}
+        />
+      )}
+
+      {/* 1. DEBT-FREE COUNTDOWN — hero of the dashboard */}
+      <CountdownHero countdown={countdown} />
+
+      {/* 2. STREAK */}
       <StreakBanner streak={eng.weeklyStreak} active={eng.thisWeekHasExtra} />
 
-      {/* 2. PRIMARY ACTION — Log Payment, large + prominent */}
+      {/* 3. PRIMARY ACTION */}
       <section className="rounded-3xl border border-border bg-card p-6 shadow-soft sm:p-8">
         <div className="text-xs uppercase tracking-wider text-muted-foreground">{greeting}</div>
         <h1 className="mt-1 font-display text-2xl font-bold tracking-tight sm:text-3xl">
           {motivational}
         </h1>
         <p className="mt-1.5 text-sm text-muted-foreground">
-          You've paid off <span className="font-semibold text-foreground">{formatMoney(stats.totalPaid)}</span> so far — keep going!
+          You've paid off <span className="font-semibold text-foreground">{formatMoney(countdown.totalPaid)}</span> so far — keep going!
         </p>
 
         <div className="mt-5">
           <div className="mb-2 flex justify-between text-sm">
             <span className="font-medium">Overall progress</span>
-            <span className="font-display font-semibold text-primary">{stats.pct.toFixed(1)}%</span>
+            <span className="font-display font-semibold text-primary">{countdown.pct.toFixed(1)}%</span>
           </div>
-          <ProgressBar value={stats.pct} />
+          <ProgressBar value={countdown.pct} />
         </div>
 
         <LogPaymentDialog>
@@ -80,20 +135,28 @@ function Dashboard() {
         </LogPaymentDialog>
       </section>
 
-      {/* 3. NEXT STEP / SMART NUDGE */}
-      <SmartNudge eng={eng} totalRemaining={stats.totalRemaining} />
+      {/* 4. SMARTER NUDGE */}
+      <SmartNudge eng={eng} totalRemaining={countdown.totalRemaining} />
 
-      {/* 4. WEEKLY CHALLENGE */}
+      {/* 5. PERSONALIZED INSIGHTS */}
+      {insights.length > 0 && (
+        <section className="grid gap-3 sm:grid-cols-2">
+          {insights.map((ins) => (
+            <InsightCard key={ins.id} insight={ins} />
+          ))}
+        </section>
+      )}
+
+      {/* 6. WEEKLY CHALLENGE */}
       <ChallengeCard eng={eng} />
 
-      {/* 5. KEY STATS — secondary info */}
-      <section className="grid gap-3 sm:grid-cols-3">
-        <Stat icon={Wallet} label="Still to go" value={formatMoney(stats.totalRemaining)} tone="default" />
-        <Stat icon={TrendingDown} label="Paid off" value={formatMoney(stats.totalPaid)} tone="success" />
-        <Stat icon={Calendar} label="Debt-free by" value={formatDate(stats.sim.payoffDate)} tone="teal" />
+      {/* 7. KEY STATS */}
+      <section className="grid gap-3 sm:grid-cols-2">
+        <Stat icon={Wallet} label="Still to go" value={formatMoney(countdown.totalRemaining)} tone="default" />
+        <Stat icon={TrendingDown} label="Paid off" value={formatMoney(countdown.totalPaid)} tone="success" />
       </section>
 
-      {/* 6. WHAT-IF SIMULATOR — promoted */}
+      {/* 8. WHAT-IF SIMULATOR */}
       <Link
         to="/app/simulator"
         className="flex items-center gap-4 rounded-3xl border border-primary/30 bg-gradient-to-br from-primary-soft/60 to-card p-5 shadow-soft transition-transform hover:-translate-y-0.5 sm:p-6"
@@ -108,7 +171,7 @@ function Dashboard() {
         <ArrowRight className="hidden h-5 w-5 text-primary sm:block" />
       </Link>
 
-      {/* 7. PERSONAL BESTS / WEEKLY STATS */}
+      {/* 9. PERSONAL BESTS */}
       <section className="grid gap-3 sm:grid-cols-2">
         <BestChip
           label="Best week"
@@ -123,7 +186,10 @@ function Dashboard() {
         />
       </section>
 
-      {/* 8. DEBTS */}
+      {/* 10. LIFE AFTER DEBT — gentle, only when near finish line */}
+      {nearComplete && <LifeAfterDebt pct={countdown.pct} />}
+
+      {/* 11. DEBTS */}
       <section>
         <div className="mb-3 flex items-center justify-between">
           <h2 className="font-display text-lg font-semibold">Your debts</h2>
@@ -157,10 +223,9 @@ function Dashboard() {
         </div>
       </section>
 
-      {/* 9. ACTIVITY FEED */}
+      {/* 12. ACTIVITY FEED */}
       <ActivityFeed activity={eng.activity} />
 
-      {/* MOBILE STICKY CTA — always-on Log Payment access */}
       <MobileStickyCTA />
     </div>
   );
@@ -180,7 +245,7 @@ function StreakBanner({ streak, active }: { streak: number; active: boolean }) {
     >
       <div
         className={`flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl text-2xl shadow-soft ${
-          hot ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"
+          hot ? "bg-primary text-primary-foreground animate-pulse-glow" : "bg-muted text-muted-foreground"
         }`}
       >
         <Flame className="h-7 w-7" />
@@ -233,14 +298,25 @@ function SmartNudge({ eng, totalRemaining }: { eng: ReturnType<typeof useEngagem
   let body = "";
   let tone: "primary" | "success" = "primary";
 
+  const bestGap = bestWeekGap(eng.weekPaid, eng.bestWeek?.amount ?? null);
+
+  // Priority order: celebrations first, then risk, then opportunities.
   if (eng.newWeekBest && eng.weekPaid > 0) {
     title = "🎉 New personal best!";
     body = `You've paid ${formatMoney(eng.weekPaid)} this week. Big deal.`;
     tone = "success";
+  } else if (bestGap !== null && bestGap > 0 && bestGap <= 50 && eng.weekPaid > 0) {
+    // 1 payment away from beating personal best
+    title = "You're so close to a new personal best";
+    body = `Just ${formatMoney(bestGap)} more this week to beat your best ever.`;
   } else if (eng.beatLastWeek) {
     title = "👀 You beat last week";
     body = `${formatMoney(eng.weekPaid)} this week vs ${formatMoney(eng.prevWeekPaid)} last week. Keep it going.`;
     tone = "success";
+  } else if (eng.weeklyStreak >= 2 && eng.weekPaid === 0 && totalRemaining > 0) {
+    // Streak risk — supportive tone
+    title = `Keep your ${eng.weeklyStreak}-week streak alive`;
+    body = "Even a small payment this week keeps the momentum going.";
   } else if (eng.weekPaid === 0 && totalRemaining > 0) {
     title = "Next step: log a payment this week";
     body = "Even a small payment keeps your streak alive.";
@@ -274,6 +350,29 @@ function SmartNudge({ eng, totalRemaining }: { eng: ReturnType<typeof useEngagem
         <div className="mt-0.5 text-sm text-muted-foreground">{body}</div>
       </div>
     </div>
+  );
+}
+
+function LifeAfterDebt({ pct }: { pct: number }) {
+  return (
+    <section className="rounded-3xl border border-teal/30 bg-gradient-to-br from-accent/40 to-card p-6 shadow-soft">
+      <div className="flex items-start gap-3">
+        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-teal text-teal-foreground">
+          <Heart className="h-5 w-5" />
+        </div>
+        <div className="flex-1">
+          <div className="text-[11px] font-semibold uppercase tracking-wider text-teal">
+            Life after debt
+          </div>
+          <div className="font-display text-base font-bold">
+            You're {pct.toFixed(0)}% there — what's next?
+          </div>
+          <p className="mt-1 text-sm text-muted-foreground">
+            When you're done, redirect those payments into a starter emergency fund. Aim for $1,000 first, then 3 months of expenses.
+          </p>
+        </div>
+      </div>
+    </section>
   );
 }
 
