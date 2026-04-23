@@ -113,11 +113,14 @@ function Dialog({ onClose }: { onClose: () => void }) {
             <span className="mb-1.5 block text-sm font-medium">Amount</span>
             <input
               autoFocus
-              type="number"
+              type="text"
               inputMode="decimal"
-              step="0.01"
+              pattern="[0-9]*[.,]?[0-9]*"
               value={amount}
-              onChange={(e) => setAmount(e.target.value)}
+              onChange={(e) => {
+                const v = e.target.value.replace(/[^0-9.,]/g, "");
+                setAmount(v);
+              }}
               placeholder="100"
               className="w-full rounded-xl border border-input bg-background px-4 py-3 text-lg outline-none focus:ring-2 focus:ring-ring"
             />
