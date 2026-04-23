@@ -183,7 +183,7 @@ export function useEngagement(): Engagement {
   useEffect(() => {
     if (!user || store.loading) return;
 
-    const tasks: Promise<unknown>[] = [];
+    const tasks: PromiseLike<unknown>[] = [];
 
     // Upsert this week / month best when current totals exceed them
     const thisWeekStart = isoDate(stats.weekStart);
