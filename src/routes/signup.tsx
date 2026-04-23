@@ -1,7 +1,7 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { Sparkles } from "lucide-react";
-import { useAppState } from "@/lib/storage";
+import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/signup")({
@@ -9,16 +9,30 @@ export const Route = createFileRoute("/signup")({
 });
 
 function SignupPage() {
-  const { update } = useAppState();
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const submit = (e: React.FormEvent) => {
+  const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email || !password) return;
-    update((s) => ({ ...s, user: { email, name } }));
+    setLoading(true);
+    const redirectUrl = typeof window !== "undefined" ? `${window.location.origin}/app` : undefined;
+    const { error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        emailRedirectTo: redirectUrl,
+        data: { display_name: name || undefined },
+      },
+    });
+    setLoading(false);
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
     toast.success("Welcome aboard! Let's get started.");
     navigate({ to: "/app" });
   };
@@ -36,13 +50,13 @@ function SignupPage() {
           placeholder="you@email.com" />
       </Field>
       <Field label="Password">
-        <input type="password" required minLength={4} value={password} onChange={(e) => setPassword(e.target.value)}
+        <input type="password" required minLength={6} value={password} onChange={(e) => setPassword(e.target.value)}
           className="w-full rounded-xl border border-input bg-background px-4 py-3 text-base outline-none focus:ring-2 focus:ring-ring"
-          placeholder="••••••••" />
+          placeholder="At least 6 characters" />
       </Field>
-      <button type="submit"
-        className="w-full rounded-full bg-primary px-5 py-3.5 text-base font-semibold text-primary-foreground shadow-glow hover:-translate-y-0.5 transition-transform">
-        Create account
+      <button type="submit" disabled={loading}
+        className="w-full rounded-full bg-primary px-5 py-3.5 text-base font-semibold text-primary-foreground shadow-glow hover:-translate-y-0.5 transition-transform disabled:opacity-60">
+        {loading ? "Creating…" : "Create account"}
       </button>
     </form>
     <p className="mt-6 text-center text-sm text-muted-foreground">
