@@ -46,15 +46,14 @@ function Landing() {
           </span>
         </h1>
         <p className="mx-auto mt-5 max-w-xl text-base text-muted-foreground sm:text-lg">
-          See exactly when you'll be debt-free, watch your progress over time, and discover how
-          small extra payments save you years.
+          Zeni helps you stay motivated, track progress, and become debt-free sooner.
         </p>
         <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
           <Link
             to="/signup"
             className="group inline-flex w-full items-center justify-center gap-2 rounded-full bg-primary px-6 py-3.5 text-base font-semibold text-primary-foreground shadow-glow transition-transform hover:-translate-y-0.5 sm:w-auto"
           >
-            Get started — free
+            Get Started
             <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
           </Link>
           <Link
