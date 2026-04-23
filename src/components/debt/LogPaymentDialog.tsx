@@ -129,7 +129,7 @@ function Dialog({ onClose }: { onClose: () => void }) {
 
 function celebrate() {
   if (typeof window === "undefined") return;
-  const colors = ["#3b82f6", "#10b981", "#06b6d4", "#fbbf24"];
+  const colors = ["#F97316", "#FDBA74", "#FACC15", "#3B82F6"];
   const count = 60;
   const container = document.createElement("div");
   container.style.cssText =
