@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { X, Plus } from "lucide-react";
-import { useAppState, uid } from "@/lib/storage";
+import { useDebtStore } from "@/lib/storage";
 import { formatMoney } from "@/lib/debt-math";
 import { toast } from "sonner";
 
@@ -15,39 +15,34 @@ export function LogPaymentDialog({ children }: { children: React.ReactNode }) {
 }
 
 function Dialog({ onClose }: { onClose: () => void }) {
-  const { state, update } = useAppState();
-  const activeDebts = state.debts.filter((d) => d.balance > 0);
+  const store = useDebtStore();
+  const activeDebts = store.debts.filter((d) => d.balance > 0);
   const [debtId, setDebtId] = useState(activeDebts[0]?.id ?? "");
   const [amount, setAmount] = useState("");
+  const [submitting, setSubmitting] = useState(false);
 
-  const submit = (e: React.FormEvent) => {
+  const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     const amt = parseFloat(amount);
     if (!debtId || isNaN(amt) || amt <= 0) {
       toast.error("Enter an amount");
       return;
     }
-    const targetDebt = state.debts.find((d) => d.id === debtId);
-    if (!targetDebt) return;
-    const wasOpen = targetDebt.balance > 0;
-    const newBalance = Math.max(0, targetDebt.balance - amt);
-
-    update((s) => ({
-      ...s,
-      debts: s.debts.map((d) => (d.id === debtId ? { ...d, balance: newBalance } : d)),
-      payments: [
-        ...s.payments,
-        { id: uid(), debtId, amount: amt, date: Date.now() },
-      ],
-    }));
-
-    if (wasOpen && newBalance === 0) {
-      celebrate();
-      toast.success(`🎉 ${targetDebt.name} is paid off!`);
-    } else {
-      toast.success(`Logged ${formatMoney(amt)} — keep going!`);
+    setSubmitting(true);
+    try {
+      const { cleared, debtName } = await store.logPayment(debtId, amt);
+      if (cleared) {
+        celebrate();
+        toast.success(`🎉 ${debtName} is paid off!`);
+      } else {
+        toast.success(`Logged ${formatMoney(amt)} — keep going!`);
+      }
+      onClose();
+    } catch {
+      toast.error("Couldn't log payment");
+    } finally {
+      setSubmitting(false);
     }
-    onClose();
   };
 
   if (activeDebts.length === 0) {
@@ -115,11 +110,24 @@ function Dialog({ onClose }: { onClose: () => void }) {
               className="w-full rounded-xl border border-input bg-background px-4 py-3 text-lg outline-none focus:ring-2 focus:ring-ring"
             />
           </label>
+          <div className="flex flex-wrap gap-2">
+            {[25, 50, 100, 200].map((v) => (
+              <button
+                type="button"
+                key={v}
+                onClick={() => setAmount(String(v))}
+                className="rounded-full border border-border bg-background px-3 py-1.5 text-xs font-medium hover:bg-secondary"
+              >
+                ${v}
+              </button>
+            ))}
+          </div>
           <button
             type="submit"
-            className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-primary px-5 py-3 text-base font-semibold text-primary-foreground shadow-glow hover:-translate-y-0.5 transition-transform"
+            disabled={submitting}
+            className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-primary px-5 py-3 text-base font-semibold text-primary-foreground shadow-glow hover:-translate-y-0.5 transition-transform disabled:opacity-60 disabled:hover:translate-y-0"
           >
-            <Plus className="h-4 w-4" /> Log payment
+            <Plus className="h-4 w-4" /> {submitting ? "Logging…" : "Log payment"}
           </button>
         </form>
       </div>

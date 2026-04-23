@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Sparkles, Calendar, TrendingDown, Clock } from "lucide-react";
-import { useAppState } from "@/lib/storage";
+import { useDebtStore } from "@/lib/storage";
 import { simulatePayoff, formatMoney, formatMonths, formatDate } from "@/lib/debt-math";
 
 export const Route = createFileRoute("/app/simulator")({
@@ -9,9 +9,13 @@ export const Route = createFileRoute("/app/simulator")({
 });
 
 function Simulator() {
-  const { state, update } = useAppState();
-  const { debts, strategy, extraMonthly } = state;
+  const store = useDebtStore();
+  const { debts, strategy, extraMonthly } = store;
   const [extra, setExtra] = useState(extraMonthly);
+
+  useEffect(() => {
+    setExtra(extraMonthly);
+  }, [extraMonthly]);
 
   const baseline = useMemo(() => simulatePayoff(debts, strategy, 0), [debts, strategy]);
   const withExtra = useMemo(
@@ -23,7 +27,7 @@ function Simulator() {
   const interestSaved = Math.max(0, baseline.totalInterest - withExtra.totalInterest);
 
   const save = () => {
-    update((s) => ({ ...s, extraMonthly: extra }));
+    store.setExtraMonthly(extra);
   };
 
   if (debts.length === 0) {
@@ -43,7 +47,6 @@ function Simulator() {
         </p>
       </div>
 
-      {/* Slider card */}
       <div className="rounded-3xl border border-border bg-card p-6 shadow-soft sm:p-8">
         <div className="text-xs uppercase tracking-wider text-muted-foreground">
           Extra payment / month
@@ -82,7 +85,6 @@ function Simulator() {
         </div>
       </div>
 
-      {/* Impact */}
       <div className="grid gap-3 sm:grid-cols-3">
         <ImpactCard
           icon={Calendar}
@@ -104,7 +106,6 @@ function Simulator() {
         />
       </div>
 
-      {/* Compare */}
       <div className="rounded-3xl border border-border bg-card p-6 shadow-soft">
         <div className="font-display text-base font-semibold">Side by side</div>
         <div className="mt-4 grid grid-cols-2 gap-4">
