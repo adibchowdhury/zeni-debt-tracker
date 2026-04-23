@@ -1,0 +1,220 @@
+import { createFileRoute } from "@tanstack/react-router";
+import { useState } from "react";
+import { Plus, Trash2, Pencil, X } from "lucide-react";
+import { useAppState, uid, type Debt } from "@/lib/storage";
+import { formatMoney } from "@/lib/debt-math";
+import { ProgressBar } from "@/components/debt/ProgressBar";
+import { toast } from "sonner";
+
+export const Route = createFileRoute("/app/debts")({
+  component: DebtsPage,
+});
+
+function DebtsPage() {
+  const { state, update } = useAppState();
+  const [editing, setEditing] = useState<Debt | null>(null);
+  const [open, setOpen] = useState(false);
+
+  const remove = (id: string) => {
+    update((s) => ({
+      ...s,
+      debts: s.debts.filter((d) => d.id !== id),
+      payments: s.payments.filter((p) => p.debtId !== id),
+    }));
+    toast.success("Debt removed");
+  };
+
+  return (
+    <div className="space-y-5">
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="font-display text-2xl font-bold tracking-tight sm:text-3xl">Your debts</h1>
+          <p className="text-sm text-muted-foreground">Add, edit, or remove debts.</p>
+        </div>
+        <button
+          onClick={() => {
+            setEditing(null);
+            setOpen(true);
+          }}
+          className="inline-flex items-center gap-2 rounded-full bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground shadow-glow hover:-translate-y-0.5 transition-transform"
+        >
+          <Plus className="h-4 w-4" /> Add debt
+        </button>
+      </div>
+
+      {state.debts.length === 0 ? (
+        <div className="rounded-3xl border border-dashed border-border bg-card/50 p-10 text-center">
+          <p className="text-muted-foreground">No debts yet. Add one to get started.</p>
+        </div>
+      ) : (
+        <div className="space-y-3">
+          {state.debts.map((d) => {
+            const paid = d.initialBalance - d.balance;
+            const pct = d.initialBalance > 0 ? Math.min(100, (paid / d.initialBalance) * 100) : 0;
+            return (
+              <div key={d.id} className="rounded-2xl border border-border bg-card p-5 shadow-soft">
+                <div className="flex items-start justify-between gap-3">
+                  <div>
+                    <div className="font-display text-base font-semibold">{d.name}</div>
+                    <div className="mt-0.5 text-xs text-muted-foreground">
+                      {d.interestRate}% APR · min {formatMoney(d.minPayment)}/mo
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <div className="font-display text-lg font-bold">{formatMoney(d.balance)}</div>
+                    <div className="text-xs text-muted-foreground">of {formatMoney(d.initialBalance)}</div>
+                  </div>
+                </div>
+                <div className="mt-3">
+                  <ProgressBar value={pct} />
+                </div>
+                <div className="mt-4 flex gap-2">
+                  <button
+                    onClick={() => {
+                      setEditing(d);
+                      setOpen(true);
+                    }}
+                    className="inline-flex items-center gap-1.5 rounded-full border border-border bg-background px-3 py-1.5 text-xs font-medium hover:bg-secondary"
+                  >
+                    <Pencil className="h-3.5 w-3.5" /> Edit
+                  </button>
+                  <button
+                    onClick={() => remove(d.id)}
+                    className="inline-flex items-center gap-1.5 rounded-full border border-border bg-background px-3 py-1.5 text-xs font-medium text-destructive hover:bg-destructive/10"
+                  >
+                    <Trash2 className="h-3.5 w-3.5" /> Remove
+                  </button>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      )}
+
+      {open && <DebtForm debt={editing} onClose={() => setOpen(false)} />}
+    </div>
+  );
+}
+
+function DebtForm({ debt, onClose }: { debt: Debt | null; onClose: () => void }) {
+  const { update } = useAppState();
+  const [name, setName] = useState(debt?.name ?? "");
+  const [balance, setBalance] = useState(debt ? String(debt.balance) : "");
+  const [rate, setRate] = useState(debt ? String(debt.interestRate) : "");
+  const [minPay, setMinPay] = useState(debt ? String(debt.minPayment) : "");
+
+  const submit = (e: React.FormEvent) => {
+    e.preventDefault();
+    const b = parseFloat(balance);
+    const r = parseFloat(rate);
+    const m = parseFloat(minPay);
+    if (!name || isNaN(b) || isNaN(r) || isNaN(m)) {
+      toast.error("Please fill in all fields");
+      return;
+    }
+    update((s) => {
+      if (debt) {
+        return {
+          ...s,
+          debts: s.debts.map((d) =>
+            d.id === debt.id
+              ? { ...d, name, balance: b, interestRate: r, minPayment: m }
+              : d
+          ),
+        };
+      }
+      const newDebt: Debt = {
+        id: uid(),
+        name,
+        balance: b,
+        initialBalance: b,
+        interestRate: r,
+        minPayment: m,
+        createdAt: Date.now(),
+      };
+      return { ...s, debts: [...s.debts, newDebt] };
+    });
+    toast.success(debt ? "Debt updated" : "Debt added!");
+    onClose();
+  };
+
+  return (
+    <div
+      className="fixed inset-0 z-50 flex items-end justify-center bg-foreground/30 p-0 backdrop-blur-sm sm:items-center sm:p-4"
+      onClick={onClose}
+    >
+      <div
+        onClick={(e) => e.stopPropagation()}
+        className="w-full max-w-md rounded-t-3xl bg-card p-6 shadow-soft sm:rounded-3xl"
+      >
+        <div className="mb-4 flex items-center justify-between">
+          <h2 className="font-display text-xl font-bold">{debt ? "Edit debt" : "Add a debt"}</h2>
+          <button onClick={onClose} className="rounded-full p-1 text-muted-foreground hover:bg-secondary">
+            <X className="h-5 w-5" />
+          </button>
+        </div>
+        <form onSubmit={submit} className="space-y-4">
+          <FormField label="Name">
+            <input
+              autoFocus
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              placeholder="Credit Card"
+              className="w-full rounded-xl border border-input bg-background px-4 py-3 outline-none focus:ring-2 focus:ring-ring"
+            />
+          </FormField>
+          <FormField label="Current balance">
+            <input
+              type="number"
+              inputMode="decimal"
+              step="0.01"
+              value={balance}
+              onChange={(e) => setBalance(e.target.value)}
+              placeholder="2500"
+              className="w-full rounded-xl border border-input bg-background px-4 py-3 outline-none focus:ring-2 focus:ring-ring"
+            />
+          </FormField>
+          <div className="grid grid-cols-2 gap-3">
+            <FormField label="Interest %">
+              <input
+                type="number"
+                inputMode="decimal"
+                step="0.01"
+                value={rate}
+                onChange={(e) => setRate(e.target.value)}
+                placeholder="18.99"
+                className="w-full rounded-xl border border-input bg-background px-4 py-3 outline-none focus:ring-2 focus:ring-ring"
+              />
+            </FormField>
+            <FormField label="Min payment">
+              <input
+                type="number"
+                inputMode="decimal"
+                step="0.01"
+                value={minPay}
+                onChange={(e) => setMinPay(e.target.value)}
+                placeholder="50"
+                className="w-full rounded-xl border border-input bg-background px-4 py-3 outline-none focus:ring-2 focus:ring-ring"
+              />
+            </FormField>
+          </div>
+          <button
+            type="submit"
+            className="w-full rounded-full bg-primary px-5 py-3 text-base font-semibold text-primary-foreground shadow-glow hover:-translate-y-0.5 transition-transform"
+          >
+            {debt ? "Save changes" : "Add debt"}
+          </button>
+        </form>
+      </div>
+    </div>
+  );
+}
+
+function FormField({ label, children }: { label: string; children: React.ReactNode }) {
+  return (
+    <label className="block">
+      <span className="mb-1.5 block text-sm font-medium">{label}</span>
+      {children}
+    </label>
+  );
+}
