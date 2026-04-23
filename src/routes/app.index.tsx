@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo } from "react";
-import { ArrowRight, Plus, TrendingDown, Calendar, Wallet, Sparkles, Flame, Trophy, Heart, Bell } from "lucide-react";
+import { ArrowRight, Plus, TrendingDown, Calendar, Wallet, Sparkles, Flame, Trophy, Bell, Zap } from "lucide-react";
 import { useDebtStore } from "@/lib/storage";
 import { useAuth } from "@/lib/auth";
 import { useEngagement } from "@/lib/engagement";
@@ -41,78 +41,89 @@ function Dashboard() {
 
   const motivational =
     stats.pct < 5
-      ? "You've started — that's the hardest part. 💪"
+      ? "You've started — that's the hardest part 💪"
       : stats.pct < 33
-      ? "You're building real momentum."
+      ? `You're ${stats.pct.toFixed(0)}% closer to being debt-free 🎉`
       : stats.pct < 66
-      ? `You're ${Math.round(stats.pct)}% closer to debt-free.`
+      ? `You're ${stats.pct.toFixed(0)}% closer to being debt-free 🎉`
       : stats.pct < 95
-      ? "The finish line is in sight 🎯"
+      ? `${stats.pct.toFixed(0)}% done — the finish line is in sight 🎯`
       : "You're almost there. Don't stop now!";
 
   return (
     <div className="space-y-6">
-      {/* Streak + bests strip */}
-      <div className="grid gap-3 sm:grid-cols-3">
-        <StreakChip streak={eng.weeklyStreak} active={eng.thisWeekHasExtra} />
-        <StatChip
-          icon={Trophy}
-          label="Best week"
-          value={eng.bestWeek ? formatMoney(eng.bestWeek.amount) : "—"}
-          tone="success"
-        />
-        <StatChip
-          icon={Heart}
-          label="This week"
-          value={formatMoney(eng.weekPaid)}
-          tone="teal"
-          highlight={eng.beatLastWeek || eng.newWeekBest}
-        />
-      </div>
+      {/* 1. STREAK — top of dashboard, prominent */}
+      <StreakBanner streak={eng.weeklyStreak} active={eng.thisWeekHasExtra} />
 
-      {/* Smart nudge */}
-      <SmartNudge eng={eng} totalRemaining={stats.totalRemaining} />
-
-      {/* Hero progress */}
+      {/* 2. PRIMARY ACTION — Log Payment, large + prominent */}
       <section className="rounded-3xl border border-border bg-card p-6 shadow-soft sm:p-8">
         <div className="text-xs uppercase tracking-wider text-muted-foreground">{greeting}</div>
         <h1 className="mt-1 font-display text-2xl font-bold tracking-tight sm:text-3xl">
           {motivational}
         </h1>
+        <p className="mt-1.5 text-sm text-muted-foreground">
+          You've paid off <span className="font-semibold text-foreground">{formatMoney(stats.totalPaid)}</span> so far — keep going!
+        </p>
 
-        <div className="mt-6 grid gap-4 sm:grid-cols-3">
-          <Stat icon={Wallet} label="Remaining" value={formatMoney(stats.totalRemaining)} tone="default" />
-          <Stat icon={TrendingDown} label="Paid off" value={formatMoney(stats.totalPaid)} tone="success" />
-          <Stat icon={Calendar} label="Debt-free by" value={formatDate(stats.sim.payoffDate)} tone="teal" />
-        </div>
-
-        <div className="mt-6">
+        <div className="mt-5">
           <div className="mb-2 flex justify-between text-sm">
             <span className="font-medium">Overall progress</span>
-            <span className="font-display font-semibold text-success">{stats.pct.toFixed(1)}%</span>
+            <span className="font-display font-semibold text-primary">{stats.pct.toFixed(1)}%</span>
           </div>
           <ProgressBar value={stats.pct} />
         </div>
 
-        <div className="mt-6 flex flex-col gap-2 sm:flex-row">
-          <LogPaymentDialog>
-            <button className="inline-flex flex-1 items-center justify-center gap-2 rounded-full bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground shadow-glow hover:-translate-y-0.5 transition-transform">
-              <Plus className="h-4 w-4" /> Log a payment
-            </button>
-          </LogPaymentDialog>
-          <Link
-            to="/app/simulator"
-            className="inline-flex flex-1 items-center justify-center gap-2 rounded-full border border-border bg-card px-5 py-3 text-sm font-semibold text-foreground hover:bg-secondary"
-          >
-            <Sparkles className="h-4 w-4" /> Try What-if
-          </Link>
-        </div>
+        <LogPaymentDialog>
+          <button className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-full bg-primary px-6 py-4 text-base font-semibold text-primary-foreground shadow-glow transition-transform hover:-translate-y-0.5 active:translate-y-0">
+            <Plus className="h-5 w-5" /> Log Payment
+          </button>
+        </LogPaymentDialog>
       </section>
 
-      {/* Weekly challenge */}
+      {/* 3. NEXT STEP / SMART NUDGE */}
+      <SmartNudge eng={eng} totalRemaining={stats.totalRemaining} />
+
+      {/* 4. WEEKLY CHALLENGE */}
       <ChallengeCard eng={eng} />
 
-      {/* Debts */}
+      {/* 5. KEY STATS — secondary info */}
+      <section className="grid gap-3 sm:grid-cols-3">
+        <Stat icon={Wallet} label="Still to go" value={formatMoney(stats.totalRemaining)} tone="default" />
+        <Stat icon={TrendingDown} label="Paid off" value={formatMoney(stats.totalPaid)} tone="success" />
+        <Stat icon={Calendar} label="Debt-free by" value={formatDate(stats.sim.payoffDate)} tone="teal" />
+      </section>
+
+      {/* 6. WHAT-IF SIMULATOR — promoted */}
+      <Link
+        to="/app/simulator"
+        className="flex items-center gap-4 rounded-3xl border border-primary/30 bg-gradient-to-br from-primary-soft/60 to-card p-5 shadow-soft transition-transform hover:-translate-y-0.5 sm:p-6"
+      >
+        <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary text-primary-foreground shadow-glow">
+          <Zap className="h-6 w-6" />
+        </div>
+        <div className="flex-1">
+          <div className="font-display text-base font-bold sm:text-lg">See how much faster you can be debt-free</div>
+          <div className="mt-0.5 text-sm text-muted-foreground">Add an extra $25/mo and watch your payoff date jump forward.</div>
+        </div>
+        <ArrowRight className="hidden h-5 w-5 text-primary sm:block" />
+      </Link>
+
+      {/* 7. PERSONAL BESTS / WEEKLY STATS */}
+      <section className="grid gap-3 sm:grid-cols-2">
+        <BestChip
+          label="Best week"
+          value={eng.bestWeek ? formatMoney(eng.bestWeek.amount) : "—"}
+          highlight={eng.newWeekBest}
+        />
+        <BestChip
+          label="This week"
+          value={formatMoney(eng.weekPaid)}
+          highlight={eng.beatLastWeek || eng.newWeekBest}
+          subtitle={eng.beatLastWeek ? "Beat last week 🎉" : eng.weekPaid === 0 ? "No payments yet" : undefined}
+        />
+      </section>
+
+      {/* 8. DEBTS */}
       <section>
         <div className="mb-3 flex items-center justify-between">
           <h2 className="font-display text-lg font-semibold">Your debts</h2>
@@ -146,53 +157,78 @@ function Dashboard() {
         </div>
       </section>
 
-      {/* Activity feed */}
+      {/* 9. ACTIVITY FEED */}
       <ActivityFeed activity={eng.activity} />
+
+      {/* MOBILE STICKY CTA — always-on Log Payment access */}
+      <MobileStickyCTA />
     </div>
   );
 }
 
-function StreakChip({ streak, active }: { streak: number; active: boolean }) {
+function StreakBanner({ streak, active }: { streak: number; active: boolean }) {
+  const hot = streak > 0;
   return (
-    <div className={`flex items-center gap-3 rounded-2xl border p-4 shadow-soft transition-colors ${active ? "border-primary/40 bg-primary-soft" : "border-border bg-card"}`}>
-      <div className={`flex h-10 w-10 items-center justify-center rounded-xl ${streak > 0 ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"}`}>
-        <Flame className="h-5 w-5" />
+    <div
+      className={`flex items-center gap-4 rounded-3xl border-2 p-5 shadow-soft transition-all ${
+        active
+          ? "border-primary bg-primary-soft"
+          : hot
+          ? "border-primary/40 bg-primary-soft/60"
+          : "border-border bg-card"
+      }`}
+    >
+      <div
+        className={`flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl text-2xl shadow-soft ${
+          hot ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"
+        }`}
+      >
+        <Flame className="h-7 w-7" />
       </div>
-      <div>
-        <div className="text-[11px] uppercase tracking-wider text-muted-foreground">Streak</div>
-        <div className="font-display text-lg font-bold">
-          {streak === 0 ? "Start one!" : `${streak} week${streak === 1 ? "" : "s"} 🔥`}
+      <div className="flex-1">
+        <div className="text-[11px] font-semibold uppercase tracking-wider text-primary">
+          {hot ? "Streak" : "Start a streak"}
+        </div>
+        <div className="font-display text-xl font-bold tracking-tight sm:text-2xl">
+          {streak === 0
+            ? "Log a payment to start your streak"
+            : active
+            ? `🔥 ${streak} week streak — keep it going!`
+            : `🔥 ${streak} week streak — don't break it`}
         </div>
       </div>
     </div>
   );
 }
 
-function StatChip({
-  icon: Icon, label, value, tone, highlight,
+function BestChip({
+  label,
+  value,
+  highlight,
+  subtitle,
 }: {
-  icon: React.ComponentType<{ className?: string }>;
   label: string;
   value: string;
-  tone: "success" | "teal";
   highlight?: boolean;
+  subtitle?: string;
 }) {
-  const toneClasses = tone === "success" ? "bg-success-soft text-success" : "bg-accent text-teal-foreground";
   return (
-    <div className={`flex items-center gap-3 rounded-2xl border p-4 shadow-soft transition-all ${highlight ? "border-success ring-2 ring-success/30" : "border-border bg-card"}`}>
-      <div className={`flex h-10 w-10 items-center justify-center rounded-xl ${toneClasses}`}>
-        <Icon className="h-5 w-5" />
-      </div>
-      <div>
+    <div
+      className={`rounded-2xl border p-4 shadow-soft transition-all ${
+        highlight ? "border-success bg-success-soft/40 ring-2 ring-success/30" : "border-border bg-card"
+      }`}
+    >
+      <div className="flex items-center gap-2">
+        <Trophy className={`h-4 w-4 ${highlight ? "text-success" : "text-muted-foreground"}`} />
         <div className="text-[11px] uppercase tracking-wider text-muted-foreground">{label}</div>
-        <div className="font-display text-lg font-bold">{value}</div>
       </div>
+      <div className="mt-1 font-display text-xl font-bold">{value}</div>
+      {subtitle && <div className="mt-0.5 text-xs font-medium text-success">{subtitle}</div>}
     </div>
   );
 }
 
 function SmartNudge({ eng, totalRemaining }: { eng: ReturnType<typeof useEngagement>; totalRemaining: number }) {
-  // pick the most relevant nudge
   let title = "";
   let body = "";
   let tone: "primary" | "success" = "primary";
@@ -206,8 +242,8 @@ function SmartNudge({ eng, totalRemaining }: { eng: ReturnType<typeof useEngagem
     body = `${formatMoney(eng.weekPaid)} this week vs ${formatMoney(eng.prevWeekPaid)} last week. Keep it going.`;
     tone = "success";
   } else if (eng.weekPaid === 0 && totalRemaining > 0) {
-    title = "Haven't logged a payment this week";
-    body = "Want to stay on track? Even a small payment counts.";
+    title = "Next step: log a payment this week";
+    body = "Even a small payment keeps your streak alive.";
   } else if (eng.prevWeekPaid > 0 && eng.weekPaid > 0 && eng.weekPaid < eng.prevWeekPaid) {
     const diff = eng.prevWeekPaid - eng.weekPaid;
     title = "You're close to last week's progress";
@@ -220,11 +256,20 @@ function SmartNudge({ eng, totalRemaining }: { eng: ReturnType<typeof useEngagem
   }
 
   return (
-    <div className={`flex items-start gap-3 rounded-2xl border p-4 shadow-soft ${tone === "success" ? "border-success/40 bg-success-soft/40" : "border-primary/30 bg-primary-soft/60"}`}>
-      <div className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl ${tone === "success" ? "bg-success text-success-foreground" : "bg-primary text-primary-foreground"}`}>
+    <div
+      className={`flex items-start gap-3 rounded-2xl border p-4 shadow-soft ${
+        tone === "success" ? "border-success/40 bg-success-soft/40" : "border-primary/30 bg-primary-soft/60"
+      }`}
+    >
+      <div
+        className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${
+          tone === "success" ? "bg-success text-success-foreground" : "bg-primary text-primary-foreground"
+        }`}
+      >
         <Bell className="h-4 w-4" />
       </div>
       <div className="flex-1">
+        <div className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Next step</div>
         <div className="font-display text-sm font-bold">{title}</div>
         <div className="mt-0.5 text-sm text-muted-foreground">{body}</div>
       </div>
@@ -233,7 +278,10 @@ function SmartNudge({ eng, totalRemaining }: { eng: ReturnType<typeof useEngagem
 }
 
 function Stat({
-  icon: Icon, label, value, tone,
+  icon: Icon,
+  label,
+  value,
+  tone,
 }: {
   icon: React.ComponentType<{ className?: string }>;
   label: string;
@@ -246,12 +294,24 @@ function Stat({
     teal: "bg-accent text-teal-foreground",
   }[tone];
   return (
-    <div className="rounded-2xl border border-border bg-background p-4">
+    <div className="rounded-2xl border border-border bg-card p-4 shadow-soft">
       <div className={`flex h-8 w-8 items-center justify-center rounded-lg ${toneClasses}`}>
         <Icon className="h-4 w-4" />
       </div>
       <div className="mt-3 text-xs uppercase tracking-wider text-muted-foreground">{label}</div>
       <div className="font-display text-xl font-bold tracking-tight">{value}</div>
+    </div>
+  );
+}
+
+function MobileStickyCTA() {
+  return (
+    <div className="fixed inset-x-0 bottom-16 z-20 px-4 sm:hidden">
+      <LogPaymentDialog>
+        <button className="flex w-full items-center justify-center gap-2 rounded-full bg-primary px-6 py-3.5 text-sm font-semibold text-primary-foreground shadow-glow active:scale-[0.98] transition-transform">
+          <Plus className="h-4 w-4" /> Log Payment
+        </button>
+      </LogPaymentDialog>
     </div>
   );
 }
@@ -266,11 +326,11 @@ function EmptyState({ greeting }: { greeting: string }) {
         {greeting} 👋
       </h1>
       <p className="mx-auto mt-2 max-w-md text-muted-foreground">
-        Add your first debt to see your payoff date, build a plan, and start crushing it.
+        Let's get started — add your first debt and we'll show you exactly when you'll be debt-free.
       </p>
       <Link
         to="/app/debts"
-        className="mt-6 inline-flex items-center gap-2 rounded-full bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground shadow-glow hover:-translate-y-0.5 transition-transform"
+        className="mt-6 inline-flex items-center gap-2 rounded-full bg-primary px-6 py-3.5 text-sm font-semibold text-primary-foreground shadow-glow hover:-translate-y-0.5 transition-transform"
       >
         <Plus className="h-4 w-4" /> Add your first debt
       </Link>
