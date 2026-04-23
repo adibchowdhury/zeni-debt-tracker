@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { X, Plus } from "lucide-react";
 import { useDebtStore } from "@/lib/storage";
 import { formatMoney } from "@/lib/debt-math";
@@ -17,9 +17,16 @@ export function LogPaymentDialog({ children }: { children: React.ReactNode }) {
 function Dialog({ onClose }: { onClose: () => void }) {
   const store = useDebtStore();
   const activeDebts = store.debts.filter((d) => d.balance > 0);
-  const [debtId, setDebtId] = useState(activeDebts[0]?.id ?? "");
+  const [debtId, setDebtId] = useState("");
   const [amount, setAmount] = useState("");
   const [submitting, setSubmitting] = useState(false);
+
+  // Once debts load, default the selection to the first active debt
+  useEffect(() => {
+    if (!debtId && activeDebts.length > 0) {
+      setDebtId(activeDebts[0].id);
+    }
+  }, [debtId, activeDebts]);
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
