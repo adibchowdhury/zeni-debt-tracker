@@ -23,8 +23,13 @@ function Dialog({ onClose }: { onClose: () => void }) {
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const amt = parseFloat(amount);
-    if (!debtId || isNaN(amt) || amt <= 0) {
+    const raw = (amount ?? "").toString().trim().replace(/,/g, ".");
+    const amt = parseFloat(raw);
+    if (!debtId) {
+      toast.error("Pick a debt");
+      return;
+    }
+    if (!raw || isNaN(amt) || amt <= 0) {
       toast.error("Enter an amount");
       return;
     }
