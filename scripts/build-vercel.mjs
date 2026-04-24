@@ -27,6 +27,14 @@ await cp(distClient, staticOut, { recursive: true });
 // Copy SSR bundle into the function
 await cp(distServer, fnDir, { recursive: true });
 
+// 2b. Copy node_modules into the function so externalized deps (h3, etc.) resolve
+const nodeModulesSrc = path.join(root, "node_modules");
+const nodeModulesDest = path.join(fnDir, "node_modules");
+if (existsSync(nodeModulesSrc)) {
+  await cp(nodeModulesSrc, nodeModulesDest, { recursive: true, dereference: true });
+}
+
+
 // Function entrypoint: bridge Node req/res to TanStack Start's Web fetch handler
 const handler = `import * as serverMod from "./server.js";
 import { Readable } from "node:stream";
@@ -97,10 +105,19 @@ export default async function (req, res) {
 
 await writeFile(path.join(fnDir, "index.mjs"), handler);
 
+const rootPkg = JSON.parse(await readFile(path.join(root, "package.json"), "utf8"));
 await writeFile(
   path.join(fnDir, "package.json"),
-  JSON.stringify({ type: "module" }, null, 2),
+  JSON.stringify(
+    {
+      type: "module",
+      dependencies: rootPkg.dependencies ?? {},
+    },
+    null,
+    2,
+  ),
 );
+
 
 await writeFile(
   path.join(fnDir, ".vc-config.json"),
