@@ -1,9 +1,10 @@
 // Postbuild: convert Vite SSR output (dist/client + dist/server) into Vercel's
-// Build Output API v3 layout (.vercel/output). Vercel auto-detects this folder
-// when "framework" is null in vercel.json.
-import { mkdir, cp, writeFile, rm, readFile } from "node:fs/promises";
+// Build Output API v3 layout. Bundles the SSR entry with esbuild so the function
+// stays under Vercel's 250 MB unzipped limit (no node_modules copy needed).
+import { mkdir, cp, writeFile, rm } from "node:fs/promises";
 import { existsSync } from "node:fs";
 import path from "node:path";
+import { build as esbuild } from "esbuild";
 
 const root = process.cwd();
 const distClient = path.join(root, "dist", "client");
@@ -21,26 +22,34 @@ await rm(out, { recursive: true, force: true });
 await mkdir(staticOut, { recursive: true });
 await mkdir(fnDir, { recursive: true });
 
-// Copy client assets to /static
+// 1. Copy client assets to /static
 await cp(distClient, staticOut, { recursive: true });
 
-// Copy SSR bundle into the function
-await cp(distServer, fnDir, { recursive: true });
+// 2. Bundle dist/server/server.js into a single file with all deps inlined.
+//    This avoids needing node_modules at runtime (which blows past 250 MB).
+await esbuild({
+  entryPoints: [path.join(distServer, "server.js")],
+  outfile: path.join(fnDir, "server.bundled.mjs"),
+  bundle: true,
+  platform: "node",
+  format: "esm",
+  target: "node22",
+  // Mark Node built-ins as external (Node provides them at runtime)
+  external: ["node:*"],
+  // Keep names readable for debugging
+  keepNames: true,
+  // Avoid eval warnings from some deps
+  logLevel: "warning",
+  banner: {
+    // Some ESM deps reference these CJS globals; shim them.
+    js: "import { createRequire as __cr } from 'node:module'; const require = __cr(import.meta.url); import { fileURLToPath as __fp } from 'node:url'; import { dirname as __dn } from 'node:path'; const __filename = __fp(import.meta.url); const __dirname = __dn(__filename);",
+  },
+});
 
-// 2b. Copy node_modules into the function so externalized deps (h3, etc.) resolve
-const nodeModulesSrc = path.join(root, "node_modules");
-const nodeModulesDest = path.join(fnDir, "node_modules");
-if (existsSync(nodeModulesSrc)) {
-  await cp(nodeModulesSrc, nodeModulesDest, { recursive: true, dereference: true });
-}
-
-
-// Function entrypoint: bridge Node req/res to TanStack Start's Web fetch handler
-const handler = `import * as serverMod from "./server.js";
+// 3. Function entrypoint — imports the bundled server and bridges Node <-> Web fetch
+const handler = `import * as serverMod from "./server.bundled.mjs";
 import { Readable } from "node:stream";
 
-// TanStack Start's server entry can export the fetch handler in several shapes
-// depending on the build. Resolve to a single (request: Request) => Response fn.
 function resolveFetch(mod) {
   const candidates = [
     mod?.default?.fetch,
@@ -52,9 +61,9 @@ function resolveFetch(mod) {
   for (const c of candidates) {
     if (typeof c === "function") return c.bind(mod);
   }
-  console.error("[ssr] server.js exports:", Object.keys(mod || {}));
-  if (mod?.default) console.error("[ssr] server.js default keys:", Object.keys(mod.default));
-  throw new Error("Could not find a fetch handler exported from server.js");
+  console.error("[ssr] server exports:", Object.keys(mod || {}));
+  if (mod?.default) console.error("[ssr] default keys:", Object.keys(mod.default));
+  throw new Error("Could not find a fetch handler exported from server bundle");
 }
 
 const fetchHandler = resolveFetch(serverMod);
@@ -77,75 +86,4 @@ function toWebRequest(req) {
 }
 
 async function sendWebResponse(res, webRes) {
-  res.statusCode = webRes.status;
-  webRes.headers.forEach((value, key) => {
-    res.setHeader(key, value);
-  });
-  if (!webRes.body) {
-    res.end();
-    return;
-  }
-  const nodeStream = Readable.fromWeb(webRes.body);
-  nodeStream.pipe(res);
-}
-
-export default async function (req, res) {
-  try {
-    const webReq = toWebRequest(req);
-    const webRes = await fetchHandler(webReq);
-    await sendWebResponse(res, webRes);
-  } catch (err) {
-    console.error("[ssr] handler error:", err && err.stack ? err.stack : err);
-    res.statusCode = 500;
-    res.setHeader("content-type", "text/plain");
-    res.end("Internal Server Error: " + (err?.message || "unknown"));
-  }
-}
-`;
-
-await writeFile(path.join(fnDir, "index.mjs"), handler);
-
-const rootPkg = JSON.parse(await readFile(path.join(root, "package.json"), "utf8"));
-await writeFile(
-  path.join(fnDir, "package.json"),
-  JSON.stringify(
-    {
-      type: "module",
-      dependencies: rootPkg.dependencies ?? {},
-    },
-    null,
-    2,
-  ),
-);
-
-
-await writeFile(
-  path.join(fnDir, ".vc-config.json"),
-  JSON.stringify(
-    {
-      runtime: "nodejs22.x",
-      handler: "index.mjs",
-      launcherType: "Nodejs",
-      shouldAddHelpers: false,
-      supportsResponseStreaming: true,
-    },
-    null,
-    2,
-  ),
-);
-
-const config = {
-  version: 3,
-  routes: [
-    {
-      src: "^/assets/(.*)$",
-      headers: { "cache-control": "public, max-age=31536000, immutable" },
-      continue: true,
-    },
-    { handle: "filesystem" },
-    { src: "/(.*)", dest: "/ssr" },
-  ],
-};
-await writeFile(path.join(out, "config.json"), JSON.stringify(config, null, 2));
-
-console.log("[build-vercel] Wrote .vercel/output (static + ssr.func)");
+  res.statusCode = w
