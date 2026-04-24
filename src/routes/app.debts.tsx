@@ -53,7 +53,8 @@ function DebtsPage() {
                   <div>
                     <div className="font-display text-base font-semibold">{d.name}</div>
                     <div className="mt-0.5 text-xs text-muted-foreground">
-                      {d.interestRate}% APR · min {formatMoney(d.minPayment)}/mo
+                      {d.debtType} · {d.interestRate}% APR · min {formatMoney(d.minPayment)}/mo
+                      {d.dueDay ? ` · due day ${d.dueDay}` : ""}
                     </div>
                   </div>
                   <div className="text-right">
