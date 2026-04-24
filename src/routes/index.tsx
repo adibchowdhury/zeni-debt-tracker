@@ -1,5 +1,4 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { CheckCircle2, Coins, TrendingUp } from "lucide-react";
 import {
   ArrowRight,
   Check,
@@ -14,6 +13,9 @@ import {
   Quote,
   Flame,
   Zap,
+  CheckCircle2,
+  Coins,
+  TrendingUp,
 } from "lucide-react";
 
 export const Route = createFileRoute("/")({
