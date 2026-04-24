@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { Plus, Trash2, Pencil, X } from "lucide-react";
-import { useDebtStore, type Debt } from "@/lib/storage";
+import { useDebtStore, type Debt, DEBT_TYPES, type DebtType } from "@/lib/storage";
 import { formatMoney } from "@/lib/debt-math";
 import { ProgressBar } from "@/components/debt/ProgressBar";
 import { toast } from "sonner";
@@ -53,7 +53,8 @@ function DebtsPage() {
                   <div>
                     <div className="font-display text-base font-semibold">{d.name}</div>
                     <div className="mt-0.5 text-xs text-muted-foreground">
-                      {d.interestRate}% APR · min {formatMoney(d.minPayment)}/mo
+                      {d.debtType} · {d.interestRate}% APR · min {formatMoney(d.minPayment)}/mo
+                      {d.dueDay ? ` · due day ${d.dueDay}` : ""}
                     </div>
                   </div>
                   <div className="text-right">
@@ -98,6 +99,8 @@ function DebtForm({ debt, onClose }: { debt: Debt | null; onClose: () => void })
   const [balance, setBalance] = useState(debt ? String(debt.balance) : "");
   const [rate, setRate] = useState(debt ? String(debt.interestRate) : "");
   const [minPay, setMinPay] = useState(debt ? String(debt.minPayment) : "");
+  const [debtType, setDebtType] = useState<DebtType>(debt?.debtType ?? "Credit Card");
+  const [dueDay, setDueDay] = useState(debt?.dueDay ? String(debt.dueDay) : "");
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -108,11 +111,34 @@ function DebtForm({ debt, onClose }: { debt: Debt | null; onClose: () => void })
       toast.error("Please fill in all fields");
       return;
     }
+    let dd: number | null = null;
+    if (dueDay.trim() !== "") {
+      const parsed = parseInt(dueDay, 10);
+      if (isNaN(parsed) || parsed < 1 || parsed > 31) {
+        toast.error("Due day must be between 1 and 31");
+        return;
+      }
+      dd = parsed;
+    }
     if (debt) {
-      await store.updateDebt(debt.id, { name, balance: b, interestRate: r, minPayment: m });
+      await store.updateDebt(debt.id, {
+        name,
+        balance: b,
+        interestRate: r,
+        minPayment: m,
+        debtType,
+        dueDay: dd,
+      });
       toast.success("Debt updated");
     } else {
-      await store.addDebt({ name, balance: b, interestRate: r, minPayment: m });
+      await store.addDebt({
+        name,
+        balance: b,
+        interestRate: r,
+        minPayment: m,
+        debtType,
+        dueDay: dd,
+      });
       toast.success("Debt added!");
     }
     onClose();
@@ -142,6 +168,19 @@ function DebtForm({ debt, onClose }: { debt: Debt | null; onClose: () => void })
               placeholder="Credit Card"
               className="w-full rounded-xl border border-input bg-background px-4 py-3 outline-none focus:ring-2 focus:ring-ring"
             />
+          </FormField>
+          <FormField label="Type of debt">
+            <select
+              value={debtType}
+              onChange={(e) => setDebtType(e.target.value as DebtType)}
+              className="w-full rounded-xl border border-input bg-background px-4 py-3 outline-none focus:ring-2 focus:ring-ring"
+            >
+              {DEBT_TYPES.map((t) => (
+                <option key={t} value={t}>
+                  {t}
+                </option>
+              ))}
+            </select>
           </FormField>
           <FormField label="Current balance">
             <input
@@ -178,6 +217,19 @@ function DebtForm({ debt, onClose }: { debt: Debt | null; onClose: () => void })
               />
             </FormField>
           </div>
+          <FormField label="Payment due day (1–31)">
+            <input
+              type="number"
+              inputMode="numeric"
+              min={1}
+              max={31}
+              step={1}
+              value={dueDay}
+              onChange={(e) => setDueDay(e.target.value)}
+              placeholder="e.g. 15"
+              className="w-full rounded-xl border border-input bg-background px-4 py-3 outline-none focus:ring-2 focus:ring-ring"
+            />
+          </FormField>
           <button
             type="submit"
             className="w-full rounded-full bg-primary px-5 py-3 text-base font-semibold text-primary-foreground shadow-glow hover:-translate-y-0.5 transition-transform"

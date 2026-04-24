@@ -72,6 +72,8 @@ export type Database = {
         Row: {
           balance: number
           created_at: string
+          debt_type: string
+          due_day: number | null
           id: string
           initial_balance: number
           interest_rate: number
@@ -82,6 +84,8 @@ export type Database = {
         Insert: {
           balance: number
           created_at?: string
+          debt_type?: string
+          due_day?: number | null
           id?: string
           initial_balance: number
           interest_rate?: number
@@ -92,6 +96,8 @@ export type Database = {
         Update: {
           balance?: number
           created_at?: string
+          debt_type?: string
+          due_day?: number | null
           id?: string
           initial_balance?: number
           interest_rate?: number

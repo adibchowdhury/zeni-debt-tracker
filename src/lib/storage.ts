@@ -4,6 +4,18 @@ import { useAuth } from "@/lib/auth";
 
 export type Strategy = "snowball" | "avalanche";
 
+export const DEBT_TYPES = [
+  "Credit Card",
+  "Personal Loan",
+  "Auto Loan",
+  "Student Loan",
+  "Mortgage",
+  "Medical Debt",
+  "Collections",
+  "Other",
+] as const;
+export type DebtType = (typeof DEBT_TYPES)[number];
+
 export interface Debt {
   id: string;
   name: string;
@@ -12,6 +24,8 @@ export interface Debt {
   interestRate: number;
   minPayment: number;
   createdAt: number;
+  debtType: DebtType;
+  dueDay: number | null;
 }
 
 export interface Payment {
@@ -73,6 +87,8 @@ export function useDebtStore(): DebtStore & DebtStoreActions {
       interestRate: Number(r.interest_rate),
       minPayment: Number(r.minimum_payment),
       createdAt: new Date(r.created_at).getTime(),
+      debtType: ((r as { debt_type?: string }).debt_type as DebtType) ?? "Other",
+      dueDay: (r as { due_day?: number | null }).due_day ?? null,
     }));
     const payments: Payment[] = (paymentsRes.data ?? []).map((r) => ({
       id: r.id,
@@ -105,7 +121,9 @@ export function useDebtStore(): DebtStore & DebtStoreActions {
       initial_balance: d.initialBalance ?? d.balance,
       interest_rate: d.interestRate,
       minimum_payment: d.minPayment,
-    });
+      debt_type: d.debtType,
+      due_day: d.dueDay,
+    } as never);
     bump();
   };
 
@@ -117,13 +135,17 @@ export function useDebtStore(): DebtStore & DebtStoreActions {
       initial_balance?: number;
       interest_rate?: number;
       minimum_payment?: number;
+      debt_type?: string;
+      due_day?: number | null;
     } = {};
     if (patch.name !== undefined) dbPatch.name = patch.name;
     if (patch.balance !== undefined) dbPatch.balance = patch.balance;
     if (patch.initialBalance !== undefined) dbPatch.initial_balance = patch.initialBalance;
     if (patch.interestRate !== undefined) dbPatch.interest_rate = patch.interestRate;
     if (patch.minPayment !== undefined) dbPatch.minimum_payment = patch.minPayment;
-    await supabase.from("debts").update(dbPatch).eq("id", id).eq("user_id", user.id);
+    if (patch.debtType !== undefined) dbPatch.debt_type = patch.debtType;
+    if (patch.dueDay !== undefined) dbPatch.due_day = patch.dueDay;
+    await supabase.from("debts").update(dbPatch as never).eq("id", id).eq("user_id", user.id);
     bump();
   };
 
