@@ -1,4 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { LazyLottie } from "@/components/LazyLottie";
+import coinsAnim from "@/assets/lottie/coins-stack.json";
+import progressAnim from "@/assets/lottie/progress-fill.json";
+import checkAnim from "@/assets/lottie/checkmark-burst.json";
 import {
   ArrowRight,
   Check,
@@ -273,32 +277,48 @@ function ProblemSection() {
   ];
 
   return (
-    <section className="mx-auto max-w-6xl px-5 py-20 sm:py-24">
-      <div className="mx-auto max-w-2xl text-center">
-        <div className="mb-3 inline-flex rounded-full bg-secondary px-3 py-1 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-          The struggle is real
-        </div>
-        <h2 className="font-display text-3xl font-bold tracking-tight sm:text-4xl">
-          Paying off debt shouldn't feel impossible.
-        </h2>
-        <p className="mt-3 text-muted-foreground">
-          Most people don't lack discipline — they lack clarity and momentum.
-        </p>
-      </div>
-
-      <div className="mt-10 grid gap-4 sm:grid-cols-3">
-        {pains.map((p) => (
-          <div
-            key={p.title}
-            className="rounded-3xl border border-border bg-card p-6 shadow-soft"
-          >
-            <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-secondary text-muted-foreground">
-              <span className="font-display text-base font-bold">!</span>
-            </div>
-            <h3 className="mt-4 font-display text-lg font-semibold">{p.title}</h3>
-            <p className="mt-1 text-sm text-muted-foreground">{p.body}</p>
+    <section className="relative mx-auto max-w-6xl px-5 py-20 sm:py-24">
+      <div className="grid items-center gap-10 lg:grid-cols-[1fr_1.2fr]">
+        {/* Lottie: coins stacking — turning struggle into something tangible */}
+        <div className="order-2 flex justify-center lg:order-1">
+          <div className="relative w-full max-w-sm">
+            <div className="pointer-events-none absolute inset-0 -z-10 rounded-[2rem] bg-gradient-to-br from-primary-soft/60 to-success-soft/40 blur-2xl" />
+            <LazyLottie
+              animationData={coinsAnim}
+              ariaLabel="Coins stacking up to represent growing payoff progress"
+              className="mx-auto h-64 w-64 sm:h-72 sm:w-72"
+            />
           </div>
-        ))}
+        </div>
+
+        <div className="order-1 lg:order-2">
+          <div className="mb-3 inline-flex rounded-full bg-secondary px-3 py-1 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+            The struggle is real
+          </div>
+          <h2 className="font-display text-3xl font-bold tracking-tight sm:text-4xl">
+            Paying off debt shouldn't feel impossible.
+          </h2>
+          <p className="mt-3 text-muted-foreground">
+            Most people don't lack discipline — they lack clarity and momentum.
+          </p>
+
+          <div className="mt-8 grid gap-4 sm:grid-cols-1">
+            {pains.map((p) => (
+              <div
+                key={p.title}
+                className="flex gap-4 rounded-2xl border border-border bg-card p-5 shadow-soft"
+              >
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-secondary text-muted-foreground">
+                  <span className="font-display text-base font-bold">!</span>
+                </div>
+                <div>
+                  <h3 className="font-display text-base font-semibold">{p.title}</h3>
+                  <p className="mt-0.5 text-sm text-muted-foreground">{p.body}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
     </section>
   );
@@ -343,7 +363,29 @@ function SolutionSection() {
           </p>
         </div>
 
-        <div className="mt-12 grid gap-5 sm:grid-cols-3">
+        {/* Lottie: filling progress bar — momentum visualised */}
+        <div className="mx-auto mt-10 max-w-xl">
+          <div className="relative overflow-hidden rounded-3xl border border-border bg-card px-6 py-5 shadow-soft">
+            <div className="flex items-center justify-between">
+              <div>
+                <div className="text-[11px] font-semibold uppercase tracking-wider text-primary">
+                  Watch progress fill
+                </div>
+                <div className="font-display text-base font-semibold text-foreground">
+                  Every payment moves the bar.
+                </div>
+              </div>
+              <div className="font-display text-2xl font-extrabold text-primary">+</div>
+            </div>
+            <LazyLottie
+              animationData={progressAnim}
+              ariaLabel="Animated progress bar filling with orange gradient"
+              className="mt-2 h-20 w-full"
+            />
+          </div>
+        </div>
+
+        <div className="mt-10 grid gap-5 sm:grid-cols-3">
           {wins.map((w) => (
             <div
               key={w.title}
@@ -397,21 +439,33 @@ function HowItWorks() {
       </div>
 
       <div className="relative mt-12 grid gap-5 sm:grid-cols-3">
-        {steps.map((s, i) => (
-          <div
-            key={s.n}
-            className="relative rounded-3xl border border-border bg-card p-6 shadow-soft"
-          >
-            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary font-display text-base font-bold text-primary-foreground shadow-glow">
-              {s.n}
+        {steps.map((s, i) => {
+          const isLast = i === steps.length - 1;
+          return (
+            <div
+              key={s.n}
+              className="relative overflow-hidden rounded-3xl border border-border bg-card p-6 shadow-soft"
+            >
+              <div className="flex items-center justify-between">
+                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary font-display text-base font-bold text-primary-foreground shadow-glow">
+                  {s.n}
+                </div>
+                {isLast && (
+                  <LazyLottie
+                    animationData={checkAnim}
+                    ariaLabel="Level completed checkmark with celebratory burst"
+                    className="h-14 w-14"
+                  />
+                )}
+              </div>
+              <h3 className="mt-4 font-display text-lg font-bold">{s.title}</h3>
+              <p className="mt-1 text-sm text-muted-foreground">{s.body}</p>
+              {!isLast && (
+                <ArrowRight className="absolute -right-3 top-1/2 hidden h-5 w-5 -translate-y-1/2 text-primary/60 sm:block" />
+              )}
             </div>
-            <h3 className="mt-4 font-display text-lg font-bold">{s.title}</h3>
-            <p className="mt-1 text-sm text-muted-foreground">{s.body}</p>
-            {i < steps.length - 1 && (
-              <ArrowRight className="absolute -right-3 top-1/2 hidden h-5 w-5 -translate-y-1/2 text-primary/60 sm:block" />
-            )}
-          </div>
-        ))}
+          );
+        })}
       </div>
     </section>
   );
