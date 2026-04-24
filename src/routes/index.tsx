@@ -439,21 +439,33 @@ function HowItWorks() {
       </div>
 
       <div className="relative mt-12 grid gap-5 sm:grid-cols-3">
-        {steps.map((s, i) => (
-          <div
-            key={s.n}
-            className="relative rounded-3xl border border-border bg-card p-6 shadow-soft"
-          >
-            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary font-display text-base font-bold text-primary-foreground shadow-glow">
-              {s.n}
+        {steps.map((s, i) => {
+          const isLast = i === steps.length - 1;
+          return (
+            <div
+              key={s.n}
+              className="relative overflow-hidden rounded-3xl border border-border bg-card p-6 shadow-soft"
+            >
+              <div className="flex items-center justify-between">
+                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary font-display text-base font-bold text-primary-foreground shadow-glow">
+                  {s.n}
+                </div>
+                {isLast && (
+                  <LazyLottie
+                    animationData={checkAnim}
+                    ariaLabel="Level completed checkmark with celebratory burst"
+                    className="h-14 w-14"
+                  />
+                )}
+              </div>
+              <h3 className="mt-4 font-display text-lg font-bold">{s.title}</h3>
+              <p className="mt-1 text-sm text-muted-foreground">{s.body}</p>
+              {!isLast && (
+                <ArrowRight className="absolute -right-3 top-1/2 hidden h-5 w-5 -translate-y-1/2 text-primary/60 sm:block" />
+              )}
             </div>
-            <h3 className="mt-4 font-display text-lg font-bold">{s.title}</h3>
-            <p className="mt-1 text-sm text-muted-foreground">{s.body}</p>
-            {i < steps.length - 1 && (
-              <ArrowRight className="absolute -right-3 top-1/2 hidden h-5 w-5 -translate-y-1/2 text-primary/60 sm:block" />
-            )}
-          </div>
-        ))}
+          );
+        })}
       </div>
     </section>
   );
