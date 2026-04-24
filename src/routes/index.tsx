@@ -1,4 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { LazyLottie } from "@/components/LazyLottie";
+import coinsAnim from "@/assets/lottie/coins-stack.json";
+import progressAnim from "@/assets/lottie/progress-fill.json";
+import checkAnim from "@/assets/lottie/checkmark-burst.json";
 import {
   ArrowRight,
   Check,
@@ -273,32 +277,48 @@ function ProblemSection() {
   ];
 
   return (
-    <section className="mx-auto max-w-6xl px-5 py-20 sm:py-24">
-      <div className="mx-auto max-w-2xl text-center">
-        <div className="mb-3 inline-flex rounded-full bg-secondary px-3 py-1 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-          The struggle is real
-        </div>
-        <h2 className="font-display text-3xl font-bold tracking-tight sm:text-4xl">
-          Paying off debt shouldn't feel impossible.
-        </h2>
-        <p className="mt-3 text-muted-foreground">
-          Most people don't lack discipline — they lack clarity and momentum.
-        </p>
-      </div>
-
-      <div className="mt-10 grid gap-4 sm:grid-cols-3">
-        {pains.map((p) => (
-          <div
-            key={p.title}
-            className="rounded-3xl border border-border bg-card p-6 shadow-soft"
-          >
-            <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-secondary text-muted-foreground">
-              <span className="font-display text-base font-bold">!</span>
-            </div>
-            <h3 className="mt-4 font-display text-lg font-semibold">{p.title}</h3>
-            <p className="mt-1 text-sm text-muted-foreground">{p.body}</p>
+    <section className="relative mx-auto max-w-6xl px-5 py-20 sm:py-24">
+      <div className="grid items-center gap-10 lg:grid-cols-[1fr_1.2fr]">
+        {/* Lottie: coins stacking — turning struggle into something tangible */}
+        <div className="order-2 flex justify-center lg:order-1">
+          <div className="relative w-full max-w-sm">
+            <div className="pointer-events-none absolute inset-0 -z-10 rounded-[2rem] bg-gradient-to-br from-primary-soft/60 to-success-soft/40 blur-2xl" />
+            <LazyLottie
+              animationData={coinsAnim}
+              ariaLabel="Coins stacking up to represent growing payoff progress"
+              className="mx-auto h-64 w-64 sm:h-72 sm:w-72"
+            />
           </div>
-        ))}
+        </div>
+
+        <div className="order-1 lg:order-2">
+          <div className="mb-3 inline-flex rounded-full bg-secondary px-3 py-1 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+            The struggle is real
+          </div>
+          <h2 className="font-display text-3xl font-bold tracking-tight sm:text-4xl">
+            Paying off debt shouldn't feel impossible.
+          </h2>
+          <p className="mt-3 text-muted-foreground">
+            Most people don't lack discipline — they lack clarity and momentum.
+          </p>
+
+          <div className="mt-8 grid gap-4 sm:grid-cols-1">
+            {pains.map((p) => (
+              <div
+                key={p.title}
+                className="flex gap-4 rounded-2xl border border-border bg-card p-5 shadow-soft"
+              >
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-secondary text-muted-foreground">
+                  <span className="font-display text-base font-bold">!</span>
+                </div>
+                <div>
+                  <h3 className="font-display text-base font-semibold">{p.title}</h3>
+                  <p className="mt-0.5 text-sm text-muted-foreground">{p.body}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
     </section>
   );
