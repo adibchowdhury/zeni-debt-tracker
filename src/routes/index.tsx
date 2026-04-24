@@ -91,9 +91,7 @@ function Hero() {
           </div>
 
           <h1 className="font-display text-[2.75rem] font-extrabold leading-[1.04] tracking-tight text-foreground sm:text-6xl lg:text-[4.25rem]">
-            A clear path to becoming{" "}
-            <span className="bg-gradient-progress bg-clip-text text-transparent">debt-free</span>
-            <span className="text-foreground"> — without feeling overwhelmed.</span>
+            A clear path to becoming debt-free — without feeling overwhelmed.
           </h1>
 
           <p className="mt-7 max-w-xl text-base text-muted-foreground sm:text-lg lg:text-xl">
