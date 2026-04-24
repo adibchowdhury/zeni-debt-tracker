@@ -3,6 +3,34 @@ import type { Debt, Payment, Strategy } from "@/lib/storage";
 import { simulatePayoff, formatMoney } from "@/lib/debt-math";
 import { startOfWeek, isoDate } from "@/lib/week";
 
+/**
+ * Months to pay off a single debt paying only the fixed monthly payment P.
+ * n = ln(P / (P - r * B)) / ln(1 + r)
+ * Returns Infinity if payment doesn't cover monthly interest.
+ */
+function monthsToPayoff(balance: number, apr: number, payment: number): number {
+  if (balance <= 0) return 0;
+  if (payment <= 0) return Infinity;
+  const r = apr / 100 / 12;
+  if (r === 0) return Math.ceil(balance / payment);
+  const interest = r * balance;
+  if (payment <= interest) return Infinity;
+  const n = Math.log(payment / (payment - r * balance)) / Math.log(1 + r);
+  return Math.ceil(n);
+}
+
+/** Months until ALL debts are paid off, paying only the minimum on each. */
+export function minPaymentPayoffMonths(debts: Debt[]): number {
+  let max = 0;
+  for (const d of debts) {
+    if (d.balance <= 0) continue;
+    const n = monthsToPayoff(d.balance, d.interestRate, d.minPayment);
+    if (n === Infinity) return Infinity;
+    if (n > max) max = n;
+  }
+  return max;
+}
+
 export interface Insight {
   id: string;
   icon: "trend" | "calendar" | "zap" | "clock" | "target";
@@ -24,29 +52,38 @@ export interface CountdownInfo {
 export function useCountdown(
   debts: Debt[],
   payments: Payment[],
-  strategy: Strategy,
-  extraMonthly: number,
+  _strategy: Strategy,
+  _extraMonthly: number,
 ): CountdownInfo {
   return useMemo(() => {
     const totalRemaining = debts.reduce((s, d) => s + d.balance, 0);
     const totalInitial = debts.reduce((s, d) => s + d.initialBalance, 0);
     const totalPaid = payments.reduce((s, p) => s + p.amount, 0);
     const pct = totalInitial > 0 ? Math.min(100, (totalPaid / totalInitial) * 100) : 0;
-    const sim = simulatePayoff(debts, strategy, extraMonthly);
-    const days = Math.max(
-      0,
-      Math.round((sim.payoffDate.getTime() - Date.now()) / (24 * 60 * 60 * 1000)),
-    );
+    // Countdown reflects paying ONLY the minimum payment on each debt.
+    const months = minPaymentPayoffMonths(debts);
+    const payoffDate = new Date();
+    let days: number;
+    if (!isFinite(months)) {
+      days = Infinity;
+      payoffDate.setFullYear(payoffDate.getFullYear() + 100);
+    } else {
+      payoffDate.setMonth(payoffDate.getMonth() + months);
+      days = Math.max(
+        0,
+        Math.round((payoffDate.getTime() - Date.now()) / (24 * 60 * 60 * 1000)),
+      );
+    }
     return {
       days,
-      months: sim.months,
-      payoffDate: sim.payoffDate,
+      months,
+      payoffDate,
       totalRemaining,
       pct,
       totalInitial,
       totalPaid,
     };
-  }, [debts, payments, strategy, extraMonthly]);
+  }, [debts, payments]);
 }
 
 interface InsightsCtx {
@@ -165,6 +202,7 @@ export function currentWeekKey(): string {
 
 /** Format a friendly relative day count. */
 export function formatDays(days: number): string {
+  if (!isFinite(days)) return "Never (min payment too low)";
   if (days <= 0) return "Today";
   if (days === 1) return "1 day";
   if (days < 60) return `${days} days`;
