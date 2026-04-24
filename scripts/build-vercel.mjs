@@ -1,7 +1,7 @@
 // Postbuild: convert Vite SSR output (dist/client + dist/server) into Vercel's
 // Build Output API v3 layout (.vercel/output). Vercel auto-detects this folder
 // when "framework" is null in vercel.json.
-import { mkdir, cp, writeFile, rm } from "node:fs/promises";
+import { mkdir, cp, writeFile, rm, readFile } from "node:fs/promises";
 import { existsSync } from "node:fs";
 import path from "node:path";
 
