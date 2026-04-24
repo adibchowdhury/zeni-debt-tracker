@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { Logo } from "@/components/Logo";
 import {
   ArrowRight,
   Check,
@@ -46,12 +47,8 @@ function SiteNav() {
   return (
     <header className="sticky top-0 z-40 border-b border-border/60 bg-background/80 backdrop-blur">
       <div className="mx-auto flex max-w-6xl items-center justify-between px-5 py-4">
-        <Link to="/" className="flex items-center gap-2">
-          <div className="flex h-9 w-9 items-center justify-center rounded-2xl bg-gradient-to-br from-primary to-[oklch(0.78_0.18_60)] text-primary-foreground shadow-glow">
-            <Sparkles className="h-4 w-4" />
-          </div>
-          <span className="font-display text-lg font-bold tracking-tight">Zeni</span>
-        </Link>
+        <Logo to="/" size="md" />
+
         <div className="flex items-center gap-2">
           <Link
             to="/login"
@@ -726,8 +723,9 @@ function FinalCTA() {
 
 function Footer() {
   return (
-    <footer className="border-t border-border py-8 text-center text-xs text-muted-foreground">
-      Made with care · Zeni — your debt-free coach
+    <footer className="flex flex-col items-center gap-2 border-t border-border py-8 text-center text-xs text-muted-foreground">
+      <Logo to="/" size="sm" />
+      <span>Made with care · your debt-free coach</span>
     </footer>
   );
 }
