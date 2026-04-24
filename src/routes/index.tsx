@@ -1,5 +1,4 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Logo } from "@/components/Logo";
 import {
   ArrowRight,
   Check,
@@ -18,6 +17,7 @@ import {
   Coins,
   TrendingUp,
 } from "lucide-react";
+import { Logo } from "@/components/Logo";
 
 export const Route = createFileRoute("/")({
   component: Landing,
