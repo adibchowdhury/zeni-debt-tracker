@@ -8,9 +8,9 @@ interface LogoProps {
 }
 
 const SIZE_MAP = {
-  sm: "h-7",
-  md: "h-9",
-  lg: "h-12",
+  sm: "h-10",
+  md: "h-12 sm:h-14",
+  lg: "h-16 sm:h-20",
 } as const;
 
 /**
