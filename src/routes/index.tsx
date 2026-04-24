@@ -167,7 +167,7 @@ function HeroVisual() {
       </div>
 
       {/* Main card */}
-      <div className="relative rounded-3xl border border-border bg-card p-6 shadow-soft sm:p-7">
+      <div className="relative rounded-3xl border border-border bg-card p-6 shadow-soft sm:p-8 lg:scale-[1.04] lg:p-9">
         <div className="flex items-center justify-between">
           <div className="text-[11px] font-semibold uppercase tracking-wider text-primary">
             Your progress
