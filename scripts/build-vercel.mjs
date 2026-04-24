@@ -28,8 +28,28 @@ await cp(distClient, staticOut, { recursive: true });
 await cp(distServer, fnDir, { recursive: true });
 
 // Function entrypoint: bridge Node req/res to TanStack Start's Web fetch handler
-const handler = `import handler from "./server.js";
+const handler = `import * as serverMod from "./server.js";
 import { Readable } from "node:stream";
+
+// TanStack Start's server entry can export the fetch handler in several shapes
+// depending on the build. Resolve to a single (request: Request) => Response fn.
+function resolveFetch(mod) {
+  const candidates = [
+    mod?.default?.fetch,
+    mod?.fetch,
+    typeof mod?.default === "function" ? mod.default : null,
+    mod?.default?.default?.fetch,
+    typeof mod?.default?.default === "function" ? mod.default.default : null,
+  ];
+  for (const c of candidates) {
+    if (typeof c === "function") return c.bind(mod);
+  }
+  console.error("[ssr] server.js exports:", Object.keys(mod || {}));
+  if (mod?.default) console.error("[ssr] server.js default keys:", Object.keys(mod.default));
+  throw new Error("Could not find a fetch handler exported from server.js");
+}
+
+const fetchHandler = resolveFetch(serverMod);
 
 function toWebRequest(req) {
   const proto = req.headers["x-forwarded-proto"] || "https";
@@ -57,22 +77,24 @@ async function sendWebResponse(res, webRes) {
     res.end();
     return;
   }
-  Readable.fromWeb(webRes.body).pipe(res);
+  const nodeStream = Readable.fromWeb(webRes.body);
+  nodeStream.pipe(res);
 }
 
 export default async function (req, res) {
   try {
     const webReq = toWebRequest(req);
-    const webRes = await handler.fetch(webReq);
+    const webRes = await fetchHandler(webReq);
     await sendWebResponse(res, webRes);
   } catch (err) {
-    console.error("[ssr] handler error:", err);
+    console.error("[ssr] handler error:", err && err.stack ? err.stack : err);
     res.statusCode = 500;
     res.setHeader("content-type", "text/plain");
-    res.end("Internal Server Error");
+    res.end("Internal Server Error: " + (err?.message || "unknown"));
   }
 }
 `;
+
 await writeFile(path.join(fnDir, "index.mjs"), handler);
 
 await writeFile(
