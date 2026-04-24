@@ -478,11 +478,13 @@ function HowItWorks() {
                   {s.n}
                 </div>
                 {isLast && (
-                  <LazyLottie
-                    animationData={checkAnim}
-                    ariaLabel="Level completed checkmark with celebratory burst"
-                    className="h-14 w-14"
-                  />
+                  <div
+                    className="flex h-10 w-10 items-center justify-center rounded-full bg-success-soft text-success ring-4 ring-success-soft/40"
+                    role="img"
+                    aria-label="Level completed checkmark"
+                  >
+                    <CheckCircle2 className="h-5 w-5" />
+                  </div>
                 )}
               </div>
               <h3 className="mt-4 font-display text-lg font-bold">{s.title}</h3>
