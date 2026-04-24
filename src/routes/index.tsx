@@ -363,7 +363,29 @@ function SolutionSection() {
           </p>
         </div>
 
-        <div className="mt-12 grid gap-5 sm:grid-cols-3">
+        {/* Lottie: filling progress bar — momentum visualised */}
+        <div className="mx-auto mt-10 max-w-xl">
+          <div className="relative overflow-hidden rounded-3xl border border-border bg-card px-6 py-5 shadow-soft">
+            <div className="flex items-center justify-between">
+              <div>
+                <div className="text-[11px] font-semibold uppercase tracking-wider text-primary">
+                  Watch progress fill
+                </div>
+                <div className="font-display text-base font-semibold text-foreground">
+                  Every payment moves the bar.
+                </div>
+              </div>
+              <div className="font-display text-2xl font-extrabold text-primary">+</div>
+            </div>
+            <LazyLottie
+              animationData={progressAnim}
+              ariaLabel="Animated progress bar filling with orange gradient"
+              className="mt-2 h-20 w-full"
+            />
+          </div>
+        </div>
+
+        <div className="mt-10 grid gap-5 sm:grid-cols-3">
           {wins.map((w) => (
             <div
               key={w.title}
