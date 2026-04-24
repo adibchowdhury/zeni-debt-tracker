@@ -202,6 +202,7 @@ export function currentWeekKey(): string {
 
 /** Format a friendly relative day count. */
 export function formatDays(days: number): string {
+  if (!isFinite(days)) return "Never (min payment too low)";
   if (days <= 0) return "Today";
   if (days === 1) return "1 day";
   if (days < 60) return `${days} days`;
