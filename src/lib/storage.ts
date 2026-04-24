@@ -4,6 +4,18 @@ import { useAuth } from "@/lib/auth";
 
 export type Strategy = "snowball" | "avalanche";
 
+export const DEBT_TYPES = [
+  "Credit Card",
+  "Personal Loan",
+  "Auto Loan",
+  "Student Loan",
+  "Mortgage",
+  "Medical Debt",
+  "Collections",
+  "Other",
+] as const;
+export type DebtType = (typeof DEBT_TYPES)[number];
+
 export interface Debt {
   id: string;
   name: string;
@@ -12,6 +24,8 @@ export interface Debt {
   interestRate: number;
   minPayment: number;
   createdAt: number;
+  debtType: DebtType;
+  dueDay: number | null;
 }
 
 export interface Payment {
