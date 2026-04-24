@@ -18,7 +18,15 @@ function Simulator() {
     setExtra(extraMonthly);
   }, [extraMonthly]);
 
-  const baseline = useMemo(() => simulatePayoff(debts, strategy, 0), [debts, strategy]);
+  // Baseline = paying ONLY minimum payments (matches home page countdown).
+  const baseline = useMemo(() => {
+    const months = minPaymentPayoffMonths(debts);
+    const safeMonths = isFinite(months) ? months : 0;
+    const sim = simulatePayoff(debts, strategy, 0);
+    const payoffDate = new Date();
+    payoffDate.setMonth(payoffDate.getMonth() + safeMonths);
+    return { months: safeMonths, totalInterest: sim.totalInterest, payoffDate };
+  }, [debts, strategy]);
   const withExtra = useMemo(
     () => simulatePayoff(debts, strategy, extra),
     [debts, strategy, extra]
