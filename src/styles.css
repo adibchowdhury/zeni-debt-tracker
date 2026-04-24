@@ -1,4 +1,5 @@
 @import url("https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Figtree:wght@300;400;500;600;700&display=swap");
+@import url("https://api.fontshare.com/v2/css?f[]=switzer@500,600,700&display=swap");
 @import "tailwindcss" source(none);
 @source "../src";
 @import "tw-animate-css";
@@ -8,6 +9,7 @@
 @theme inline {
   --font-sans: "Figtree", ui-sans-serif, system-ui, sans-serif;
   --font-display: "Outfit", "Figtree", ui-sans-serif, system-ui, sans-serif;
+  --font-zeni: "Switzer", "Figtree", ui-sans-serif, system-ui, sans-serif;
 
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
@@ -170,6 +172,7 @@
 
 @layer utilities {
   .font-display { font-family: var(--font-display); }
+  .font-zeni { font-family: var(--font-zeni); font-feature-settings: "ss01"; }
   .bg-gradient-hero { background: var(--gradient-hero); }
   .bg-gradient-progress { background: var(--gradient-progress); }
   .shadow-soft { box-shadow: var(--shadow-soft); }
