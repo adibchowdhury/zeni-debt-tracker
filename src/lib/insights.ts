@@ -52,29 +52,38 @@ export interface CountdownInfo {
 export function useCountdown(
   debts: Debt[],
   payments: Payment[],
-  strategy: Strategy,
-  extraMonthly: number,
+  _strategy: Strategy,
+  _extraMonthly: number,
 ): CountdownInfo {
   return useMemo(() => {
     const totalRemaining = debts.reduce((s, d) => s + d.balance, 0);
     const totalInitial = debts.reduce((s, d) => s + d.initialBalance, 0);
     const totalPaid = payments.reduce((s, p) => s + p.amount, 0);
     const pct = totalInitial > 0 ? Math.min(100, (totalPaid / totalInitial) * 100) : 0;
-    const sim = simulatePayoff(debts, strategy, extraMonthly);
-    const days = Math.max(
-      0,
-      Math.round((sim.payoffDate.getTime() - Date.now()) / (24 * 60 * 60 * 1000)),
-    );
+    // Countdown reflects paying ONLY the minimum payment on each debt.
+    const months = minPaymentPayoffMonths(debts);
+    const payoffDate = new Date();
+    let days: number;
+    if (!isFinite(months)) {
+      days = Infinity;
+      payoffDate.setFullYear(payoffDate.getFullYear() + 100);
+    } else {
+      payoffDate.setMonth(payoffDate.getMonth() + months);
+      days = Math.max(
+        0,
+        Math.round((payoffDate.getTime() - Date.now()) / (24 * 60 * 60 * 1000)),
+      );
+    }
     return {
       days,
-      months: sim.months,
-      payoffDate: sim.payoffDate,
+      months,
+      payoffDate,
       totalRemaining,
       pct,
       totalInitial,
       totalPaid,
     };
-  }, [debts, payments, strategy, extraMonthly]);
+  }, [debts, payments]);
 }
 
 interface InsightsCtx {
