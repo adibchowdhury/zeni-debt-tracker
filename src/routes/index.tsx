@@ -1,8 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { LazyLottie } from "@/components/LazyLottie";
-import coinsAnim from "@/assets/lottie/coins-stack.json";
-import progressAnim from "@/assets/lottie/progress-fill.json";
-import checkAnim from "@/assets/lottie/checkmark-burst.json";
+import { CheckCircle2, Coins, TrendingUp } from "lucide-react";
 import {
   ArrowRight,
   Check,
