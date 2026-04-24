@@ -12,9 +12,9 @@ interface LogoProps {
 const BBOX = { x: 208, y: 572, w: 1119, h: 362 };
 
 const SIZE_MAP = {
-  sm: "h-8",
-  md: "h-10 sm:h-12",
-  lg: "h-14 sm:h-16",
+  sm: "h-6",
+  md: "h-7 sm:h-8",
+  lg: "h-10 sm:h-12",
 } as const;
 
 /**
