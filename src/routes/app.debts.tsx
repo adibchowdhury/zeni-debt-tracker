@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { Plus, Trash2, Pencil, X } from "lucide-react";
-import { useDebtStore, type Debt } from "@/lib/storage";
+import { useDebtStore, type Debt, DEBT_TYPES, type DebtType } from "@/lib/storage";
 import { formatMoney } from "@/lib/debt-math";
 import { ProgressBar } from "@/components/debt/ProgressBar";
 import { toast } from "sonner";
