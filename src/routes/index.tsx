@@ -397,11 +397,18 @@ function SolutionSection() {
               </div>
               <div className="font-display text-2xl font-extrabold text-primary">+</div>
             </div>
-            <LazyLottie
-              animationData={progressAnim}
-              ariaLabel="Animated progress bar filling with orange gradient"
-              className="mt-2 h-20 w-full"
-            />
+            <div
+              className="mt-4 h-3 w-full overflow-hidden rounded-full bg-secondary"
+              role="img"
+              aria-label="Progress bar filling with orange gradient"
+            >
+              <div className="h-full w-2/3 rounded-full bg-gradient-to-r from-primary to-primary-glow" />
+            </div>
+            <div className="mt-2 flex justify-between text-[11px] font-medium text-muted-foreground">
+              <span>$0</span>
+              <span className="text-primary">+$420 this month</span>
+              <span>Goal</span>
+            </div>
           </div>
         </div>
 
