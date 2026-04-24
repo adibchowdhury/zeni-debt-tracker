@@ -121,7 +121,9 @@ export function useDebtStore(): DebtStore & DebtStoreActions {
       initial_balance: d.initialBalance ?? d.balance,
       interest_rate: d.interestRate,
       minimum_payment: d.minPayment,
-    });
+      debt_type: d.debtType,
+      due_day: d.dueDay,
+    } as never);
     bump();
   };
 
@@ -133,13 +135,17 @@ export function useDebtStore(): DebtStore & DebtStoreActions {
       initial_balance?: number;
       interest_rate?: number;
       minimum_payment?: number;
+      debt_type?: string;
+      due_day?: number | null;
     } = {};
     if (patch.name !== undefined) dbPatch.name = patch.name;
     if (patch.balance !== undefined) dbPatch.balance = patch.balance;
     if (patch.initialBalance !== undefined) dbPatch.initial_balance = patch.initialBalance;
     if (patch.interestRate !== undefined) dbPatch.interest_rate = patch.interestRate;
     if (patch.minPayment !== undefined) dbPatch.minimum_payment = patch.minPayment;
-    await supabase.from("debts").update(dbPatch).eq("id", id).eq("user_id", user.id);
+    if (patch.debtType !== undefined) dbPatch.debt_type = patch.debtType;
+    if (patch.dueDay !== undefined) dbPatch.due_day = patch.dueDay;
+    await supabase.from("debts").update(dbPatch as never).eq("id", id).eq("user_id", user.id);
     bump();
   };
 
