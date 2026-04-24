@@ -1,8 +1,8 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
-import { Sparkles } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { Logo } from "@/components/Logo";
 
 export const Route = createFileRoute("/signup")({
   component: SignupPage,
@@ -68,12 +68,9 @@ function SignupPage() {
 export function AuthShell({ title, subtitle, children }: { title: string; subtitle: string; children: React.ReactNode }) {
   return (
     <div className="min-h-screen bg-gradient-hero px-5 py-10">
-      <Link to="/" className="mx-auto mb-10 flex w-fit items-center gap-2">
-        <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-soft">
-          <Sparkles className="h-4 w-4" />
-        </div>
-        <span className="font-display text-lg font-semibold tracking-tight">Debtfree</span>
-      </Link>
+      <div className="mx-auto mb-10 flex w-fit items-center">
+        <Logo to="/" size="md" />
+      </div>
       <div className="mx-auto max-w-md rounded-3xl border border-border bg-card p-6 shadow-soft sm:p-8">
         <h1 className="font-display text-2xl font-bold tracking-tight">{title}</h1>
         <p className="mt-1 text-sm text-muted-foreground">{subtitle}</p>

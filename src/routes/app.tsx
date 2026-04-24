@@ -1,7 +1,8 @@
 import { createFileRoute, Link, Outlet, useNavigate, useLocation } from "@tanstack/react-router";
 import { useEffect } from "react";
-import { LayoutDashboard, ListPlus, Target, SlidersHorizontal, LogOut, Sparkles, Trophy } from "lucide-react";
+import { LayoutDashboard, ListPlus, Target, SlidersHorizontal, LogOut, Trophy } from "lucide-react";
 import { useAuth } from "@/lib/auth";
+import { Logo } from "@/components/Logo";
 
 export const Route = createFileRoute("/app")({
   component: AppLayout,
@@ -43,12 +44,8 @@ function AppLayout() {
     <div className="min-h-screen bg-gradient-hero pb-24 sm:pb-10">
       <header className="sticky top-0 z-30 border-b border-border/60 bg-background/80 backdrop-blur">
         <div className="mx-auto flex max-w-5xl items-center justify-between px-4 py-3 sm:px-6">
-          <Link to="/app" className="flex items-center gap-2">
-            <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-soft">
-              <Sparkles className="h-4 w-4" />
-            </div>
-            <span className="font-display text-base font-semibold tracking-tight">Debtfree</span>
-          </Link>
+          <Logo to="/app" size="md" />
+
 
           <nav className="hidden items-center gap-1 sm:flex">
             {NAV.map((n) => {

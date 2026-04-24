@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { Logo } from "@/components/Logo";
 import {
   ArrowRight,
   Check,
@@ -722,8 +723,9 @@ function FinalCTA() {
 
 function Footer() {
   return (
-    <footer className="border-t border-border py-8 text-center text-xs text-muted-foreground">
-      Made with care · Zeni — your debt-free coach
+    <footer className="flex flex-col items-center gap-2 border-t border-border py-8 text-center text-xs text-muted-foreground">
+      <Logo to="/" size="sm" />
+      <span>Made with care · your debt-free coach</span>
     </footer>
   );
 }
