@@ -87,6 +87,8 @@ export function useDebtStore(): DebtStore & DebtStoreActions {
       interestRate: Number(r.interest_rate),
       minPayment: Number(r.minimum_payment),
       createdAt: new Date(r.created_at).getTime(),
+      debtType: ((r as { debt_type?: string }).debt_type as DebtType) ?? "Other",
+      dueDay: (r as { due_day?: number | null }).due_day ?? null,
     }));
     const payments: Payment[] = (paymentsRes.data ?? []).map((r) => ({
       id: r.id,
