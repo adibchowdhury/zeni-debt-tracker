@@ -1,8 +1,4 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { LazyLottie } from "@/components/LazyLottie";
-import coinsAnim from "@/assets/lottie/coins-stack.json";
-import progressAnim from "@/assets/lottie/progress-fill.json";
-import checkAnim from "@/assets/lottie/checkmark-burst.json";
 import {
   ArrowRight,
   Check,
@@ -17,6 +13,9 @@ import {
   Quote,
   Flame,
   Zap,
+  CheckCircle2,
+  Coins,
+  TrendingUp,
 } from "lucide-react";
 
 export const Route = createFileRoute("/")({
@@ -279,15 +278,36 @@ function ProblemSection() {
   return (
     <section className="relative mx-auto max-w-6xl px-5 py-20 sm:py-24">
       <div className="grid items-center gap-10 lg:grid-cols-[1fr_1.2fr]">
-        {/* Lottie: coins stacking — turning struggle into something tangible */}
+        {/* Visual: stacked coins illustration — turning struggle into something tangible */}
         <div className="order-2 flex justify-center lg:order-1">
           <div className="relative w-full max-w-sm">
             <div className="pointer-events-none absolute inset-0 -z-10 rounded-[2rem] bg-gradient-to-br from-primary-soft/60 to-success-soft/40 blur-2xl" />
-            <LazyLottie
-              animationData={coinsAnim}
-              ariaLabel="Coins stacking up to represent growing payoff progress"
-              className="mx-auto h-64 w-64 sm:h-72 sm:w-72"
-            />
+            <div
+              className="mx-auto flex h-64 w-64 items-end justify-center gap-3 rounded-[2rem] border border-border bg-card p-6 shadow-soft sm:h-72 sm:w-72"
+              role="img"
+              aria-label="Stacked coins representing growing payoff progress"
+            >
+              <div className="flex flex-col items-center gap-1.5">
+                <div className="h-3 w-12 rounded-full bg-primary/30" />
+                <div className="h-3 w-12 rounded-full bg-primary/40" />
+                <div className="h-3 w-12 rounded-full bg-primary/60" />
+                <Coins className="mt-1 h-5 w-5 text-primary" />
+              </div>
+              <div className="flex flex-col items-center gap-1.5">
+                <div className="h-3 w-14 rounded-full bg-primary/30" />
+                <div className="h-3 w-14 rounded-full bg-primary/40" />
+                <div className="h-3 w-14 rounded-full bg-primary/60" />
+                <div className="h-3 w-14 rounded-full bg-primary/80" />
+                <div className="h-3 w-14 rounded-full bg-primary" />
+                <Coins className="mt-1 h-5 w-5 text-primary" />
+              </div>
+              <div className="flex flex-col items-center gap-1.5">
+                <div className="h-3 w-12 rounded-full bg-primary/40" />
+                <div className="h-3 w-12 rounded-full bg-primary/60" />
+                <div className="h-3 w-12 rounded-full bg-primary/80" />
+                <Coins className="mt-1 h-5 w-5 text-primary" />
+              </div>
+            </div>
           </div>
         </div>
 
@@ -377,11 +397,18 @@ function SolutionSection() {
               </div>
               <div className="font-display text-2xl font-extrabold text-primary">+</div>
             </div>
-            <LazyLottie
-              animationData={progressAnim}
-              ariaLabel="Animated progress bar filling with orange gradient"
-              className="mt-2 h-20 w-full"
-            />
+            <div
+              className="mt-4 h-3 w-full overflow-hidden rounded-full bg-secondary"
+              role="img"
+              aria-label="Progress bar filling with orange gradient"
+            >
+              <div className="h-full w-2/3 rounded-full bg-gradient-to-r from-primary to-primary-glow" />
+            </div>
+            <div className="mt-2 flex justify-between text-[11px] font-medium text-muted-foreground">
+              <span>$0</span>
+              <span className="text-primary">+$420 this month</span>
+              <span>Goal</span>
+            </div>
           </div>
         </div>
 
@@ -451,11 +478,13 @@ function HowItWorks() {
                   {s.n}
                 </div>
                 {isLast && (
-                  <LazyLottie
-                    animationData={checkAnim}
-                    ariaLabel="Level completed checkmark with celebratory burst"
-                    className="h-14 w-14"
-                  />
+                  <div
+                    className="flex h-10 w-10 items-center justify-center rounded-full bg-success-soft text-success ring-4 ring-success-soft/40"
+                    role="img"
+                    aria-label="Level completed checkmark"
+                  >
+                    <CheckCircle2 className="h-5 w-5" />
+                  </div>
                 )}
               </div>
               <h3 className="mt-4 font-display text-lg font-bold">{s.title}</h3>
