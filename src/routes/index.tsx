@@ -46,12 +46,8 @@ function SiteNav() {
   return (
     <header className="sticky top-0 z-40 border-b border-border/60 bg-background/80 backdrop-blur">
       <div className="mx-auto flex max-w-6xl items-center justify-between px-5 py-4">
-        <Link to="/" className="flex items-center gap-2">
-          <div className="flex h-9 w-9 items-center justify-center rounded-2xl bg-gradient-to-br from-primary to-[oklch(0.78_0.18_60)] text-primary-foreground shadow-glow">
-            <Sparkles className="h-4 w-4" />
-          </div>
-          <span className="font-display text-lg font-bold tracking-tight">Zeni</span>
-        </Link>
+        <Logo to="/" size="md" />
+
         <div className="flex items-center gap-2">
           <Link
             to="/login"
