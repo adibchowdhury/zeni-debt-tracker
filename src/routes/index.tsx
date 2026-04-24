@@ -74,47 +74,47 @@ function SiteNav() {
 
 function Hero() {
   return (
-    <section className="relative overflow-hidden bg-gradient-hero">
+    <section className="relative overflow-hidden bg-gradient-hero lg:min-h-[calc(100vh-73px)]">
       {/* Soft decorative orange blobs */}
       <div className="pointer-events-none absolute -top-24 -left-24 h-72 w-72 rounded-full bg-primary/20 blur-3xl" />
       <div className="pointer-events-none absolute -bottom-32 -right-24 h-80 w-80 rounded-full bg-[oklch(0.86_0.17_92/0.35)] blur-3xl" />
 
-      <div className="mx-auto grid max-w-6xl gap-12 px-5 pt-14 pb-20 sm:pt-20 sm:pb-28 lg:grid-cols-[1.05fr_0.95fr] lg:items-center">
+      <div className="mx-auto grid max-w-6xl gap-12 px-5 pt-14 pb-20 sm:pt-20 sm:pb-28 lg:min-h-[calc(100vh-73px)] lg:grid-cols-[1.05fr_1fr] lg:items-center lg:gap-16 lg:py-16">
         {/* Left — copy */}
         <div className="relative">
-          <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary-soft/70 px-3 py-1 text-xs font-semibold text-primary">
+          <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary-soft/70 px-3 py-1 text-xs font-semibold text-primary">
             <span className="inline-block h-1.5 w-1.5 rounded-full bg-primary" />
             Your supportive debt-free coach
           </div>
 
-          <h1 className="font-display text-[2.5rem] font-extrabold leading-[1.04] tracking-tight text-foreground sm:text-6xl">
+          <h1 className="font-display text-[2.75rem] font-extrabold leading-[1.04] tracking-tight text-foreground sm:text-6xl lg:text-[4.25rem]">
             A clear path to becoming{" "}
             <span className="bg-gradient-progress bg-clip-text text-transparent">debt-free</span>
             <span className="text-foreground"> — without feeling overwhelmed.</span>
           </h1>
 
-          <p className="mt-5 max-w-xl text-base text-muted-foreground sm:text-lg">
+          <p className="mt-7 max-w-xl text-base text-muted-foreground sm:text-lg lg:text-xl">
             Track your debt, stay motivated, and see your progress every day.
             Zeni turns the long road to zero into small, encouraging wins.
           </p>
 
-          <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+          <div className="mt-10 flex flex-col gap-3 sm:flex-row">
             <Link
               to="/signup"
-              className="group inline-flex w-full items-center justify-center gap-2 rounded-full bg-primary px-6 py-3.5 text-base font-semibold text-primary-foreground shadow-glow transition-transform hover:-translate-y-0.5 sm:w-auto"
+              className="group inline-flex w-full items-center justify-center gap-2 rounded-full bg-primary px-7 py-4 text-base font-semibold text-primary-foreground shadow-glow transition-transform hover:-translate-y-0.5 sm:w-auto lg:text-lg"
             >
               Start My Debt-Free Plan
               <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
             </Link>
             <a
               href="#how-it-works"
-              className="inline-flex w-full items-center justify-center rounded-full border border-border bg-card px-6 py-3.5 text-base font-medium text-foreground hover:bg-secondary sm:w-auto"
+              className="inline-flex w-full items-center justify-center rounded-full border border-border bg-card px-7 py-4 text-base font-medium text-foreground hover:bg-secondary sm:w-auto lg:text-lg"
             >
               See how it works
             </a>
           </div>
 
-          <div className="mt-6 flex flex-wrap items-center gap-4 text-xs text-muted-foreground">
+          <div className="mt-8 flex flex-wrap items-center gap-4 text-xs text-muted-foreground">
             <span className="inline-flex items-center gap-1.5">
               <ShieldCheck className="h-3.5 w-3.5 text-success" />
               No bank connection
