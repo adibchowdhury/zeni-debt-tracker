@@ -3,6 +3,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Sparkles, Calendar, TrendingDown, Clock } from "lucide-react";
 import { useDebtStore } from "@/lib/storage";
 import { simulatePayoff, formatMoney, formatMonths, formatDate } from "@/lib/debt-math";
+import { minPaymentPayoffMonths } from "@/lib/insights";
 
 export const Route = createFileRoute("/app/simulator")({
   component: Simulator,
