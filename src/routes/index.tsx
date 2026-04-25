@@ -84,6 +84,10 @@ function Hero() {
       <div className="mx-auto grid max-w-6xl gap-12 px-5 pt-14 pb-20 sm:pt-20 sm:pb-28 lg:min-h-[calc(100vh-73px)] lg:grid-cols-[1.05fr_1fr] lg:items-center lg:gap-16 lg:py-16">
         {/* Left — copy */}
         <div className="relative">
+          <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary-soft/70 px-3 py-1 text-xs font-semibold text-primary">
+            <span className="inline-block h-1.5 w-1.5 rounded-full bg-primary" />
+            Your supportive debt-free coach
+          </div>
 
           <h1 className="font-display text-[2.75rem] font-semibold leading-[1.04] tracking-tight text-foreground sm:text-6xl lg:text-[4.25rem]">
             A clear path to becoming <span className="font-extrabold text-primary">debt-free</span> — without the stress
