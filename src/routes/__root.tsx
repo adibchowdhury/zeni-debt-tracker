@@ -2,6 +2,7 @@ import { Outlet, Link, createRootRoute, HeadContent, Scripts } from "@tanstack/r
 import { Toaster } from "@/components/ui/sonner";
 import { AuthProvider } from "@/lib/auth";
 import { Analytics } from "@vercel/analytics/react";
+import faviconUrl from "@/assets/logo_coin.png?url"
 
 import appCss from "../styles.css?url";
 
@@ -32,7 +33,7 @@ export const Route = createRootRoute({
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "zeni — Pay off debt faster, without the stress" },
+      { title: "Zeni — Become Debt-Free, Without the Stress" },
       {
         name: "description",
         content:
@@ -51,7 +52,10 @@ export const Route = createRootRoute({
       { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/606690b9-631e-4503-9a9a-740d0773163b/id-preview-e3650c2a--5a194a91-60f4-4c3d-a8a9-0c50253cdbc1.lovable.app-1776977908643.png" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
-    links: [{ rel: "stylesheet", href: appCss }],
+    links: [
+      { rel: "stylesheet", href: appCss },
+      { rel: "icon", type: "image/svg+xml", href: faviconUrl},
+    ],
   }),
   shellComponent: RootShell,
   component: RootComponent,
