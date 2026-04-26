@@ -9,8 +9,13 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as TermsRouteImport } from './routes/terms'
 import { Route as SignupRouteImport } from './routes/signup'
+import { Route as SecurityRouteImport } from './routes/security'
+import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as LoginRouteImport } from './routes/login'
+import { Route as CookiesRouteImport } from './routes/cookies'
+import { Route as ContactRouteImport } from './routes/contact'
 import { Route as AppRouteImport } from './routes/app'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AppIndexRouteImport } from './routes/app.index'
@@ -19,14 +24,39 @@ import { Route as AppSimulatorRouteImport } from './routes/app.simulator'
 import { Route as AppMilestonesRouteImport } from './routes/app.milestones'
 import { Route as AppDebtsRouteImport } from './routes/app.debts'
 
+const TermsRoute = TermsRouteImport.update({
+  id: '/terms',
+  path: '/terms',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SignupRoute = SignupRouteImport.update({
   id: '/signup',
   path: '/signup',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SecurityRoute = SecurityRouteImport.update({
+  id: '/security',
+  path: '/security',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PrivacyRoute = PrivacyRouteImport.update({
+  id: '/privacy',
+  path: '/privacy',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CookiesRoute = CookiesRouteImport.update({
+  id: '/cookies',
+  path: '/cookies',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ContactRoute = ContactRouteImport.update({
+  id: '/contact',
+  path: '/contact',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AppRoute = AppRouteImport.update({
@@ -68,8 +98,13 @@ const AppDebtsRoute = AppDebtsRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/app': typeof AppRouteWithChildren
+  '/contact': typeof ContactRoute
+  '/cookies': typeof CookiesRoute
   '/login': typeof LoginRoute
+  '/privacy': typeof PrivacyRoute
+  '/security': typeof SecurityRoute
   '/signup': typeof SignupRoute
+  '/terms': typeof TermsRoute
   '/app/debts': typeof AppDebtsRoute
   '/app/milestones': typeof AppMilestonesRoute
   '/app/simulator': typeof AppSimulatorRoute
@@ -78,8 +113,13 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/contact': typeof ContactRoute
+  '/cookies': typeof CookiesRoute
   '/login': typeof LoginRoute
+  '/privacy': typeof PrivacyRoute
+  '/security': typeof SecurityRoute
   '/signup': typeof SignupRoute
+  '/terms': typeof TermsRoute
   '/app/debts': typeof AppDebtsRoute
   '/app/milestones': typeof AppMilestonesRoute
   '/app/simulator': typeof AppSimulatorRoute
@@ -90,8 +130,13 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/app': typeof AppRouteWithChildren
+  '/contact': typeof ContactRoute
+  '/cookies': typeof CookiesRoute
   '/login': typeof LoginRoute
+  '/privacy': typeof PrivacyRoute
+  '/security': typeof SecurityRoute
   '/signup': typeof SignupRoute
+  '/terms': typeof TermsRoute
   '/app/debts': typeof AppDebtsRoute
   '/app/milestones': typeof AppMilestonesRoute
   '/app/simulator': typeof AppSimulatorRoute
@@ -103,8 +148,13 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/app'
+    | '/contact'
+    | '/cookies'
     | '/login'
+    | '/privacy'
+    | '/security'
     | '/signup'
+    | '/terms'
     | '/app/debts'
     | '/app/milestones'
     | '/app/simulator'
@@ -113,8 +163,13 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/contact'
+    | '/cookies'
     | '/login'
+    | '/privacy'
+    | '/security'
     | '/signup'
+    | '/terms'
     | '/app/debts'
     | '/app/milestones'
     | '/app/simulator'
@@ -124,8 +179,13 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/app'
+    | '/contact'
+    | '/cookies'
     | '/login'
+    | '/privacy'
+    | '/security'
     | '/signup'
+    | '/terms'
     | '/app/debts'
     | '/app/milestones'
     | '/app/simulator'
@@ -136,12 +196,24 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AppRoute: typeof AppRouteWithChildren
+  ContactRoute: typeof ContactRoute
+  CookiesRoute: typeof CookiesRoute
   LoginRoute: typeof LoginRoute
+  PrivacyRoute: typeof PrivacyRoute
+  SecurityRoute: typeof SecurityRoute
   SignupRoute: typeof SignupRoute
+  TermsRoute: typeof TermsRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/terms': {
+      id: '/terms'
+      path: '/terms'
+      fullPath: '/terms'
+      preLoaderRoute: typeof TermsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/signup': {
       id: '/signup'
       path: '/signup'
@@ -149,11 +221,39 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SignupRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/security': {
+      id: '/security'
+      path: '/security'
+      fullPath: '/security'
+      preLoaderRoute: typeof SecurityRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/privacy': {
+      id: '/privacy'
+      path: '/privacy'
+      fullPath: '/privacy'
+      preLoaderRoute: typeof PrivacyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/login': {
       id: '/login'
       path: '/login'
       fullPath: '/login'
       preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/cookies': {
+      id: '/cookies'
+      path: '/cookies'
+      fullPath: '/cookies'
+      preLoaderRoute: typeof CookiesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/contact': {
+      id: '/contact'
+      path: '/contact'
+      fullPath: '/contact'
+      preLoaderRoute: typeof ContactRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/app': {
@@ -229,8 +329,13 @@ const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AppRoute: AppRouteWithChildren,
+  ContactRoute: ContactRoute,
+  CookiesRoute: CookiesRoute,
   LoginRoute: LoginRoute,
+  PrivacyRoute: PrivacyRoute,
+  SecurityRoute: SecurityRoute,
   SignupRoute: SignupRoute,
+  TermsRoute: TermsRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
