@@ -1,116 +1,131 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
+import { Mail, MapPin, Phone } from "lucide-react";
+import { useState } from "react";
+import { LottieAnimation } from "../components/LottieAnimation";
+import { AnimatedSection } from "../components/AnimatedSection";
 
 export const Route = createFileRoute("/contact")({
   head: () => ({
     meta: [
-      { title: "Contact — zeni" },
-      {
-        name: "description",
-        content:
-          "How zeni collects, uses, and protects your personal information.",
-      },
-      { property: "og:title", content: "Privacy Policy — zeni" },
-      {
-        property: "og:description",
-        content:
-          "How zeni collects, uses, and protects your personal information.",
-      },
+      { title: "Contact — Zeni Personal Finance" },
+      { name: "description", content: "Have questions? We're here to help. Reach out to the Zeni team." },
+      { property: "og:title", content: "Contact — Zeni Personal Finance" },
+      { property: "og:description", content: "Questions about Zeni? We'd love to hear from you." },
     ],
   }),
-  component: PrivacyPage,
+  component: ContactPage,
 });
 
-function PrivacyPage() {
+function ContactPage() {
+  const [submitted, setSubmitted] = useState(false);
+
   return (
-    <div className="min-h-screen bg-background">
-      {/* Header */}
-      <header className="border-b border-border">
-        <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-5">
-          <Link to="/" className="font-zeni text-2xl font-bold text-foreground">
-            zeni
-          </Link>
-          <Link
-            to="/"
-            className="text-sm font-medium text-muted-foreground transition hover:text-foreground"
-          >
-            ← Back to home
-          </Link>
+    <div className="px-6 py-24">
+      <div className="mx-auto max-w-5xl">
+        <AnimatedSection className="text-center">
+          <h1 className="font-display text-4xl font-bold text-foreground md:text-6xl">
+            Get in <span className="text-gradient-primary">Touch</span>
+          </h1>
+          <p className="mx-auto mt-4 max-w-2xl text-lg text-muted-foreground">
+            Questions, feedback, or just want to say hi? We're real people and we'd love to hear from you.
+          </p>
+        </AnimatedSection>
+
+        <div className="mt-20 grid gap-12 md:grid-cols-5">
+          <AnimatedSection animation="slide-left" className="md:col-span-2">
+            <div className="space-y-8">
+              {[
+                { icon: Mail, title: "Email", detail: "hello@zeni.ai" },
+                { icon: Phone, title: "Phone", detail: "+1 (415) 555-0120" },
+                { icon: MapPin, title: "Office", detail: "San Francisco, CA" },
+              ].map((item) => (
+                <div key={item.title} className="group flex items-start gap-4">
+                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-primary/10 transition-transform group-hover:scale-110">
+                    <item.icon className="h-5 w-5 text-primary" />
+                  </div>
+                  <div>
+                    <h3 className="font-display text-sm font-semibold text-foreground">{item.title}</h3>
+                    <p className="mt-1 text-sm text-muted-foreground">{item.detail}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+            <div className="mt-10 max-w-[200px]">
+              <LottieAnimation
+                url="https://assets9.lottiefiles.com/packages/lf20_u25cckyh.json"
+                className="w-full"
+              />
+            </div>
+          </AnimatedSection>
+
+          <AnimatedSection animation="slide-right" delay={200} className="md:col-span-3">
+            <div className="glass rounded-2xl p-8">
+              {submitted ? (
+                <div className="py-12 text-center">
+                  <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-success/10">
+                    <Mail className="h-8 w-8 text-success" />
+                  </div>
+                  <h3 className="font-display text-xl font-semibold text-foreground">Message Sent!</h3>
+                  <p className="mt-2 text-sm text-muted-foreground">We'll get back to you within 24 hours.</p>
+                </div>
+              ) : (
+                <form
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    setSubmitted(true);
+                  }}
+                  className="space-y-6"
+                >
+                  <div className="grid gap-6 sm:grid-cols-2">
+                    <div>
+                      <label className="mb-2 block text-sm font-medium text-foreground">First Name</label>
+                      <input
+                        type="text"
+                        required
+                        className="w-full rounded-xl border border-border bg-secondary/30 px-4 py-3 text-sm text-foreground placeholder-muted-foreground outline-none focus:ring-2 focus:ring-ring"
+                        placeholder="John"
+                      />
+                    </div>
+                    <div>
+                      <label className="mb-2 block text-sm font-medium text-foreground">Last Name</label>
+                      <input
+                        type="text"
+                        required
+                        className="w-full rounded-xl border border-border bg-secondary/30 px-4 py-3 text-sm text-foreground placeholder-muted-foreground outline-none focus:ring-2 focus:ring-ring"
+                        placeholder="Doe"
+                      />
+                    </div>
+                  </div>
+                  <div>
+                    <label className="mb-2 block text-sm font-medium text-foreground">Email</label>
+                    <input
+                      type="email"
+                      required
+                      className="w-full rounded-xl border border-border bg-secondary/30 px-4 py-3 text-sm text-foreground placeholder-muted-foreground outline-none focus:ring-2 focus:ring-ring"
+                      placeholder="john@company.com"
+                    />
+                  </div>
+                  <div>
+                    <label className="mb-2 block text-sm font-medium text-foreground">Message</label>
+                    <textarea
+                      required
+                      rows={5}
+                      className="w-full rounded-xl border border-border bg-secondary/30 px-4 py-3 text-sm text-foreground placeholder-muted-foreground outline-none focus:ring-2 focus:ring-ring"
+                      placeholder="Tell us about your needs..."
+                    />
+                  </div>
+                  <button
+                    type="submit"
+                    className="w-full rounded-xl bg-primary px-6 py-3.5 text-sm font-semibold text-primary-foreground transition-all hover:shadow-[var(--shadow-glow)]"
+                  >
+                    Send Message
+                  </button>
+                </form>
+              )}
+            </div>
+          </AnimatedSection>
         </div>
-      </header>
-
-      {/* Content */}
-      <main className="mx-auto max-w-3xl px-6 py-16">
-        <p className="text-sm font-medium uppercase tracking-wider text-primary">
-          Legal
-        </p>
-        <h1 className="mt-3 font-display text-4xl font-bold tracking-tight text-foreground sm:text-5xl">
-          Privacy Policy
-        </h1>
-        <p className="mt-4 text-sm text-muted-foreground">
-          Last updated: April 26, 2026
-        </p>
-
-        <div className="mt-12 space-y-10 text-foreground">
-          <section>
-            <h2 className="font-display text-2xl font-semibold">
-              1. Information We Collect
-            </h2>
-            <p className="mt-3 leading-relaxed text-muted-foreground">
-              We collect information you provide directly, such as your email
-              address, debt details, and payment activity. We also collect
-              usage data to improve the product.
-            </p>
-          </section>
-
-          <section>
-            <h2 className="font-display text-2xl font-semibold">
-              2. How We Use Your Information
-            </h2>
-            <p className="mt-3 leading-relaxed text-muted-foreground">
-              Your information is used to provide debt tracking features,
-              calculate your payoff timeline, and send progress updates. We
-              never sell your data to third parties.
-            </p>
-          </section>
-
-          <section>
-            <h2 className="font-display text-2xl font-semibold">
-              3. Data Storage & Security
-            </h2>
-            <p className="mt-3 leading-relaxed text-muted-foreground">
-              All data is encrypted in transit and at rest. We use
-              industry-standard security practices to protect your account.
-            </p>
-          </section>
-
-          <section>
-            <h2 className="font-display text-2xl font-semibold">
-              4. Your Rights
-            </h2>
-            <p className="mt-3 leading-relaxed text-muted-foreground">
-              You can access, export, or delete your data at any time from
-              your account settings. Contact us at privacy@zeni.app for
-              assistance.
-            </p>
-          </section>
-
-          <section>
-            <h2 className="font-display text-2xl font-semibold">
-              5. Contact Us
-            </h2>
-            <p className="mt-3 leading-relaxed text-muted-foreground">
-              Questions about this policy? Email us at{" "}
-              <a
-                href="mailto:privacy@zeni.app"
-                className="text-primary underline-offset-4 hover:underline"
-              >
-                privacy@zeni.app
-              </a>
-              .
-            </p>
-          </section>
-        </div>
-      </main>
+      </div>
     </div>
   );
 }

@@ -789,13 +789,13 @@ function Footer() {
   };
 
   const siteMap: Array<
-    { label: string; to: "/" | "/login" | "/signup" } | { label: string; href: string }
+    { label: string; to: "/" | "/login" | "/signup" | "/contact"} | { label: string; href: string }
   > = [
     { label: "How it works", href: "#how-it-works" },
     { label: "Get started", to: "/signup" },
     { label: "About", to: "/"},
     { label: "Security", to: "/"},
-    { label: "Contact/Support", to: "/"},
+    { label: "Contact/Support", to: "/contact"},
   ];
 
   const legal = [
