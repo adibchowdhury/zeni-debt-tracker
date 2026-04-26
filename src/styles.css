@@ -196,6 +196,12 @@
   50% { box-shadow: 0 0 0 12px oklch(0.705 0.187 47 / 0); }
 }
 
+@keyframes shimmer {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(400%); }
+}
+
+
 .animate-pulse-glow {
   animation: pulse-glow 2s ease-out infinite;
 }

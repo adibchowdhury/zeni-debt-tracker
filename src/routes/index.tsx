@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useEffect, useState } from "react"; 
 import {
   ArrowRight,
   Check,
@@ -119,7 +120,74 @@ function Hero() {
   );
 }
 
+/**
+ * Animated demo of the app's progress card.
+ * Loops from 32% → 88% paid over ~6s, ticking down the remaining balance,
+ * pulling in the debt-free date, and incrementing the streak as it goes.
+ */
 function HeroVisual() {
+  const START_PCT = 32;
+  const END_PCT = 88;
+  const INITIAL_BALANCE = 18300;
+  const DURATION_MS = 6000;
+  const HOLD_MS = 1400;
+
+  const [pct, setPct] = useState(START_PCT);
+  const [pulse, setPulse] = useState(false);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const reduce = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+    if (reduce) {
+      setPct(END_PCT);
+      return;
+    }
+
+    let raf = 0;
+    let cycleStart = performance.now();
+    let holding = false;
+    let holdUntil = 0;
+
+    // ease-out-cubic for that satisfying decelerating fill
+    const ease = (t: number) => 1 - Math.pow(1 - t, 3);
+
+    const tick = (now: number) => {
+      if (holding) {
+        if (now >= holdUntil) {
+          holding = false;
+          cycleStart = now;
+          setPulse(true);
+          window.setTimeout(() => setPulse(false), 600);
+        }
+      } else {
+        const elapsed = now - cycleStart;
+        const t = Math.min(1, elapsed / DURATION_MS);
+        const eased = ease(t);
+        setPct(START_PCT + (END_PCT - START_PCT) * eased);
+        if (t >= 1) {
+          holding = true;
+          holdUntil = now + HOLD_MS;
+        }
+      }
+      raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, []);
+
+  // Derived, animated values
+  const remaining = Math.max(0, Math.round(INITIAL_BALANCE * (1 - pct / 100)));
+  const paidThisCycle = Math.round(INITIAL_BALANCE * ((pct - START_PCT) / 100));
+  // Debt-free date pulls in as progress grows: ~30 months out at start → ~6 months at end
+  const monthsAway = Math.round(30 - ((pct - START_PCT) / (END_PCT - START_PCT)) * 24);
+  const payoffDate = new Date();
+  payoffDate.setMonth(payoffDate.getMonth() + Math.max(1, monthsAway));
+  const payoffLabel = payoffDate.toLocaleDateString("en-US", { month: "short", year: "numeric" });
+  // Streak grows from 12 → 28 across the cycle
+  const streakWeeks = Math.round(12 + ((pct - START_PCT) / (END_PCT - START_PCT)) * 16);
+
+  const fmtMoney = (n: number) => `$${n.toLocaleString("en-US")}`;
+
   return (
     <div className="relative">
       {/* Floating "debt-free date" badge */}
@@ -131,25 +199,40 @@ function HeroVisual() {
           <div className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
             Debt-free by
           </div>
-          <div className="font-display text-sm font-bold text-foreground">March 2027</div>
+          <div
+            key={payoffLabel}
+            className="font-display text-sm font-bold text-foreground animate-fade-in"
+          >
+            {payoffLabel}
+          </div>
         </div>
       </div>
 
       {/* Floating streak chip */}
       <div className="absolute -bottom-3 -right-2 z-20 hidden rounded-2xl border border-border bg-card p-3 shadow-soft sm:flex sm:items-center sm:gap-2">
-        <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-primary text-primary-foreground">
+        <div
+          className={`flex h-8 w-8 items-center justify-center rounded-xl bg-primary text-primary-foreground transition-transform duration-300 ${
+            pulse ? "scale-110" : "scale-100"
+          }`}
+        >
           <Flame className="h-4 w-4" />
         </div>
         <div>
           <div className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
             Streak
           </div>
-          <div className="font-display text-sm font-bold text-foreground">12 weeks 🔥</div>
+          <div className="font-display text-sm font-bold text-foreground tabular-nums">
+            {streakWeeks} weeks 🔥
+          </div>
         </div>
       </div>
 
       {/* Main card */}
-      <div className="relative rounded-3xl border border-border bg-card p-6 shadow-soft sm:p-8 lg:scale-[1.04] lg:p-9">
+      <div
+        className={`relative rounded-3xl border border-border bg-card p-6 shadow-soft sm:p-8 lg:scale-[1.04] lg:p-9 transition-shadow duration-500 ${
+          pulse ? "shadow-[0_0_0_4px_color-mix(in_oklab,var(--primary)_20%,transparent)]" : ""
+        }`}
+      >
         <div className="flex items-center justify-between">
           <div className="text-[11px] font-semibold uppercase tracking-wider text-primary">
             Your progress
@@ -175,7 +258,9 @@ function HeroVisual() {
             <div className="text-[11px] uppercase tracking-wider text-muted-foreground">
               Remaining
             </div>
-            <div className="font-display text-2xl font-bold text-foreground">$12,430</div>
+            <div className="font-display text-2xl font-bold text-foreground tabular-nums">
+              {fmtMoney(remaining)}
+            </div>
           </div>
           <div className="ml-auto">
             <div className="text-[11px] uppercase tracking-wider text-muted-foreground">
@@ -188,23 +273,37 @@ function HeroVisual() {
         {/* Big % */}
         <div className="mt-6 flex items-baseline justify-between">
           <div>
-            <div className="font-display text-4xl font-extrabold text-foreground sm:text-5xl">
-              32%
+            <div className="font-display text-4xl font-extrabold text-foreground tabular-nums sm:text-5xl">
+              {pct.toFixed(0)}%
             </div>
-            <div className="text-sm text-muted-foreground">paid off — you're closer than you think</div>
+            <div className="text-sm text-muted-foreground">
+              paid off — you're closer than you think
+            </div>
           </div>
           <div className="hidden text-right sm:block">
             <div className="text-[11px] uppercase tracking-wider text-muted-foreground">
-              This month
+              This cycle
             </div>
-            <div className="font-display text-base font-semibold text-primary">+$420 paid</div>
+            <div className="font-display text-base font-semibold text-primary tabular-nums">
+              +{fmtMoney(paidThisCycle)} paid
+            </div>
           </div>
         </div>
 
         {/* Progress bar with milestone ticks */}
         <div className="mt-4">
           <div className="relative h-3 w-full overflow-hidden rounded-full bg-secondary">
-            <div className="h-full w-[32%] rounded-full bg-gradient-progress" />
+            <div
+              className="h-full rounded-full bg-gradient-progress"
+              style={{ width: `${pct}%`, transition: "width 80ms linear" }}
+            />
+            {/* Shimmer sweep on the filled portion */}
+            <div
+              className="pointer-events-none absolute inset-y-0 left-0 overflow-hidden rounded-full"
+              style={{ width: `${pct}%` }}
+            >
+              <div className="absolute inset-y-0 -left-1/3 w-1/3 bg-gradient-to-r from-transparent via-white/40 to-transparent animate-[shimmer_2s_linear_infinite]" />
+            </div>
             {[25, 50, 75].map((m) => (
               <div
                 key={m}
@@ -215,7 +314,7 @@ function HeroVisual() {
           </div>
           <div className="mt-2 flex justify-between text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
             {[0, 25, 50, 75, 100].map((m) => (
-              <span key={m} className={m <= 32 ? "text-primary" : ""}>
+              <span key={m} className={m <= pct ? "text-primary transition-colors" : "transition-colors"}>
                 {m}%
               </span>
             ))}
@@ -233,6 +332,7 @@ function HeroVisual() {
     </div>
   );
 }
+
 
 /* -------------------------------------------------------------------------- */
 /* Problem                                                                    */
@@ -464,14 +564,10 @@ function PreviewSection() {
     <section className="bg-gradient-to-b from-primary-soft/40 to-background py-20 sm:py-24">
       <div className="mx-auto max-w-6xl px-5">
         <div className="mx-auto max-w-2xl text-center">
-          <div className="mb-3 inline-flex rounded-full bg-primary-soft px-3 py-1 text-xs font-semibold uppercase tracking-wider text-primary">
-            Inside the app
-          </div>
           <h2 className="font-display text-3xl font-bold tracking-tight sm:text-4xl">
             Designed to feel like a win, not a chore.
           </h2>
         </div>
-
         <div className="mt-12 grid gap-5 lg:grid-cols-3">
           {/* Dashboard preview */}
           <div className="rounded-3xl border border-border bg-card p-6 shadow-soft lg:col-span-2">
