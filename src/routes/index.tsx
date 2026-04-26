@@ -270,9 +270,6 @@ function ProblemSection() {
         </div>
 
         <div className="order-1 lg:order-2">
-          <div className="mb-3 inline-flex rounded-full bg-secondary px-3 py-1 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-            The struggle is real
-          </div>
           <h2 className="font-display text-3xl font-bold tracking-tight sm:text-4xl">
             Paying off debt shouldn't feel impossible.
           </h2>
