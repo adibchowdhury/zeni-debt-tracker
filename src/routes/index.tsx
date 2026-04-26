@@ -110,21 +110,6 @@ function Hero() {
               See how it works
             </a>
           </div>
-
-          <div className="mt-8 flex flex-wrap items-center gap-4 text-xs text-muted-foreground">
-            <span className="inline-flex items-center gap-1.5">
-              <ShieldCheck className="h-3.5 w-3.5 text-success" />
-              No bank connection
-            </span>
-            <span className="inline-flex items-center gap-1.5">
-              <Zap className="h-3.5 w-3.5 text-primary" />
-              Set up in under a minute
-            </span>
-            <span className="inline-flex items-center gap-1.5">
-              <HeartHandshake className="h-3.5 w-3.5 text-primary" />
-              Built to motivate, not shame
-            </span>
-          </div>
         </div>
 
         {/* Right — visual */}
