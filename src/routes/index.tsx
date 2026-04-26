@@ -791,17 +791,17 @@ function Footer() {
   const siteMap: Array<
     { label: string; to: "/" | "/login" | "/signup" } | { label: string; href: string }
   > = [
-    { label: "Homepage", to: "/" },
     { label: "How it works", href: "#how-it-works" },
-    { label: "Features", href: "#features" },
-    { label: "Log in", to: "/login" },
     { label: "Get started", to: "/signup" },
+    { label: "About", to: "/"},
+    { label: "Security", to: "/"},
+    { label: "Contact/Support", to: "/"},
   ];
 
   const legal = [
     { label: "Privacy Policy", href: "#" },
     { label: "Terms of Service", href: "#" },
-    { label: "Contact", href: "#" },
+    { label: "Cookie Policy", href: "#" },
   ];
 
   return (
