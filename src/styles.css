@@ -125,32 +125,69 @@
 }
 
 .dark {
-  --background: oklch(0.18 0.03 245);
-  --foreground: oklch(0.97 0.005 230);
-  --card: oklch(0.22 0.035 245);
-  --card-foreground: oklch(0.97 0.005 230);
-  --popover: oklch(0.22 0.035 245);
-  --popover-foreground: oklch(0.97 0.005 230);
-  --primary: oklch(0.72 0.14 240);
-  --primary-foreground: oklch(0.18 0.03 245);
-  --primary-soft: oklch(0.32 0.06 245);
-  --secondary: oklch(0.28 0.04 245);
-  --secondary-foreground: oklch(0.97 0.005 230);
-  --muted: oklch(0.26 0.035 245);
-  --muted-foreground: oklch(0.7 0.03 235);
-  --accent: oklch(0.32 0.05 200);
-  --accent-foreground: oklch(0.97 0.005 230);
-  --success: oklch(0.72 0.13 155);
-  --success-foreground: oklch(0.18 0.03 240);
-  --success-soft: oklch(0.3 0.06 155);
-  --teal: oklch(0.74 0.1 195);
-  --teal-foreground: oklch(0.18 0.03 245);
+  /* Dark navy/charcoal surfaces — NOT pure black */
+  --background: oklch(0.18 0.02 260);          /* deep charcoal-navy */
+  --foreground: oklch(0.96 0.005 80);          /* near-white, warm tint */
+
+  --card: oklch(0.22 0.02 260);                /* slightly lifted surface */
+  --card-foreground: oklch(0.96 0.005 80);
+  --popover: oklch(0.22 0.02 260);
+  --popover-foreground: oklch(0.96 0.005 80);
+
+  /* Keep the SAME vibrant orange brand on dark */
+  --primary: oklch(0.72 0.19 47);
+  --primary-foreground: oklch(0.16 0.02 260);
+  --primary-soft: oklch(0.32 0.08 50);         /* darker peach tint for chips/pills */
+
+  --secondary: oklch(0.26 0.02 260);
+  --secondary-foreground: oklch(0.96 0.005 80);
+
+  --muted: oklch(0.24 0.02 260);
+  --muted-foreground: oklch(0.72 0.02 80);     /* readable secondary text */
+
+  /* Peach accent stays warm */
+  --accent: oklch(0.55 0.13 60);
+  --accent-foreground: oklch(0.98 0.005 80);
+
+  /* Yellow celebrations stay yellow */
+  --success: oklch(0.82 0.16 92);
+  --success-foreground: oklch(0.2 0.04 80);
+  --success-soft: oklch(0.34 0.08 92);
+
+  /* Blue contrast accent stays blue */
+  --teal: oklch(0.68 0.16 255);
+  --teal-foreground: oklch(0.16 0.02 260);
+
   --destructive: oklch(0.65 0.2 25);
-  --destructive-foreground: oklch(0.97 0.005 240);
+  --destructive-foreground: oklch(0.98 0.005 240);
+
   --border: oklch(1 0 0 / 10%);
   --input: oklch(1 0 0 / 14%);
-  --ring: oklch(0.72 0.14 240);
+  --ring: oklch(0.72 0.19 47);
+
+  /* Charts keep brand identity */
+  --chart-1: oklch(0.72 0.19 47);
+  --chart-2: oklch(0.82 0.16 92);
+  --chart-3: oklch(0.68 0.16 255);
+  --chart-4: oklch(0.55 0.13 60);
+  --chart-5: oklch(0.65 0.2 30);
+
+  --sidebar: oklch(0.18 0.02 260);
+  --sidebar-foreground: oklch(0.96 0.005 80);
+  --sidebar-primary: oklch(0.72 0.19 47);
+  --sidebar-primary-foreground: oklch(0.16 0.02 260);
+  --sidebar-accent: oklch(0.32 0.08 50);
+  --sidebar-accent-foreground: oklch(0.98 0.005 80);
+  --sidebar-border: oklch(1 0 0 / 10%);
+  --sidebar-ring: oklch(0.72 0.19 47);
+
+  /* Darker hero gradient — warm undertone, not flat black */
+  --gradient-hero: linear-gradient(180deg, oklch(0.22 0.04 50) 0%, oklch(0.18 0.02 260) 100%);
+  --gradient-progress: linear-gradient(90deg, oklch(0.72 0.2 40), oklch(0.78 0.18 60), oklch(0.86 0.17 92));
+  --shadow-soft: 0 1px 2px oklch(0 0 0 / 0.4), 0 8px 24px -12px oklch(0 0 0 / 0.5);
+  --shadow-glow: 0 10px 40px -12px oklch(0.72 0.19 47 / 0.55);
 }
+
 
 @layer base {
   * {

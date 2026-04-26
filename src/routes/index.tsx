@@ -19,6 +19,7 @@ import {
   TrendingUp,
 } from "lucide-react";
 import { Logo } from "@/components/Logo";
+import { ThemeToggle } from "@/components/ThemeToggle";
 import { DotLottieReact } from "@lottiefiles/dotlottie-react";
 import stressedWomanLottie from "@/assets/lottie/stressed-woman.lottie?url";
 
@@ -53,6 +54,7 @@ function SiteNav() {
         <Logo to="/" size="md" />
 
         <div className="flex items-center gap-2">
+          <ThemeToggle />
           <Link
             to="/login"
             className="rounded-full px-4 py-2 text-sm font-medium text-foreground/80 hover:text-foreground"
@@ -66,6 +68,7 @@ function SiteNav() {
             Get started
           </Link>
         </div>
+
       </div>
     </header>
   );

@@ -1,6 +1,7 @@
 import { Outlet, Link, createRootRoute, HeadContent, Scripts } from "@tanstack/react-router";
 import { Toaster } from "@/components/ui/sonner";
 import { AuthProvider } from "@/lib/auth";
+import { ThemeProvider } from "@/lib/theme";
 import { Analytics } from "@vercel/analytics/react";
 import faviconUrl from "@/assets/logo_coin.png?url"
 
@@ -63,10 +64,21 @@ export const Route = createRootRoute({
 });
 
 function RootShell({ children }: { children: React.ReactNode }) {
+  const themeScript = `
+    (function () {
+      try {
+        var stored = localStorage.getItem('zeni-theme');
+        var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        var theme = stored === 'light' || stored === 'dark' ? stored : (prefersDark ? 'dark' : 'light');
+        if (theme === 'dark') document.documentElement.classList.add('dark');
+      } catch (e) {}
+    })();
+  `;
   return (
     <html lang="en">
       <head>
         <HeadContent />
+        <script dangerouslySetInnerHTML={{ __html: themeScript }} />
       </head>
       <body>
         {children}
@@ -78,12 +90,13 @@ function RootShell({ children }: { children: React.ReactNode }) {
 
 function RootComponent() {
   return (
-    <AuthProvider>
-      <>
+    <ThemeProvider>
+      <AuthProvider>
         <Outlet />
+        <Toaster />
         <Analytics />
-      </>
-      <Toaster />
-    </AuthProvider>
+      </AuthProvider>
+    </ThemeProvider>
   );
 }
+
