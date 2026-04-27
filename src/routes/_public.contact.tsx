@@ -35,9 +35,9 @@ function ContactPage() {
           <AnimatedSection animation="slide-left" className="md:col-span-2">
             <div className="space-y-8">
               {[
-                { icon: Mail, title: "Email", detail: "hello@zeni.ai" },
-                { icon: Phone, title: "Phone", detail: "+1 (415) 555-0120" },
-                { icon: MapPin, title: "Office", detail: "San Francisco, CA" },
+                { icon: Mail, title: "Email", detail: "support@zenidebtfree.com" },
+                { icon: Phone, title: "Phone", detail: "Not Available" },
+                { icon: MapPin, title: "Office", detail: "Dallas-Fort Worth Metroplex" },
               ].map((item) => (
                 <div key={item.title} className="group flex items-start gap-4">
                   <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-primary/10 transition-transform group-hover:scale-110">
