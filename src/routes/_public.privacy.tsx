@@ -23,21 +23,6 @@ export const Route = createFileRoute("/_public/privacy")({
 function PrivacyPage() {
   return (
     <div className="min-h-screen bg-background">
-      {/* Header */}
-      <header className="border-b border-border">
-        <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-5">
-          <Link to="/" className="font-zeni text-2xl font-bold text-foreground">
-            zeni
-          </Link>
-          <Link
-            to="/"
-            className="text-sm font-medium text-muted-foreground transition hover:text-foreground"
-          >
-            ← Back to home
-          </Link>
-        </div>
-      </header>
-
       {/* Content */}
       <main className="mx-auto max-w-3xl px-6 py-16">
         <p className="text-sm font-medium uppercase tracking-wider text-primary">
