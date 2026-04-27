@@ -27,14 +27,13 @@ import { Logo } from "@/components/Logo";
 import { DotLottieReact } from "@lottiefiles/dotlottie-react";
 import stressedWomanLottie from "@/assets/lottie/stressed-woman.lottie?url";
 
-export const Route = createFileRoute("/")({
+export const Route = createFileRoute("/_public/")({
   component: Landing,
 });
 
 function Landing() {
   return (
     <div className="min-h-screen bg-background">
-      <SiteNav />
       <Hero />
       <ProblemSection />
       <SolutionSection />
@@ -42,37 +41,7 @@ function Landing() {
       <PreviewSection />
       <SocialProof />
       <FinalCTA />
-      <Footer />
     </div>
-  );
-}
-
-/* -------------------------------------------------------------------------- */
-/* Navigation                                                                 */
-/* -------------------------------------------------------------------------- */
-
-function SiteNav() {
-  return (
-    <header className="sticky top-0 z-40 border-b border-border/60 bg-background/80 backdrop-blur">
-      <div className="mx-auto flex max-w-6xl items-center justify-between px-5 py-4">
-        <Logo to="/" size="md" />
-
-        <div className="flex items-center gap-2">
-          <Link
-            to="/login"
-            className="rounded-full px-4 py-2 text-sm font-medium text-foreground/80 hover:text-foreground"
-          >
-            Log in
-          </Link>
-          <Link
-            to="/signup"
-            className="rounded-full bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground shadow-soft transition-transform hover:-translate-y-0.5"
-          >
-            Get started
-          </Link>
-        </div>
-      </div>
-    </header>
   );
 }
 
@@ -775,131 +744,6 @@ function FinalCTA() {
         </div>
       </div>
     </section>
-  );
-}
-
-/* -------------------------------------------------------------------------- */
-/* Footer                                                                     */
-/* -------------------------------------------------------------------------- */
-
-function Footer() {
-  const scrollToTop = () => {
-    if (typeof window === "undefined") return;
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  };
-
-  const siteMap: Array<
-    { label: string; to: "/" | "/login" | "/signup" | "/contact"} | { label: string; href: string }
-  > = [
-    { label: "How it works", href: "#how-it-works" },
-    { label: "Get started", to: "/signup" },
-    { label: "About", to: "/"},
-    { label: "Security", to: "/"},
-    { label: "Contact/Support", to: "/contact"},
-  ];
-
-  const legal = [
-    { label: "Privacy Policy", href: "/privacy" },
-    { label: "Terms of Service", href: "/terms" },
-    { label: "Cookie Policy", href: "/cookies" },
-  ];
-
-  return (
-    <footer className="mt-16">
-      {/* Main dark panel */}
-      <div className="bg-[#F5F1EB] text-[#2A2F36]">
-        <div className="mx-auto grid max-w-6xl gap-12 px-5 py-14 sm:py-16 md:grid-cols-[1.4fr_1fr_1fr]">
-          {/* Brand column */}
-          <div>
-            <Logo to="/" size="md" className="[&_image]:brightness-0 [&_image]:invert" />
-            <p className="mt-5 max-w-sm text-sm leading-relaxed text-[#2A2F36]">
-              Your supportive debt-free coach. Track every payment, stay motivated,
-              and turn the long road to zero into small, encouraging wins.
-            </p>
-
-            {/* Social icons */}
-            <div className="mt-6 flex items-center gap-4 text-[#2A2F36]">
-              <a href="#" aria-label="Twitter" className="transition hover:text-primary">
-                <Twitter className="h-5 w-5" />
-              </a>
-              <a href="#" aria-label="LinkedIn" className="transition hover:text-primary">
-                <Linkedin className="h-5 w-5" />
-              </a>
-              <a href="#" aria-label="Instagram" className="transition hover:text-primary">
-                <Instagram className="h-5 w-5" />
-              </a>
-              <a href="#" aria-label="Facebook" className="transition hover:text-primary">
-                <Facebook className="h-5 w-5" />
-              </a>
-            </div>
-
-            {/* Back to top */}
-            <button
-              type="button"
-              onClick={scrollToTop}
-              className="mt-8 inline-flex items-center gap-2 rounded-md border border-[#2A2F36] text-[#2A2F36] px-5 py-2.5 text-xs font-semibold uppercase tracking-[0.18em] transition hover:border-primary hover:text-primary"
-            >
-              <ChevronUp className="h-4 w-4" />
-              Back to top
-            </button>
-          </div>
-
-          {/* Site Map */}
-          <div>
-            <h3 className="font-display text-sm font-semibold uppercase tracking-[0.18em] text-[#2A2F36]">
-              Site Map
-            </h3>
-            <ul className="mt-5 space-y-3 text-sm">
-              {siteMap.map((item) =>
-                "to" in item ? (
-                  <li key={item.label}>
-                    <Link
-                      to={item.to}
-                      className="text-[#2A2F36] transition hover:text-primary"
-                    >
-                      {item.label}
-                    </Link>
-                  </li>
-                ) : (
-                  <li key={item.label}>
-                    <a
-                      href={item.href}
-                      className="text-[#2A2F36] transition hover:text-primary"
-                    >
-                      {item.label}
-                    </a>
-                  </li>
-                ),
-              )}
-            </ul>
-          </div>
-
-          {/* Legal */}
-          <div>
-            <h3 className="font-display text-sm font-semibold uppercase tracking-[0.18em] text-[#2A2F36]">
-              Legal
-            </h3>
-            <ul className="mt-5 space-y-3 text-sm">
-              {legal.map((item) => (
-                <li key={item.label}>
-                  <a
-                    href={item.href}
-                    className="text-[#2A2F36] transition hover:text-primary"
-                  >
-                    {item.label}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </div>
-        </div>
-      </div>
-
-      {/* Thin orange copyright bar */}
-      <div className="bg-primary py-3 text-center text-xs font-medium text-primary-foreground">
-        Copyright © {new Date().getFullYear()} zeni. All rights reserved.
-      </div>
-    </footer>
   );
 }
 

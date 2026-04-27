@@ -4,7 +4,7 @@ import { useState } from "react";
 import { LottieAnimation } from "../components/LottieAnimation";
 import { AnimatedSection } from "../components/AnimatedSection";
 
-export const Route = createFileRoute("/contact")({
+export const Route = createFileRoute("/_public/contact")({
   head: () => ({
     meta: [
       { title: "Contact — Zeni Personal Finance" },

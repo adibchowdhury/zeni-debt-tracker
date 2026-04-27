@@ -1,26 +1,26 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 
-export const Route = createFileRoute("/privacy")({
+export const Route = createFileRoute("/_public/terms")({
   head: () => ({
     meta: [
-      { title: "Privacy Policy — zeni" },
+      { title: "Terms of Service — zeni" },
       {
         name: "description",
         content:
-          "How zeni collects, uses, and protects your personal information.",
+          "The terms governing your use of zeni.",
       },
-      { property: "og:title", content: "Privacy Policy — zeni" },
+      { property: "og:title", content: "Terms of Service — zeni" },
       {
         property: "og:description",
         content:
-          "How zeni collects, uses, and protects your personal information.",
+          "The terms governing your use of zeni.",
       },
     ],
   }),
-  component: PrivacyPage,
+  component: TermsPage,
 });
 
-function PrivacyPage() {
+function TermsPage() {
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
@@ -44,7 +44,7 @@ function PrivacyPage() {
           Legal
         </p>
         <h1 className="mt-3 font-display text-4xl font-bold tracking-tight text-foreground sm:text-5xl">
-          Privacy Policy
+          Terms of Service
         </h1>
         <p className="mt-4 text-sm text-muted-foreground">
           Last updated: April 26, 2026

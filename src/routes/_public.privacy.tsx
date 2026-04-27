@@ -1,9 +1,9 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 
-export const Route = createFileRoute("/cookies")({
+export const Route = createFileRoute("/_public/privacy")({
   head: () => ({
     meta: [
-      { title: "Cookies Policy — zeni" },
+      { title: "Privacy Policy — zeni" },
       {
         name: "description",
         content:
@@ -17,10 +17,10 @@ export const Route = createFileRoute("/cookies")({
       },
     ],
   }),
-  component: CookiesPage,
+  component: PrivacyPage,
 });
 
-function CookiesPage() {
+function PrivacyPage() {
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
@@ -44,7 +44,7 @@ function CookiesPage() {
           Legal
         </p>
         <h1 className="mt-3 font-display text-4xl font-bold tracking-tight text-foreground sm:text-5xl">
-          Cookies Policy
+          Privacy Policy
         </h1>
         <p className="mt-4 text-sm text-muted-foreground">
           Last updated: April 26, 2026

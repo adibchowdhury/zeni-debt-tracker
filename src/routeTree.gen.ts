@@ -9,39 +9,26 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as TermsRouteImport } from './routes/terms'
 import { Route as SignupRouteImport } from './routes/signup'
-import { Route as SecurityRouteImport } from './routes/security'
-import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as LoginRouteImport } from './routes/login'
-import { Route as CookiesRouteImport } from './routes/cookies'
-import { Route as ContactRouteImport } from './routes/contact'
 import { Route as AppRouteImport } from './routes/app'
-import { Route as IndexRouteImport } from './routes/index'
+import { Route as PublicRouteImport } from './routes/_public'
 import { Route as AppIndexRouteImport } from './routes/app.index'
+import { Route as PublicIndexRouteImport } from './routes/_public.index'
 import { Route as AppStrategyRouteImport } from './routes/app.strategy'
 import { Route as AppSimulatorRouteImport } from './routes/app.simulator'
 import { Route as AppMilestonesRouteImport } from './routes/app.milestones'
 import { Route as AppDebtsRouteImport } from './routes/app.debts'
+import { Route as PublicTermsRouteImport } from './routes/_public.terms'
+import { Route as PublicSecurityRouteImport } from './routes/_public.security'
+import { Route as PublicPrivacyRouteImport } from './routes/_public.privacy'
+import { Route as PublicCookiesRouteImport } from './routes/_public.cookies'
+import { Route as PublicContactRouteImport } from './routes/_public.contact'
+import { Route as PublicAboutRouteImport } from './routes/_public.about'
 
-const TermsRoute = TermsRouteImport.update({
-  id: '/terms',
-  path: '/terms',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const SignupRoute = SignupRouteImport.update({
   id: '/signup',
   path: '/signup',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SecurityRoute = SecurityRouteImport.update({
-  id: '/security',
-  path: '/security',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const PrivacyRoute = PrivacyRouteImport.update({
-  id: '/privacy',
-  path: '/privacy',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LoginRoute = LoginRouteImport.update({
@@ -49,30 +36,24 @@ const LoginRoute = LoginRouteImport.update({
   path: '/login',
   getParentRoute: () => rootRouteImport,
 } as any)
-const CookiesRoute = CookiesRouteImport.update({
-  id: '/cookies',
-  path: '/cookies',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ContactRoute = ContactRouteImport.update({
-  id: '/contact',
-  path: '/contact',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const AppRoute = AppRouteImport.update({
   id: '/app',
   path: '/app',
   getParentRoute: () => rootRouteImport,
 } as any)
-const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
+const PublicRoute = PublicRouteImport.update({
+  id: '/_public',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AppIndexRoute = AppIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => AppRoute,
+} as any)
+const PublicIndexRoute = PublicIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => PublicRoute,
 } as any)
 const AppStrategyRoute = AppStrategyRouteImport.update({
   id: '/strategy',
@@ -94,17 +75,48 @@ const AppDebtsRoute = AppDebtsRouteImport.update({
   path: '/debts',
   getParentRoute: () => AppRoute,
 } as any)
+const PublicTermsRoute = PublicTermsRouteImport.update({
+  id: '/terms',
+  path: '/terms',
+  getParentRoute: () => PublicRoute,
+} as any)
+const PublicSecurityRoute = PublicSecurityRouteImport.update({
+  id: '/security',
+  path: '/security',
+  getParentRoute: () => PublicRoute,
+} as any)
+const PublicPrivacyRoute = PublicPrivacyRouteImport.update({
+  id: '/privacy',
+  path: '/privacy',
+  getParentRoute: () => PublicRoute,
+} as any)
+const PublicCookiesRoute = PublicCookiesRouteImport.update({
+  id: '/cookies',
+  path: '/cookies',
+  getParentRoute: () => PublicRoute,
+} as any)
+const PublicContactRoute = PublicContactRouteImport.update({
+  id: '/contact',
+  path: '/contact',
+  getParentRoute: () => PublicRoute,
+} as any)
+const PublicAboutRoute = PublicAboutRouteImport.update({
+  id: '/about',
+  path: '/about',
+  getParentRoute: () => PublicRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
-  '/': typeof IndexRoute
+  '/': typeof PublicIndexRoute
   '/app': typeof AppRouteWithChildren
-  '/contact': typeof ContactRoute
-  '/cookies': typeof CookiesRoute
   '/login': typeof LoginRoute
-  '/privacy': typeof PrivacyRoute
-  '/security': typeof SecurityRoute
   '/signup': typeof SignupRoute
-  '/terms': typeof TermsRoute
+  '/about': typeof PublicAboutRoute
+  '/contact': typeof PublicContactRoute
+  '/cookies': typeof PublicCookiesRoute
+  '/privacy': typeof PublicPrivacyRoute
+  '/security': typeof PublicSecurityRoute
+  '/terms': typeof PublicTermsRoute
   '/app/debts': typeof AppDebtsRoute
   '/app/milestones': typeof AppMilestonesRoute
   '/app/simulator': typeof AppSimulatorRoute
@@ -112,35 +124,38 @@ export interface FileRoutesByFullPath {
   '/app/': typeof AppIndexRoute
 }
 export interface FileRoutesByTo {
-  '/': typeof IndexRoute
-  '/contact': typeof ContactRoute
-  '/cookies': typeof CookiesRoute
   '/login': typeof LoginRoute
-  '/privacy': typeof PrivacyRoute
-  '/security': typeof SecurityRoute
   '/signup': typeof SignupRoute
-  '/terms': typeof TermsRoute
+  '/about': typeof PublicAboutRoute
+  '/contact': typeof PublicContactRoute
+  '/cookies': typeof PublicCookiesRoute
+  '/privacy': typeof PublicPrivacyRoute
+  '/security': typeof PublicSecurityRoute
+  '/terms': typeof PublicTermsRoute
   '/app/debts': typeof AppDebtsRoute
   '/app/milestones': typeof AppMilestonesRoute
   '/app/simulator': typeof AppSimulatorRoute
   '/app/strategy': typeof AppStrategyRoute
+  '/': typeof PublicIndexRoute
   '/app': typeof AppIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
-  '/': typeof IndexRoute
+  '/_public': typeof PublicRouteWithChildren
   '/app': typeof AppRouteWithChildren
-  '/contact': typeof ContactRoute
-  '/cookies': typeof CookiesRoute
   '/login': typeof LoginRoute
-  '/privacy': typeof PrivacyRoute
-  '/security': typeof SecurityRoute
   '/signup': typeof SignupRoute
-  '/terms': typeof TermsRoute
+  '/_public/about': typeof PublicAboutRoute
+  '/_public/contact': typeof PublicContactRoute
+  '/_public/cookies': typeof PublicCookiesRoute
+  '/_public/privacy': typeof PublicPrivacyRoute
+  '/_public/security': typeof PublicSecurityRoute
+  '/_public/terms': typeof PublicTermsRoute
   '/app/debts': typeof AppDebtsRoute
   '/app/milestones': typeof AppMilestonesRoute
   '/app/simulator': typeof AppSimulatorRoute
   '/app/strategy': typeof AppStrategyRoute
+  '/_public/': typeof PublicIndexRoute
   '/app/': typeof AppIndexRoute
 }
 export interface FileRouteTypes {
@@ -148,12 +163,13 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/app'
+    | '/login'
+    | '/signup'
+    | '/about'
     | '/contact'
     | '/cookies'
-    | '/login'
     | '/privacy'
     | '/security'
-    | '/signup'
     | '/terms'
     | '/app/debts'
     | '/app/milestones'
@@ -162,77 +178,54 @@ export interface FileRouteTypes {
     | '/app/'
   fileRoutesByTo: FileRoutesByTo
   to:
-    | '/'
+    | '/login'
+    | '/signup'
+    | '/about'
     | '/contact'
     | '/cookies'
-    | '/login'
     | '/privacy'
     | '/security'
-    | '/signup'
     | '/terms'
     | '/app/debts'
     | '/app/milestones'
     | '/app/simulator'
     | '/app/strategy'
+    | '/'
     | '/app'
   id:
     | '__root__'
-    | '/'
+    | '/_public'
     | '/app'
-    | '/contact'
-    | '/cookies'
     | '/login'
-    | '/privacy'
-    | '/security'
     | '/signup'
-    | '/terms'
+    | '/_public/about'
+    | '/_public/contact'
+    | '/_public/cookies'
+    | '/_public/privacy'
+    | '/_public/security'
+    | '/_public/terms'
     | '/app/debts'
     | '/app/milestones'
     | '/app/simulator'
     | '/app/strategy'
+    | '/_public/'
     | '/app/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute
+  PublicRoute: typeof PublicRouteWithChildren
   AppRoute: typeof AppRouteWithChildren
-  ContactRoute: typeof ContactRoute
-  CookiesRoute: typeof CookiesRoute
   LoginRoute: typeof LoginRoute
-  PrivacyRoute: typeof PrivacyRoute
-  SecurityRoute: typeof SecurityRoute
   SignupRoute: typeof SignupRoute
-  TermsRoute: typeof TermsRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/terms': {
-      id: '/terms'
-      path: '/terms'
-      fullPath: '/terms'
-      preLoaderRoute: typeof TermsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/signup': {
       id: '/signup'
       path: '/signup'
       fullPath: '/signup'
       preLoaderRoute: typeof SignupRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/security': {
-      id: '/security'
-      path: '/security'
-      fullPath: '/security'
-      preLoaderRoute: typeof SecurityRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/privacy': {
-      id: '/privacy'
-      path: '/privacy'
-      fullPath: '/privacy'
-      preLoaderRoute: typeof PrivacyRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/login': {
@@ -242,20 +235,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LoginRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/cookies': {
-      id: '/cookies'
-      path: '/cookies'
-      fullPath: '/cookies'
-      preLoaderRoute: typeof CookiesRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/contact': {
-      id: '/contact'
-      path: '/contact'
-      fullPath: '/contact'
-      preLoaderRoute: typeof ContactRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/app': {
       id: '/app'
       path: '/app'
@@ -263,11 +242,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/': {
-      id: '/'
-      path: '/'
+    '/_public': {
+      id: '/_public'
+      path: ''
       fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
+      preLoaderRoute: typeof PublicRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/app/': {
@@ -276,6 +255,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/app/'
       preLoaderRoute: typeof AppIndexRouteImport
       parentRoute: typeof AppRoute
+    }
+    '/_public/': {
+      id: '/_public/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof PublicIndexRouteImport
+      parentRoute: typeof PublicRoute
     }
     '/app/strategy': {
       id: '/app/strategy'
@@ -305,8 +291,73 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppDebtsRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_public/terms': {
+      id: '/_public/terms'
+      path: '/terms'
+      fullPath: '/terms'
+      preLoaderRoute: typeof PublicTermsRouteImport
+      parentRoute: typeof PublicRoute
+    }
+    '/_public/security': {
+      id: '/_public/security'
+      path: '/security'
+      fullPath: '/security'
+      preLoaderRoute: typeof PublicSecurityRouteImport
+      parentRoute: typeof PublicRoute
+    }
+    '/_public/privacy': {
+      id: '/_public/privacy'
+      path: '/privacy'
+      fullPath: '/privacy'
+      preLoaderRoute: typeof PublicPrivacyRouteImport
+      parentRoute: typeof PublicRoute
+    }
+    '/_public/cookies': {
+      id: '/_public/cookies'
+      path: '/cookies'
+      fullPath: '/cookies'
+      preLoaderRoute: typeof PublicCookiesRouteImport
+      parentRoute: typeof PublicRoute
+    }
+    '/_public/contact': {
+      id: '/_public/contact'
+      path: '/contact'
+      fullPath: '/contact'
+      preLoaderRoute: typeof PublicContactRouteImport
+      parentRoute: typeof PublicRoute
+    }
+    '/_public/about': {
+      id: '/_public/about'
+      path: '/about'
+      fullPath: '/about'
+      preLoaderRoute: typeof PublicAboutRouteImport
+      parentRoute: typeof PublicRoute
+    }
   }
 }
+
+interface PublicRouteChildren {
+  PublicAboutRoute: typeof PublicAboutRoute
+  PublicContactRoute: typeof PublicContactRoute
+  PublicCookiesRoute: typeof PublicCookiesRoute
+  PublicPrivacyRoute: typeof PublicPrivacyRoute
+  PublicSecurityRoute: typeof PublicSecurityRoute
+  PublicTermsRoute: typeof PublicTermsRoute
+  PublicIndexRoute: typeof PublicIndexRoute
+}
+
+const PublicRouteChildren: PublicRouteChildren = {
+  PublicAboutRoute: PublicAboutRoute,
+  PublicContactRoute: PublicContactRoute,
+  PublicCookiesRoute: PublicCookiesRoute,
+  PublicPrivacyRoute: PublicPrivacyRoute,
+  PublicSecurityRoute: PublicSecurityRoute,
+  PublicTermsRoute: PublicTermsRoute,
+  PublicIndexRoute: PublicIndexRoute,
+}
+
+const PublicRouteWithChildren =
+  PublicRoute._addFileChildren(PublicRouteChildren)
 
 interface AppRouteChildren {
   AppDebtsRoute: typeof AppDebtsRoute
@@ -327,15 +378,10 @@ const AppRouteChildren: AppRouteChildren = {
 const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
-  IndexRoute: IndexRoute,
+  PublicRoute: PublicRouteWithChildren,
   AppRoute: AppRouteWithChildren,
-  ContactRoute: ContactRoute,
-  CookiesRoute: CookiesRoute,
   LoginRoute: LoginRoute,
-  PrivacyRoute: PrivacyRoute,
-  SecurityRoute: SecurityRoute,
   SignupRoute: SignupRoute,
-  TermsRoute: TermsRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
