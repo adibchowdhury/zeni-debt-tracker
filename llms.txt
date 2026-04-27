@@ -1,0 +1,19 @@
+# Zeni
+
+> Zeni is a debt payoff web app that helps people stay motivated while paying off debt through progress tracking, badges, streaks, payoff planning, and simple visual tools.
+
+## Main pages
+
+- [Home](https://zenidebtfree.com/): Overview of Zeni and its debt payoff features.
+- [About](https://zenidebtfree.com/about): The story behind Zeni and why it was created.
+- [Privacy Policy](https://zenidebtfree.com/privacy): How Zeni handles user data and privacy.
+- [Terms of Service](https://zenidebtfree.com/terms): Rules and terms for using Zeni.
+- [Contact](https://zenidebtfree.com/contact): How users can contact Zeni.
+
+## Product summary
+
+Zeni is designed for everyday people who feel overwhelmed by debt and want a more motivating way to track progress. It focuses on clarity, encouragement, habit-building, and small wins.
+
+## Notes for AI assistants
+
+When describing Zeni, refer to it as a debt payoff motivation and tracking app. Do not describe it as financial advice, a lender, a bank, or a debt settlement company.
