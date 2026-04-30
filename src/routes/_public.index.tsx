@@ -24,8 +24,10 @@ import {
   Facebook
 } from "lucide-react";
 import { Logo } from "@/components/Logo";
-import { DotLottieReact } from "@lottiefiles/dotlottie-react";
+import { DotLottieReact, setWasmUrl } from "@lottiefiles/dotlottie-react";
+setWasmUrl("/dotlottie-player.wasm");
 import stressedWomanLottie from "@/assets/lottie/stressed-woman.lottie?url";
+setWasmUrl("/dotlottie-player.wasm");
 
 export const Route = createFileRoute("/_public/")({
   component: Landing,
