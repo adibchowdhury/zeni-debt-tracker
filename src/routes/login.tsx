@@ -15,18 +15,33 @@ function LoginPage() {
   const [loading, setLoading] = useState(false);
 
   const submit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!email || !password) return;
-    setLoading(true);
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
-    setLoading(false);
-    if (error) {
-      toast.error(error.message);
+  e.preventDefault();
+
+  if (loading) return;
+
+  if (!email || !password) return;
+
+  setLoading(true);
+
+  const { error } = await supabase.auth.signInWithPassword({ email, password });
+
+  setLoading(false);
+
+  if (error) {
+  const message = error.message.toLowerCase();
+
+    if (message.includes("rate") || message.includes("too many") || message.includes("429")) {
+      toast.error("Too many login attempts. Please wait a minute and try again.");
       return;
     }
-    toast.success("Welcome back!");
-    navigate({ to: "/app" });
-  };
+
+    toast.error("Invalid email or password.");
+    return;
+}
+
+  toast.success("Welcome back!");
+  navigate({ to: "/app" });
+};
 
   return (
     <AuthShell title="Welcome back" subtitle="Pick up where you left off.">

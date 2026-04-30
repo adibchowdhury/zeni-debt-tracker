@@ -15,6 +15,9 @@ function ForgotPasswordPage() {
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (loading) return;
+
     if (!email) return;
     setLoading(true);
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
@@ -22,8 +25,15 @@ function ForgotPasswordPage() {
     });
     setLoading(false);
     if (error) {
-      toast.error(error.message);
-      return;
+        const message = error.message.toLowerCase();
+
+        if (message.includes("rate") || message.includes("too many") || message.includes("429")) {
+            toast.error("Too many requests. Please wait a minute before trying again.");
+            return;
+        }
+
+        toast.error("Something went wrong. Please try again.");
+        return;
     }
     setSent(true);
     toast.success("Check your inbox for the reset link.");

@@ -17,6 +17,7 @@ function SignupPage() {
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (loading) return;
     if (!email || !password) return;
     setLoading(true);
     const redirectUrl = typeof window !== "undefined" ? `${window.location.origin}/app` : undefined;
@@ -29,12 +30,21 @@ function SignupPage() {
       },
     });
     setLoading(false);
+
     if (error) {
-      toast.error(error.message);
+      const message = error.message.toLowerCase();
+
+      if (message.includes("rate") || message.includes("too many") || message.includes("429")) {
+        toast.error("Too many attempts. Please wait a minute and try again.");
+        return;
+      }
+
+      toast.error("Unable to create account. Try a different email or password.");
       return;
     }
-    toast.success("Welcome aboard! Let's get started.");
-    navigate({ to: "/app" });
+
+    toast.success("Check your email to finish creating your account.");
+    navigate({ to: "/login" });
   };
 
   return <AuthShell title="Create your account" subtitle="Start your debt-free journey today.">
