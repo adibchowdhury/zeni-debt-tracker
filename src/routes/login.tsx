@@ -38,7 +38,12 @@ function LoginPage() {
             placeholder="you@email.com" />
         </label>
         <label className="block">
-          <span className="mb-1.5 block text-sm font-medium">Password</span>
+          <div className="mb-1.5 flex items-center justify-between">
+            <span className="text-sm font-medium">Password</span>
+            <Link to="/forgot-password" className="text-xs font-medium text-primary hover:underline">
+              Forgot password?
+            </Link>
+          </div>
           <input type="password" required value={password} onChange={(e) => setPassword(e.target.value)}
             className="w-full rounded-xl border border-input bg-background px-4 py-3 text-base outline-none focus:ring-2 focus:ring-ring"
             placeholder="••••••••" />
