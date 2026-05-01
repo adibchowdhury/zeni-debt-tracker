@@ -37,7 +37,6 @@ export function SiteFooter() {
     { label: "How it works", href: "#how-it-works" },
     { label: "Get started", to: "/signup" },
     { label: "About", to: "/about"},
-    { label: "How We Protect Your Data", to: "/security"},
     { label: "Contact/Support", to: "/contact"},
   ];
 
@@ -45,6 +44,7 @@ export function SiteFooter() {
     { label: "Privacy Policy", href: "/privacy" },
     { label: "Terms of Service", href: "/terms" },
     { label: "Cookie Policy", href: "/cookies" },
+    { label: "How We Protect Your Data", href: "/security"},
   ];
 
   return (
@@ -116,10 +116,10 @@ export function SiteFooter() {
             </ul>
           </div>
 
-          {/* Legal */}
+          {/* Legal & Privacy */}
           <div>
             <h3 className="font-display text-sm font-semibold uppercase tracking-[0.18em] text-[#2A2F36]">
-              Legal
+              Legal and Privacy
             </h3>
             <ul className="mt-5 space-y-3 text-sm">
               {legal.map((item) => (
