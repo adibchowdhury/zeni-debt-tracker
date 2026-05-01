@@ -6,7 +6,6 @@ import {
   Sparkles,
   TrendingDown,
   Target,
-  HeartHandshake,
   ListChecks,
   Trophy,
   Calendar,
@@ -15,15 +14,8 @@ import {
   Flame,
   Zap,
   CheckCircle2,
-  Coins,
-  TrendingUp,
-  ChevronUp,
-  Twitter,
-  Linkedin,
-  Instagram,
-  Facebook
+  ChevronDown
 } from "lucide-react";
-import { Logo } from "@/components/Logo";
 import { DotLottieReact, setWasmUrl } from "@lottiefiles/dotlottie-react";
 setWasmUrl("/dotlottie-player.wasm");
 import stressedWomanLottie from "@/assets/lottie/stressed-woman.lottie?url";
@@ -59,6 +51,7 @@ function Landing() {
       <HowItWorks />
       <PreviewSection />
       <SocialProof />
+      <FAQSection />
       <FinalCTA />
     </div>
   );
@@ -784,6 +777,93 @@ function SocialProof() {
             </div>
           </div>
         ))}
+      </div>
+    </section>
+  );
+}
+
+function FAQSection() {
+  const faqs = [
+    {
+      question: "Is Zeni just another debt tracker?",
+      answer:
+        "No. Zeni helps you track your debt, but the main goal is to keep you motivated. You can see your progress, log payments, build streaks, and stay focused on your debt-free date.",
+    },
+    {
+      question: "Do I have to connect my bank account?",
+      answer:
+        "No. Zeni is built around manual debt and payment tracking, so you can stay in control without connecting your bank account.",
+    },
+    {
+      question: "What payoff methods does Zeni support?",
+      answer:
+        "Zeni supports snowball and avalanche payoff planning. Snowball focuses on paying off smaller balances first. Avalanche focuses on higher-interest debts first.",
+    },
+    {
+      question: "Can I track multiple debts?",
+      answer:
+        "Yes. You can add and manage multiple debts in one place, including credit cards, loans, or any balance you are working to pay off.",
+    },
+    {
+      question: "Does Zeni help me stay motivated?",
+      answer:
+        "Yes. Zeni uses progress tracking, streaks, milestones, and simple visual wins to make paying off debt feel less overwhelming.",
+    },
+  ];
+
+  const [openIndex, setOpenIndex] = useState<number | null>(0);
+
+  return (
+    <section className="bg-gradient-to-b from-background to-primary-soft/30 px-5 py-20 sm:py-24">
+      <div className="mx-auto max-w-3xl">
+        <div className="text-center">
+          <div className="mb-3 inline-flex rounded-full bg-primary-soft px-3 py-1 text-xs font-semibold uppercase tracking-wider text-primary">
+            FAQ
+          </div>
+
+          <h2 className="font-display text-3xl font-bold tracking-tight sm:text-4xl">
+            Questions before you start?
+          </h2>
+
+          <p className="mt-3 text-muted-foreground">
+            Here are the answers to the things people usually want to know before using Zeni.
+          </p>
+        </div>
+
+        <div className="mt-10 space-y-3">
+          {faqs.map((faq, index) => {
+            const isOpen = openIndex === index;
+
+            return (
+              <div
+                key={faq.question}
+                className="overflow-hidden rounded-2xl border border-border bg-card shadow-soft"
+              >
+                <button
+                  type="button"
+                  onClick={() => setOpenIndex(isOpen ? null : index)}
+                  className="flex w-full items-center justify-between gap-4 px-5 py-4 text-left"
+                >
+                  <span className="font-display text-base font-semibold text-foreground">
+                    {faq.question}
+                  </span>
+
+                  <ChevronDown
+                    className={`h-5 w-5 shrink-0 text-primary transition-transform ${
+                      isOpen ? "rotate-180" : ""
+                    }`}
+                  />
+                </button>
+
+                {isOpen && (
+                  <div className="px-5 pb-5 text-sm leading-6 text-muted-foreground">
+                    {faq.answer}
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
       </div>
     </section>
   );
