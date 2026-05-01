@@ -16,6 +16,12 @@ export const Route = createFileRoute("/_public/cookies")({
           "How zeni collects, uses, and protects your personal information.",
       },
     ],
+    links: [
+      {
+        rel: "canonical",
+        href: "https://zenidebtfree.com/cookies",
+      },
+    ],
   }),
   component: CookiesPage,
 });

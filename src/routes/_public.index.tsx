@@ -30,6 +30,22 @@ import stressedWomanLottie from "@/assets/lottie/stressed-woman.lottie?url";
 setWasmUrl("/dotlottie-player.wasm");
 
 export const Route = createFileRoute("/_public/")({
+  head: () => ({
+    meta: [
+      { title: "Zeni — Debt Payoff Motivation App" },
+      {
+        name: "description",
+        content:
+          "Zeni helps you stay motivated while paying off debt with progress tracking, streaks, and simple debt payoff tools.",
+      },
+    ],
+    links: [
+      {
+        rel: "canonical",
+        href: "https://zenidebtfree.com/",
+      },
+    ],
+  }),
   component: Landing,
 });
 

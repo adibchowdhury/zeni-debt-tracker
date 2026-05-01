@@ -16,6 +16,12 @@ export const Route = createFileRoute("/_public/about")({
           "zeni is a simple, motivating debt payoff coach. Learn why we built it, who it's for, and how we keep your data private.",
       },
     ],
+    links: [
+      {
+        rel: "canonical",
+        href: "https://zenidebtfree.com/about",
+      },
+    ],
   }),
   component: AboutPage,
 });

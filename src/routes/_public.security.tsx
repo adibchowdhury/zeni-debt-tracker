@@ -16,6 +16,12 @@ export const Route = createFileRoute("/_public/security")({
           "Learn how zeni protects your data with modern security practices.",
       },
     ],
+    links: [
+      {
+        rel: "canonical",
+        href: "https://zenidebtfree.com/security",
+      },
+    ],
   }),
   component: SecurityPage,
 });

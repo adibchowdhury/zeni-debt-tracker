@@ -12,6 +12,12 @@ export const Route = createFileRoute("/_public/contact")({
       { property: "og:title", content: "Contact — Zeni Personal Finance" },
       { property: "og:description", content: "Questions about Zeni? We'd love to hear from you." },
     ],
+    links: [
+      {
+        rel: "canonical",
+        href: "https://zenidebtfree.com/contact",
+      },
+    ],
   }),
   component: ContactPage,
 });

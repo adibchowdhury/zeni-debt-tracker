@@ -16,6 +16,12 @@ export const Route = createFileRoute("/_public/terms")({
           "The terms governing your use of zeni.",
       },
     ],
+    links: [
+      {
+        rel: "canonical",
+        href: "https://zenidebtfree.com/terms",
+      },
+    ],
   }),
   component: TermsPage,
 });
