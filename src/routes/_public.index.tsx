@@ -418,7 +418,7 @@ function ProblemSection() {
             Paying off debt shouldn't feel impossible.
           </h2>
           <p className="mt-3 text-muted-foreground">
-            Most people don't lack discipline — they lack clarity and momentum.
+            Most people don't lack discipline — they lack momentum.
           </p>
 
           <div className="mt-8 grid gap-4 sm:grid-cols-1">
@@ -474,7 +474,7 @@ function SolutionSection() {
             How Zeni helps
           </div>
           <h2 className="font-display text-3xl font-bold tracking-tight sm:text-4xl">
-            Clarity, momentum, and a date you can{" "}
+            Clarity, momentum and a date you'll actually{" "}
             <span className="text-primary">circle on the calendar.</span>
           </h2>
           <p className="mt-3 text-muted-foreground">
