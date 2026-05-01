@@ -21,13 +21,15 @@ import {
   Twitter,
   Linkedin,
   Instagram,
-  Facebook
+  Facebook,
+  Repeat
 } from "lucide-react";
 import { Logo } from "@/components/Logo";
 import { DotLottieReact, setWasmUrl } from "@lottiefiles/dotlottie-react";
 setWasmUrl("/dotlottie-player.wasm");
 import stressedWomanLottie from "@/assets/lottie/stressed-woman.lottie?url";
 setWasmUrl("/dotlottie-player.wasm");
+import heroBg from "@/assets/hero-background.png";
 
 export const Route = createFileRoute("/_public/")({
   head: () => ({
@@ -69,21 +71,29 @@ function Landing() {
 
 function Hero() {
   return (
-    <section className="relative overflow-hidden bg-gradient-hero lg:min-h-[calc(100vh-73px)]">
-      {/* Soft decorative orange blobs */}
-      <div className="pointer-events-none absolute -top-24 -left-24 h-72 w-72 rounded-full bg-primary/20 blur-3xl" />
-      <div className="pointer-events-none absolute -bottom-32 -right-24 h-80 w-80 rounded-full bg-[oklch(0.86_0.17_92/0.35)] blur-3xl" />
+    <section className="relative overflow-hidden bg-[#fdf8f1]">
+      <div
+        className="absolute inset-0"
+        style={{
+          backgroundImage: `url(${heroBg})`,
+          backgroundSize: "80%",
+          backgroundPosition: "130% 10%",
+          backgroundRepeat: "no-repeat",
+        }}
+      />
 
-      <div className="mx-auto grid max-w-6xl gap-12 px-5 pt-14 pb-20 sm:pt-20 sm:pb-28 lg:min-h-[calc(100vh-73px)] lg:grid-cols-[1.05fr_1fr] lg:items-center lg:gap-16 lg:py-16">
-        {/* Left — copy */}
-        <div className="relative">
+      <div className="absolute inset-0 bg-gradient-to-r from-[#fdf8f1] via-[#fdf8f1]/90 via-10% to-transparent" />
+
+      <div className="relative z-10 mx-auto grid max-w-7xl gap-10 px-5 pt-14 pb-20 sm:pt-20 sm:pb-28 lg:min-h-[calc(100vh-73px)] lg:grid-cols-[0.95fr_1.05fr] lg:items-center lg:gap-12 lg:py-16">
+        <div className="relative -ml-4 lg:-ml-10 -mt-6 lg:-mt-25">
           <div className="mb-6 h-[26px]" aria-hidden="true" />
 
-          <h1 className="font-display text-[2.75rem] font-semibold leading-[1.04] tracking-tight text-foreground sm:text-6xl lg:text-[4.25rem]">
-            A clear path to becoming <span className="font-extrabold text-primary">debt-free</span> — without the stress
+          <h1 className="max-w-[520px] font-display text-[2.75rem] font-semibold leading-[1.04] tracking-tight text-foreground sm:text-6xl lg:text-[4.25rem]">
+            A clear path to becoming{" "}
+            <span className="font-extrabold text-primary">debt-free</span> — without the stress
           </h1>
 
-          <p className="mt-7 max-w-xl text-base text-muted-foreground sm:text-lg lg:text-xl">
+          <p className="mt-7 max-w-[460px] text-base text-muted-foreground sm:text-lg lg:text-xl">
             Track your debt, stay motivated, and see your progress every day.
             Zeni turns the long road to zero into small, encouraging wins.
           </p>
@@ -96,6 +106,7 @@ function Hero() {
               Start My Debt-Free Plan
               <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
             </Link>
+
             <a
               href="#how-it-works"
               className="inline-flex w-full items-center justify-center rounded-full border border-border bg-card px-7 py-4 text-base font-medium text-foreground hover:bg-secondary sm:w-auto lg:text-lg"
@@ -105,8 +116,9 @@ function Hero() {
           </div>
         </div>
 
-        {/* Right — visual */}
-        <HeroVisual />
+        <div className="relative z-20 mx-auto w-full max-w-[480px] origin-top scale-[0.9] lg:-translate-x-50 lg:-translate-y-28 xl:scale-[0.82]">
+          <HeroVisual />
+        </div>
       </div>
     </section>
   );
