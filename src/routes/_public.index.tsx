@@ -712,71 +712,124 @@ function Stat({
 /* -------------------------------------------------------------------------- */
 
 function SocialProof() {
-  const quotes = [
+  const reviews = [
     {
-      name: "Maya R.",
-      role: "Paid off $8,200 in 14 months",
-      body: "Seeing the bar move every week kept me going. I finally feel in control of my money.",
+      name: "Early User",
+      role: "Credit card payoff journey",
+      body: "Zeni makes paying off debt feel less overwhelming. Seeing my progress and streaks keeps me coming back.",
     },
     {
-      name: "Jordan T.",
-      role: "On a 22-week streak",
-      body: "Zeni feels like a coach in my pocket. The little wins add up to something huge.",
+      name: "Beta Tester",
+      role: "Student loan payoff journey",
+      body: "The debt-free date helped everything click. I finally had a clear goal instead of just staring at balances.",
     },
     {
-      name: "Priya S.",
-      role: "32% to debt-free",
-      body: "It's the first money app I actually open daily. Simple, motivating, no shame.",
+      name: "Zeni User",
+      role: "Personal debt tracking",
+      body: "Logging payments feels rewarding. It makes each small payment feel like real progress.",
+    },
+    {
+      name: "Early Access User",
+      role: "Debt payoff tracking",
+      body: "I like that it’s simple. I don’t need another complicated finance app. I just need motivation to keep going.",
+    },
+    {
+      name: "Zeni User",
+      role: "Building payment momentum",
+      body: "The weekly progress and milestones make the journey feel doable instead of endless.",
     },
   ];
 
   return (
-    <section className="mx-auto max-w-6xl px-5 py-20 sm:py-24">
-      <div className="mx-auto max-w-2xl text-center">
-        <div className="mb-3 inline-flex rounded-full bg-secondary px-3 py-1 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-          Loved by people paying it down
-        </div>
-        <h2 className="font-display text-3xl font-bold tracking-tight sm:text-4xl">
-          Real progress, real momentum.
-        </h2>
-      </div>
+    <section className="px-5 py-20 sm:py-24">
+      <div className="mx-auto max-w-6xl rounded-[2rem] border border-border bg-gradient-to-br from-card via-primary-soft/30 to-background p-6 shadow-soft sm:p-10">
+        <div className="grid gap-10 lg:grid-cols-[0.75fr_1.25fr] lg:items-start">
+          <div className="text-center lg:text-left">
+            <div className="mb-3 inline-flex rounded-full bg-primary-soft px-3 py-1 text-xs font-semibold uppercase tracking-wider text-primary">
+              Loved by people paying it down
+            </div>
 
-      {/* Quick stats */}
-      <div className="mt-10 grid gap-4 sm:grid-cols-3">
-        {[
-          { value: "$2.4M+", label: "Debt paid down" },
-          { value: "94%", label: "Stick with it monthly" },
-          { value: "4.9★", label: "Average rating" },
-        ].map((s) => (
-          <div
-            key={s.label}
-            className="rounded-3xl border border-border bg-card p-6 text-center shadow-soft"
-          >
-            <div className="font-display text-3xl font-extrabold text-primary">{s.value}</div>
-            <div className="mt-1 text-sm text-muted-foreground">{s.label}</div>
-          </div>
-        ))}
-      </div>
+            <h2 className="font-display text-3xl font-bold tracking-tight sm:text-4xl">
+              Real progress from real debt payoff journeys.
+            </h2>
 
-      <div className="mt-8 grid gap-4 sm:grid-cols-3">
-        {quotes.map((q) => (
-          <div
-            key={q.name}
-            className="rounded-3xl border border-border bg-card p-6 shadow-soft"
-          >
-            <Quote className="h-5 w-5 text-primary" />
-            <p className="mt-3 text-sm leading-relaxed text-foreground">"{q.body}"</p>
-            <div className="mt-4 flex items-center gap-3">
-              <div className="flex h-9 w-9 items-center justify-center rounded-full bg-primary-soft font-display text-sm font-bold text-primary">
-                {q.name.charAt(0)}
-              </div>
+            <p className="mt-4 text-muted-foreground">
+              Zeni helps make debt payoff feel clearer, more motivating, and easier to stick with.
+            </p>
+
+            <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-1">
               <div>
-                <div className="text-sm font-semibold">{q.name}</div>
-                <div className="text-xs text-muted-foreground">{q.role}</div>
+                <div className="font-display text-4xl font-extrabold text-primary">
+                  5/5
+                </div>
+                <p className="mt-1 text-sm font-semibold text-foreground">
+                  Early user feedback
+                </p>
+              </div>
+
+              <div>
+                <div className="font-display text-4xl font-extrabold text-primary">
+                  100%
+                </div>
+                <p className="mt-1 text-sm font-semibold text-foreground">
+                  Built for motivation
+                </p>
               </div>
             </div>
+
+            <div className="mt-8 flex flex-col gap-3 sm:flex-row lg:flex-col">
+              <Link
+                to="/signup"
+                className="inline-flex items-center justify-center gap-2 rounded-full bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground shadow-glow transition-transform hover:-translate-y-0.5"
+              >
+                Start free
+                <ArrowRight className="h-4 w-4" />
+              </Link>
+
+              <Link
+                to="/features"
+                className="inline-flex items-center justify-center rounded-full border border-border bg-card px-6 py-3 text-sm font-semibold text-foreground hover:bg-secondary"
+              >
+                See features
+              </Link>
+            </div>
           </div>
-        ))}
+
+          <div className="grid gap-4 sm:grid-cols-2">
+            {reviews.map((review, index) => (
+              <div
+                key={`${review.name}-${index}`}
+                className={`rounded-3xl border border-border bg-card p-5 shadow-soft ${
+                  index === 0 ? "sm:row-span-2" : ""
+                }`}
+              >
+                <div className="mb-4 flex items-center justify-between gap-3">
+                  <div className="text-sm text-primary">★★★★★</div>
+                  <span className="text-xs text-muted-foreground">5/5</span>
+                </div>
+
+                <p className="text-sm leading-6 text-foreground">
+                  "{review.body}"
+                </p>
+
+                <div className="mt-5 flex items-center gap-3">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary-soft font-display text-sm font-bold text-primary">
+                    {review.name.charAt(0)}
+                  </div>
+
+                  <div>
+                    <div className="text-sm font-semibold text-foreground">
+                      {review.name}
+                    </div>
+                    <div className="text-xs text-muted-foreground">
+                      {review.role}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
     </section>
   );
