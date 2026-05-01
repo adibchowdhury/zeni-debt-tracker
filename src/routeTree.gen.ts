@@ -24,6 +24,8 @@ import { Route as AppDebtsRouteImport } from './routes/app.debts'
 import { Route as PublicTermsRouteImport } from './routes/_public.terms'
 import { Route as PublicSecurityRouteImport } from './routes/_public.security'
 import { Route as PublicPrivacyRouteImport } from './routes/_public.privacy'
+import { Route as PublicPricingRouteImport } from './routes/_public.pricing'
+import { Route as PublicFeaturesRouteImport } from './routes/_public.features'
 import { Route as PublicCookiesRouteImport } from './routes/_public.cookies'
 import { Route as PublicContactRouteImport } from './routes/_public.contact'
 import { Route as PublicAboutRouteImport } from './routes/_public.about'
@@ -102,6 +104,16 @@ const PublicPrivacyRoute = PublicPrivacyRouteImport.update({
   path: '/privacy',
   getParentRoute: () => PublicRoute,
 } as any)
+const PublicPricingRoute = PublicPricingRouteImport.update({
+  id: '/pricing',
+  path: '/pricing',
+  getParentRoute: () => PublicRoute,
+} as any)
+const PublicFeaturesRoute = PublicFeaturesRouteImport.update({
+  id: '/features',
+  path: '/features',
+  getParentRoute: () => PublicRoute,
+} as any)
 const PublicCookiesRoute = PublicCookiesRouteImport.update({
   id: '/cookies',
   path: '/cookies',
@@ -128,6 +140,8 @@ export interface FileRoutesByFullPath {
   '/about': typeof PublicAboutRoute
   '/contact': typeof PublicContactRoute
   '/cookies': typeof PublicCookiesRoute
+  '/features': typeof PublicFeaturesRoute
+  '/pricing': typeof PublicPricingRoute
   '/privacy': typeof PublicPrivacyRoute
   '/security': typeof PublicSecurityRoute
   '/terms': typeof PublicTermsRoute
@@ -145,6 +159,8 @@ export interface FileRoutesByTo {
   '/about': typeof PublicAboutRoute
   '/contact': typeof PublicContactRoute
   '/cookies': typeof PublicCookiesRoute
+  '/features': typeof PublicFeaturesRoute
+  '/pricing': typeof PublicPricingRoute
   '/privacy': typeof PublicPrivacyRoute
   '/security': typeof PublicSecurityRoute
   '/terms': typeof PublicTermsRoute
@@ -166,6 +182,8 @@ export interface FileRoutesById {
   '/_public/about': typeof PublicAboutRoute
   '/_public/contact': typeof PublicContactRoute
   '/_public/cookies': typeof PublicCookiesRoute
+  '/_public/features': typeof PublicFeaturesRoute
+  '/_public/pricing': typeof PublicPricingRoute
   '/_public/privacy': typeof PublicPrivacyRoute
   '/_public/security': typeof PublicSecurityRoute
   '/_public/terms': typeof PublicTermsRoute
@@ -188,6 +206,8 @@ export interface FileRouteTypes {
     | '/about'
     | '/contact'
     | '/cookies'
+    | '/features'
+    | '/pricing'
     | '/privacy'
     | '/security'
     | '/terms'
@@ -205,6 +225,8 @@ export interface FileRouteTypes {
     | '/about'
     | '/contact'
     | '/cookies'
+    | '/features'
+    | '/pricing'
     | '/privacy'
     | '/security'
     | '/terms'
@@ -225,6 +247,8 @@ export interface FileRouteTypes {
     | '/_public/about'
     | '/_public/contact'
     | '/_public/cookies'
+    | '/_public/features'
+    | '/_public/pricing'
     | '/_public/privacy'
     | '/_public/security'
     | '/_public/terms'
@@ -352,6 +376,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PublicPrivacyRouteImport
       parentRoute: typeof PublicRoute
     }
+    '/_public/pricing': {
+      id: '/_public/pricing'
+      path: '/pricing'
+      fullPath: '/pricing'
+      preLoaderRoute: typeof PublicPricingRouteImport
+      parentRoute: typeof PublicRoute
+    }
+    '/_public/features': {
+      id: '/_public/features'
+      path: '/features'
+      fullPath: '/features'
+      preLoaderRoute: typeof PublicFeaturesRouteImport
+      parentRoute: typeof PublicRoute
+    }
     '/_public/cookies': {
       id: '/_public/cookies'
       path: '/cookies'
@@ -380,6 +418,8 @@ interface PublicRouteChildren {
   PublicAboutRoute: typeof PublicAboutRoute
   PublicContactRoute: typeof PublicContactRoute
   PublicCookiesRoute: typeof PublicCookiesRoute
+  PublicFeaturesRoute: typeof PublicFeaturesRoute
+  PublicPricingRoute: typeof PublicPricingRoute
   PublicPrivacyRoute: typeof PublicPrivacyRoute
   PublicSecurityRoute: typeof PublicSecurityRoute
   PublicTermsRoute: typeof PublicTermsRoute
@@ -390,6 +430,8 @@ const PublicRouteChildren: PublicRouteChildren = {
   PublicAboutRoute: PublicAboutRoute,
   PublicContactRoute: PublicContactRoute,
   PublicCookiesRoute: PublicCookiesRoute,
+  PublicFeaturesRoute: PublicFeaturesRoute,
+  PublicPricingRoute: PublicPricingRoute,
   PublicPrivacyRoute: PublicPrivacyRoute,
   PublicSecurityRoute: PublicSecurityRoute,
   PublicTermsRoute: PublicTermsRoute,

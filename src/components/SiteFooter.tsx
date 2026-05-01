@@ -139,7 +139,7 @@ export function SiteFooter() {
 
       {/* Thin orange copyright bar */}
       <div className="bg-primary py-3 text-center text-xs font-medium text-primary-foreground">
-        Copyright © {new Date().getFullYear()} zeni. All rights reserved.
+        Copyright © {new Date().getFullYear()} Zeni. All rights reserved.
       </div>
     </footer>
   );
