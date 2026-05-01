@@ -53,6 +53,7 @@ function Landing() {
   return (
     <div className="min-h-screen bg-background">
       <Hero />
+      <SellingBar />
       <ProblemSection />
       <SolutionSection />
       <HowItWorks />
@@ -107,6 +108,57 @@ function Hero() {
 
         {/* Right — visual */}
         <HeroVisual />
+      </div>
+    </section>
+  );
+}
+
+function SellingBar() {
+  const items = [
+    {
+      icon: ShieldCheck,
+      title: "No bank connection required",
+      body: "Start safely with manual tracking",
+    },
+    {
+      icon: Target,
+      title: "Clear payoff direction",
+      body: "Know what to focus on next",
+    },
+    {
+      icon: Flame,
+      title: "Built for motivation",
+      body: "Streaks, wins, and progress moments",
+    },
+    {
+      icon: Zap,
+      title: "Fast and simple",
+      body: "Track debt without spreadsheets",
+    },
+  ];
+
+  return (
+    <section className="relative z-10 px-5">
+      <div className="mx-auto -mt-8 grid max-w-6xl gap-4 rounded-[2rem] border border-border bg-card/90 p-4 shadow-soft backdrop-blur sm:grid-cols-2 lg:grid-cols-4 lg:p-5">
+        {items.map((item) => (
+          <div
+            key={item.title}
+            className="flex items-center gap-4 rounded-2xl px-3 py-4 transition hover:bg-secondary/70"
+          >
+            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-primary-soft text-primary">
+              <item.icon className="h-5 w-5" />
+            </div>
+
+            <div>
+              <h3 className="text-sm font-semibold text-foreground">
+                {item.title}
+              </h3>
+              <p className="mt-0.5 text-xs leading-5 text-muted-foreground">
+                {item.body}
+              </p>
+            </div>
+          </div>
+        ))}
       </div>
     </section>
   );
