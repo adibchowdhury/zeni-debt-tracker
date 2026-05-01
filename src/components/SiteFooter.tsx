@@ -37,7 +37,7 @@ export function SiteFooter() {
     { label: "How it works", href: "#how-it-works" },
     { label: "Get started", to: "/signup" },
     { label: "About", to: "/about"},
-    { label: "Security", to: "/security"},
+    { label: "How We Protect Your Data", to: "/security"},
     { label: "Contact/Support", to: "/contact"},
   ];
 
