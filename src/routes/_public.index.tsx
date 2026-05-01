@@ -470,9 +470,6 @@ function SolutionSection() {
     <section className="bg-gradient-to-b from-background to-primary-soft/40 py-20 sm:py-24">
       <div className="mx-auto max-w-6xl px-5">
         <div className="mx-auto max-w-2xl text-center">
-          <div className="mb-3 inline-flex rounded-full bg-primary-soft px-3 py-1 text-xs font-semibold uppercase tracking-wider text-primary">
-            How Zeni helps
-          </div>
           <h2 className="font-display text-3xl font-bold tracking-tight sm:text-4xl">
             Clarity, momentum and a date you'll actually{" "}
             <span className="text-primary">circle on the calendar.</span>
@@ -539,17 +536,17 @@ function HowItWorks() {
     {
       n: "1",
       title: "Add your debts",
-      body: "Name, balance, interest, minimum. Done in a minute.",
+      body: "Enter each balance, minimum payment, interest rate, and due date. Zeni organizes everything into one simple view so you know exactly where you stand.",
     },
     {
       n: "2",
-      title: "Track your progress",
-      body: "Log payments and watch the bar move. Every dollar counts.",
+      title: "Choose your payoff plan",
+      body: "Pick snowball for quick wins or avalanche to focus on higher interest first. Zeni turns your choice into a clear order so you know what to attack next.",
     },
     {
       n: "3",
-      title: "Become debt-free",
-      body: "Hit milestones, build streaks, and celebrate every win along the way.",
+      title: "Track payments and build momentum",
+      body: "Log payments, watch your progress update, and see your streaks, milestones, and debt-free date move with you.",
     },
   ];
 
@@ -562,38 +559,56 @@ function HowItWorks() {
         <h2 className="font-display text-3xl font-bold tracking-tight sm:text-4xl">
           Three simple steps to your debt-free date.
         </h2>
+        <p className="mt-3 text-muted-foreground">
+          Zeni gives you a simple payoff system, shows you what to focus on next, and keeps you motivated as your balance goes down.
+        </p>
       </div>
 
-      <div className="relative mt-12 grid gap-5 sm:grid-cols-3">
-        {steps.map((s, i) => {
-          const isLast = i === steps.length - 1;
-          return (
-            <div
-              key={s.n}
-              className="relative overflow-hidden rounded-3xl border border-border bg-card p-6 shadow-soft"
-            >
-              <div className="flex items-center justify-between">
-                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary font-display text-base font-bold text-primary-foreground shadow-glow">
-                  {s.n}
-                </div>
-                {isLast && (
-                  <div
-                    className="flex h-10 w-10 items-center justify-center rounded-full bg-success-soft text-success ring-4 ring-success-soft/40"
-                    role="img"
-                    aria-label="Level completed checkmark"
-                  >
-                    <CheckCircle2 className="h-5 w-5" />
+      <div className="relative mx-auto mt-14 max-w-5xl">
+        <div className="pointer-events-none absolute left-1/2 top-0 hidden h-full w-px -translate-x-1/2 bg-border md:block" />
+
+        <div className="space-y-8 md:space-y-12">
+          {steps.map((s, i) => {
+            const isRight = i % 2 === 1;
+            const isLast = i === steps.length - 1;
+
+            return (
+              <div
+                key={s.n}
+                className={`relative flex ${
+                  isRight ? "md:justify-end" : "md:justify-start"
+                }`}
+              >
+                <div className="pointer-events-none absolute left-1/2 top-8 hidden h-4 w-4 -translate-x-1/2 rounded-full border-4 border-background bg-primary shadow-glow md:block" />
+
+                <div className="relative w-full overflow-hidden rounded-3xl border border-border bg-card p-6 shadow-soft transition-transform hover:-translate-y-1 md:w-[46%]">
+                  <div className="flex items-center justify-between">
+                    <div className="flex h-11 w-11 items-center justify-center rounded-full bg-primary font-display text-base font-bold text-primary-foreground shadow-glow">
+                      {s.n}
+                    </div>
+
+                    {isLast && (
+                      <div
+                        className="flex h-10 w-10 items-center justify-center rounded-full bg-success-soft text-success ring-4 ring-success-soft/40"
+                        role="img"
+                        aria-label="Level completed checkmark"
+                      >
+                        <CheckCircle2 className="h-5 w-5" />
+                      </div>
+                    )}
                   </div>
-                )}
+
+                  <h3 className="mt-5 font-display text-xl font-bold">
+                    {s.title}
+                  </h3>
+                  <p className="mt-2 text-sm leading-6 text-muted-foreground">
+                    {s.body}
+                  </p>
+                </div>
               </div>
-              <h3 className="mt-4 font-display text-lg font-bold">{s.title}</h3>
-              <p className="mt-1 text-sm text-muted-foreground">{s.body}</p>
-              {!isLast && (
-                <ArrowRight className="absolute -right-3 top-1/2 hidden h-5 w-5 -translate-y-1/2 text-primary/60 sm:block" />
-              )}
-            </div>
-          );
-        })}
+            );
+          })}
+        </div>
       </div>
     </section>
   );
