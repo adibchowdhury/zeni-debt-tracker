@@ -84,8 +84,8 @@ function Hero() {
           </h1>
 
           <p className="mt-7 max-w-xl text-base text-muted-foreground sm:text-lg lg:text-xl">
-            A simple debt payoff app that keeps you motivated every step of the way
-            Track your debt, log pyayments, and turn progress into small wins that keep you going. 
+            Pay off debt faster without the stress.
+            Track progress, stay motivated, and turn every payment into a win. 
           </p>
 
           <div className="mt-10 flex flex-col gap-3 sm:flex-row">
