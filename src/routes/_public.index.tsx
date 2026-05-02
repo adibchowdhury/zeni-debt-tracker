@@ -939,10 +939,10 @@ function FinalCTA() {
             It starts with one small step
           </div>
           <h2 className="font-display text-3xl font-extrabold leading-tight text-primary-foreground sm:text-5xl">
-            Start your debt-free journey today.
+            Start your debt-free journey your way.
           </h2>
           <p className="mx-auto mt-3 max-w-xl text-base text-primary-foreground/90 sm:text-lg">
-            Free to try. No bank connection. Just a clear plan and a coach in your pocket.
+            Add your debts and payments manually, or connect your bank account so Zeni can help track transactions and debt payments automatically.
           </p>
           <div className="mt-7 flex flex-col items-center justify-center gap-3 sm:flex-row">
             <Link
@@ -956,7 +956,7 @@ function FinalCTA() {
               to="/login"
               className="inline-flex w-full items-center justify-center rounded-full border border-white/40 px-6 py-3.5 text-base font-medium text-primary-foreground hover:bg-white/10 sm:w-auto"
             >
-              I already have an account
+              See How It Works
             </Link>
           </div>
         </div>
