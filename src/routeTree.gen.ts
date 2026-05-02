@@ -17,6 +17,7 @@ import { Route as AppRouteImport } from './routes/app'
 import { Route as PublicRouteImport } from './routes/_public'
 import { Route as AppIndexRouteImport } from './routes/app.index'
 import { Route as PublicIndexRouteImport } from './routes/_public.index'
+import { Route as AppTransactionsRouteImport } from './routes/app.transactions'
 import { Route as AppStrategyRouteImport } from './routes/app.strategy'
 import { Route as AppSimulatorRouteImport } from './routes/app.simulator'
 import { Route as AppMilestonesRouteImport } from './routes/app.milestones'
@@ -68,6 +69,11 @@ const PublicIndexRoute = PublicIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => PublicRoute,
+} as any)
+const AppTransactionsRoute = AppTransactionsRouteImport.update({
+  id: '/transactions',
+  path: '/transactions',
+  getParentRoute: () => AppRoute,
 } as any)
 const AppStrategyRoute = AppStrategyRouteImport.update({
   id: '/strategy',
@@ -149,6 +155,7 @@ export interface FileRoutesByFullPath {
   '/app/milestones': typeof AppMilestonesRoute
   '/app/simulator': typeof AppSimulatorRoute
   '/app/strategy': typeof AppStrategyRoute
+  '/app/transactions': typeof AppTransactionsRoute
   '/app/': typeof AppIndexRoute
 }
 export interface FileRoutesByTo {
@@ -168,6 +175,7 @@ export interface FileRoutesByTo {
   '/app/milestones': typeof AppMilestonesRoute
   '/app/simulator': typeof AppSimulatorRoute
   '/app/strategy': typeof AppStrategyRoute
+  '/app/transactions': typeof AppTransactionsRoute
   '/': typeof PublicIndexRoute
   '/app': typeof AppIndexRoute
 }
@@ -191,6 +199,7 @@ export interface FileRoutesById {
   '/app/milestones': typeof AppMilestonesRoute
   '/app/simulator': typeof AppSimulatorRoute
   '/app/strategy': typeof AppStrategyRoute
+  '/app/transactions': typeof AppTransactionsRoute
   '/_public/': typeof PublicIndexRoute
   '/app/': typeof AppIndexRoute
 }
@@ -215,6 +224,7 @@ export interface FileRouteTypes {
     | '/app/milestones'
     | '/app/simulator'
     | '/app/strategy'
+    | '/app/transactions'
     | '/app/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -234,6 +244,7 @@ export interface FileRouteTypes {
     | '/app/milestones'
     | '/app/simulator'
     | '/app/strategy'
+    | '/app/transactions'
     | '/'
     | '/app'
   id:
@@ -256,6 +267,7 @@ export interface FileRouteTypes {
     | '/app/milestones'
     | '/app/simulator'
     | '/app/strategy'
+    | '/app/transactions'
     | '/_public/'
     | '/app/'
   fileRoutesById: FileRoutesById
@@ -326,6 +338,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/'
       preLoaderRoute: typeof PublicIndexRouteImport
       parentRoute: typeof PublicRoute
+    }
+    '/app/transactions': {
+      id: '/app/transactions'
+      path: '/transactions'
+      fullPath: '/app/transactions'
+      preLoaderRoute: typeof AppTransactionsRouteImport
+      parentRoute: typeof AppRoute
     }
     '/app/strategy': {
       id: '/app/strategy'
@@ -446,6 +465,7 @@ interface AppRouteChildren {
   AppMilestonesRoute: typeof AppMilestonesRoute
   AppSimulatorRoute: typeof AppSimulatorRoute
   AppStrategyRoute: typeof AppStrategyRoute
+  AppTransactionsRoute: typeof AppTransactionsRoute
   AppIndexRoute: typeof AppIndexRoute
 }
 
@@ -454,6 +474,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppMilestonesRoute: AppMilestonesRoute,
   AppSimulatorRoute: AppSimulatorRoute,
   AppStrategyRoute: AppStrategyRoute,
+  AppTransactionsRoute: AppTransactionsRoute,
   AppIndexRoute: AppIndexRoute,
 }
 

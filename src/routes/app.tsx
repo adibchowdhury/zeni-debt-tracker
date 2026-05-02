@@ -1,6 +1,6 @@
 import { createFileRoute, Link, Outlet, useNavigate, useLocation } from "@tanstack/react-router";
 import { useEffect } from "react";
-import { LayoutDashboard, ListPlus, Target, SlidersHorizontal, LogOut, Trophy } from "lucide-react";
+import { LayoutDashboard, ListPlus, Target, SlidersHorizontal, LogOut, Trophy, Icon, Receipt } from "lucide-react";
 import { useAuth } from "@/lib/auth";
 import { Logo } from "@/components/Logo";
 
@@ -9,8 +9,9 @@ export const Route = createFileRoute("/app")({
 });
 
 const NAV = [
-  { to: "/app", label: "Home", icon: LayoutDashboard, exact: true },
+  { to: "/app", label: "Dashboard", icon: LayoutDashboard, exact: true },
   { to: "/app/debts", label: "Debts", icon: ListPlus, exact: false },
+  { to: "/app/transactions", label: "Transactions", icon: Receipt, exact: false },
   { to: "/app/strategy", label: "Plan", icon: Target, exact: false },
   { to: "/app/simulator", label: "What if", icon: SlidersHorizontal, exact: false },
   { to: "/app/milestones", label: "Wins", icon: Trophy, exact: false },
