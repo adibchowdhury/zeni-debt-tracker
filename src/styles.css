@@ -201,7 +201,26 @@
   100% { transform: translateX(400%); }
 }
 
+@keyframes milestone-pop {
+  0% {
+    transform: scale(0.94);
+    opacity: 0.88;
+  }
+  55% {
+    transform: scale(1.025);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
 
 .animate-pulse-glow {
   animation: pulse-glow 2s ease-out infinite;
+}
+
+.animate-milestone-pop {
+  animation: milestone-pop 0.72s cubic-bezier(0.34, 1.56, 0.64, 1) both;
 }

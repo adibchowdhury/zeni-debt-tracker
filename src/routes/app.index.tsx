@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { ArrowRight, Plus, TrendingDown, Wallet, Sparkles, Flame, Trophy, Bell, Zap, Heart } from "lucide-react";
-import { useDebtStore, type Debt, type Strategy } from "@/lib/storage";
+import { useDebtStore, type Debt, type Payment, type Strategy } from "@/lib/storage";
 import { useAuth } from "@/lib/auth";
 import { useEngagement } from "@/lib/engagement";
 import {
