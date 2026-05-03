@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { Plus, Trash2, Pencil, X } from "lucide-react";
 import { useDebtStore, type Debt, DEBT_TYPES, type DebtType } from "@/lib/storage";
-import { formatMoney } from "@/lib/debt-math";
+import { debtPayoffPercent, formatMoney, paidTowardDebt } from "@/lib/debt-math";
 import { ProgressBar } from "@/components/debt/ProgressBar";
 import { toast } from "sonner";
 
@@ -45,8 +45,8 @@ function DebtsPage() {
       ) : (
         <div className="space-y-3">
           {store.debts.map((d) => {
-            const paid = d.initialBalance - d.balance;
-            const pct = d.initialBalance > 0 ? Math.min(100, (paid / d.initialBalance) * 100) : 0;
+            const paid = paidTowardDebt(d, store.payments);
+            const pct = debtPayoffPercent(d, store.payments);
             return (
               <div key={d.id} className="rounded-2xl border border-border bg-card p-5 shadow-soft">
                 <div className="flex items-start justify-between gap-3">

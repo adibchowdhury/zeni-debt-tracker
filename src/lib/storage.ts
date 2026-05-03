@@ -159,14 +159,18 @@ export function useDebtStore(): DebtStore & DebtStoreActions {
     if (!user) return { cleared: false, debtName: "" };
     const debt = state.debts.find((d) => d.id === debtId);
     const debtName = debt?.name ?? "";
-    const willClear = !!debt && debt.balance > 0 && debt.balance - amount <= 0.005;
+    const remainingAfter = !!debt ? Math.max(0, debt.balance - amount) : 0;
+    const willClear =
+      !!debt && debt.balance > 0 && remainingAfter <= 0.005;
 
-    await supabase.from("payments").insert({
+    const { error } = await supabase.from("payments").insert({
       user_id: user.id,
       debt_id: debtId,
       amount,
     });
-    bump();
+    if (error) throw error;
+
+    await refresh();
     return { cleared: willClear, debtName };
   };
 

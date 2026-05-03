@@ -1,10 +1,18 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { ArrowRight, Plus, TrendingDown, Wallet, Sparkles, Flame, Trophy, Bell, Zap, Heart } from "lucide-react";
-import { useDebtStore } from "@/lib/storage";
+import { useDebtStore, type Debt, type Strategy } from "@/lib/storage";
 import { useAuth } from "@/lib/auth";
 import { useEngagement } from "@/lib/engagement";
-import { formatMoney } from "@/lib/debt-math";
+import {
+  debtPayoffPercent,
+  formatDate,
+  formatMoney,
+  formatMonths,
+  paidTowardDebt,
+  payoffDateAfterMonths,
+  payoffRoadmapOrder,
+} from "@/lib/debt-math";
 import { ProgressBar } from "@/components/debt/ProgressBar";
 import { LogPaymentDialog } from "@/components/debt/LogPaymentDialog";
 import { ActivityFeed } from "@/components/debt/ActivityFeed";
@@ -107,10 +115,18 @@ function Dashboard() {
       {/* 1. DEBT-FREE COUNTDOWN — hero of the dashboard */}
       <CountdownHero countdown={countdown} />
 
-      {/* 2. STREAK */}
+      {/* 2. FOCUS DEBT — avalanche/snowball target */}
+      <FocusDebtSection
+        debts={debts}
+        payments={payments}
+        strategy={strategy}
+        extraMonthly={extraMonthly}
+      />
+
+      {/* 3. STREAK */}
       <StreakBanner streak={eng.weeklyStreak} active={eng.thisWeekHasExtra} />
 
-      {/* 3. PRIMARY ACTION */}
+      {/* 4. PRIMARY ACTION */}
       <section className="rounded-3xl border border-border bg-card p-6 shadow-soft sm:p-8">
         <div className="text-xs uppercase tracking-wider text-muted-foreground">{greeting}</div>
         <h1 className="mt-1 font-display text-2xl font-bold tracking-tight sm:text-3xl">
@@ -135,10 +151,10 @@ function Dashboard() {
         </LogPaymentDialog>
       </section>
 
-      {/* 4. SMARTER NUDGE */}
+      {/* 5. SMARTER NUDGE */}
       <SmartNudge eng={eng} totalRemaining={countdown.totalRemaining} />
 
-      {/* 5. PERSONALIZED INSIGHTS */}
+      {/* 6. PERSONALIZED INSIGHTS */}
       {insights.length > 0 && (
         <section className="grid gap-3 sm:grid-cols-2">
           {insights.map((ins) => (
@@ -147,16 +163,16 @@ function Dashboard() {
         </section>
       )}
 
-      {/* 6. WEEKLY CHALLENGE */}
+      {/* 7. WEEKLY CHALLENGE */}
       <ChallengeCard eng={eng} />
 
-      {/* 7. KEY STATS */}
+      {/* 8. KEY STATS */}
       <section className="grid gap-3 sm:grid-cols-2">
         <Stat icon={Wallet} label="Still to go" value={formatMoney(countdown.totalRemaining)} tone="default" />
         <Stat icon={TrendingDown} label="Paid off" value={formatMoney(countdown.totalPaid)} tone="success" />
       </section>
 
-      {/* 8. WHAT-IF SIMULATOR */}
+      {/* 9. WHAT-IF SIMULATOR */}
       <Link
         to="/app/simulator"
         className="flex items-center gap-4 rounded-3xl border border-primary/30 bg-gradient-to-br from-primary-soft/60 to-card p-5 shadow-soft transition-transform hover:-translate-y-0.5 sm:p-6"
@@ -171,7 +187,7 @@ function Dashboard() {
         <ArrowRight className="hidden h-5 w-5 text-primary sm:block" />
       </Link>
 
-      {/* 9. PERSONAL BESTS */}
+      {/* 10. PERSONAL BESTS */}
       <section className="grid gap-3 sm:grid-cols-2">
         <BestChip
           label="Best week"
@@ -186,10 +202,10 @@ function Dashboard() {
         />
       </section>
 
-      {/* 10. LIFE AFTER DEBT — gentle, only when near finish line */}
+      {/* 11. LIFE AFTER DEBT — gentle, only when near finish line */}
       {nearComplete && <LifeAfterDebt pct={countdown.pct} />}
 
-      {/* 11. DEBTS */}
+      {/* 12. DEBTS */}
       <section>
         <div className="mb-3 flex items-center justify-between">
           <h2 className="font-display text-lg font-semibold">Your debts</h2>
@@ -199,8 +215,8 @@ function Dashboard() {
         </div>
         <div className="space-y-3">
           {debts.map((d) => {
-            const paid = d.initialBalance - d.balance;
-            const pct = d.initialBalance > 0 ? Math.min(100, (paid / d.initialBalance) * 100) : 0;
+            const paid = paidTowardDebt(d, payments);
+            const pct = debtPayoffPercent(d, payments);
             return (
               <div key={d.id} className="rounded-2xl border border-border bg-card p-5 shadow-soft">
                 <div className="flex items-baseline justify-between gap-3">
@@ -223,11 +239,142 @@ function Dashboard() {
         </div>
       </section>
 
-      {/* 12. ACTIVITY FEED */}
+      {/* 13. ACTIVITY FEED */}
       <ActivityFeed activity={eng.activity} />
 
       <MobileStickyCTA />
     </div>
+  );
+}
+
+const MAX_SIM_MONTHS = 12 * 80;
+
+function FocusDebtSection({
+  debts,
+  payments,
+  strategy,
+  extraMonthly,
+}: {
+  debts: Debt[];
+  payments: Payment[];
+  strategy: Strategy;
+  extraMonthly: number;
+}) {
+  const { ordered, sim } = useMemo(
+    () => payoffRoadmapOrder(debts, strategy, extraMonthly),
+    [debts, strategy, extraMonthly],
+  );
+
+  const focusDebt = ordered[0] ?? null;
+  const nextDebt = ordered[1] ?? null;
+
+  const description =
+    strategy === "avalanche"
+      ? "This is your highest-rate balance among what's left. Paying it down first saves the most interest, then roll that payment into the next debt."
+      : "This is your smallest balance. Clearing it first builds momentum, then roll that payment into the next debt.";
+
+  if (!focusDebt) {
+    return (
+      <section className="rounded-3xl border border-border bg-card p-6 shadow-soft sm:p-8">
+        <p className="text-center text-sm text-muted-foreground">
+          No active focus — all your debts are at zero balance. Nice work.
+        </p>
+        <div className="mt-4 text-center">
+          <Link to="/app/strategy" className="text-sm font-medium text-primary hover:underline">
+            Plan settings
+          </Link>
+        </div>
+      </section>
+    );
+  }
+
+  const pct = debtPayoffPercent(focusDebt, payments);
+  const monthsUntil = sim.perDebtMonths[focusDebt.id];
+  const payoffOk =
+    typeof monthsUntil === "number" &&
+    Number.isFinite(monthsUntil) &&
+    monthsUntil >= 1 &&
+    sim.months < MAX_SIM_MONTHS;
+
+  const payoffLabel = payoffOk ? formatDate(payoffDateAfterMonths(monthsUntil)) : "—";
+  const monthsLeftLabel = payoffOk ? formatMonths(monthsUntil) : "—";
+
+  return (
+    <section>
+      <div className="grid gap-4 lg:grid-cols-3">
+        <div className="rounded-3xl border border-border bg-card p-5 shadow-soft sm:p-7 lg:col-span-2">
+          <div className="flex flex-wrap items-start justify-between gap-3">
+            <div className="inline-flex items-center gap-1.5 rounded-full bg-violet-600 px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider text-white shadow-sm dark:bg-violet-500">
+              <Flame className="h-3.5 w-3.5 shrink-0" aria-hidden />
+              Current target
+            </div>
+            <Link to="/app/strategy" className="shrink-0 pt-0.5 text-xs font-medium text-primary hover:underline">
+              Plan settings
+            </Link>
+          </div>
+
+          <h2 className="mt-4 font-display text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
+            {focusDebt.name}
+          </h2>
+          <p className="mt-2 max-w-xl text-sm leading-relaxed text-muted-foreground">{description}</p>
+
+          <div className="mt-6">
+            <div className="text-xs font-medium uppercase tracking-wider text-muted-foreground">Balance</div>
+            <div className="mt-1 font-display text-3xl font-bold tabular-nums tracking-tight sm:text-4xl">
+              {formatMoney(focusDebt.balance)}
+            </div>
+          </div>
+
+          <div className="mt-6 grid grid-cols-3 gap-2 sm:gap-3">
+            <div className="rounded-xl border border-border/80 bg-muted/40 px-3 py-3 dark:bg-muted/25">
+              <div className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">Monthly</div>
+              <div className="mt-1 font-display text-base font-bold tabular-nums sm:text-lg">
+                {formatMoney(focusDebt.minPayment)}
+              </div>
+            </div>
+            <div className="rounded-xl border border-border/80 bg-muted/40 px-3 py-3 dark:bg-muted/25">
+              <div className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">APR</div>
+              <div className="mt-1 font-display text-base font-bold tabular-nums sm:text-lg">
+                {focusDebt.interestRate}%
+              </div>
+            </div>
+            <div className="rounded-xl border border-border/80 bg-muted/40 px-3 py-3 dark:bg-muted/25">
+              <div className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">Payoff</div>
+              <div className="mt-1 font-display text-base font-bold tabular-nums sm:text-lg">{payoffLabel}</div>
+            </div>
+          </div>
+
+          <div className="mt-6 space-y-2">
+            <div className="flex items-center justify-between text-xs font-medium text-muted-foreground">
+              <span>{pct.toFixed(0)}% paid</span>
+              <span className="tabular-nums">{monthsLeftLabel === "—" ? "—" : `${monthsLeftLabel} left`}</span>
+            </div>
+            <ProgressBar value={pct} />
+          </div>
+        </div>
+
+        {nextDebt ? (
+          <div className="flex flex-col rounded-3xl border border-border bg-card p-5 shadow-soft sm:p-6 lg:col-span-1">
+            <div className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Up next</div>
+            <h3 className="mt-3 font-display text-lg font-bold text-foreground">{nextDebt.name}</h3>
+            <p className="mt-0.5 text-sm text-muted-foreground">{nextDebt.debtType}</p>
+            <div className="mt-4 font-display text-2xl font-bold tabular-nums">{formatMoney(nextDebt.balance)}</div>
+            <p className="mt-2 text-sm text-muted-foreground">
+              {formatMoney(nextDebt.minPayment)}/mo · {nextDebt.interestRate}% APR
+            </p>
+            <div className="mt-auto flex items-start gap-2 border-t border-border pt-4 text-xs text-muted-foreground">
+              <ArrowRight className="mt-0.5 h-3.5 w-3.5 shrink-0 text-muted-foreground" aria-hidden />
+              <span>Starts after {focusDebt.name} is cleared</span>
+            </div>
+          </div>
+        ) : (
+          <div className="flex flex-col justify-center rounded-3xl border border-dashed border-border bg-muted/20 p-5 text-center sm:p-6 lg:col-span-1">
+            <p className="text-sm font-medium text-foreground">Last debt on your plan</p>
+            <p className="mt-1 text-xs text-muted-foreground">Once it’s gone, you’re debt-free.</p>
+          </div>
+        )}
+      </div>
+    </section>
   );
 }
 

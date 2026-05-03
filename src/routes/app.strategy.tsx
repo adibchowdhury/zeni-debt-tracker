@@ -3,6 +3,7 @@ import { useMemo } from "react";
 import { Snowflake, Mountain, Check } from "lucide-react";
 import { useDebtStore, type Strategy } from "@/lib/storage";
 import { simulatePayoff, formatMoney, formatMonths } from "@/lib/debt-math";
+import { PayoffRoadmap } from "@/components/debt/PayoffRoadmap";
 
 export const Route = createFileRoute("/app/strategy")({
   component: StrategyPage,
@@ -10,7 +11,7 @@ export const Route = createFileRoute("/app/strategy")({
 
 function StrategyPage() {
   const store = useDebtStore();
-  const { debts, strategy, extraMonthly } = store;
+  const { debts, payments, strategy, extraMonthly } = store;
 
   const compare = useMemo(() => {
     const snow = simulatePayoff(debts, "snowball", extraMonthly);
@@ -39,30 +40,39 @@ function StrategyPage() {
           <p className="text-muted-foreground">Add a debt first to see your plan.</p>
         </div>
       ) : (
-        <div className="grid gap-4 sm:grid-cols-2">
-          <StrategyCard
-            id="avalanche"
-            title="Avalanche"
-            tagline="Math-optimal. Save more interest."
-            icon={Mountain}
-            description="Pay off the highest interest rate first. Saves the most money over time."
-            result={compare.ava}
-            selected={strategy === "avalanche"}
-            recommended={recommended === "avalanche"}
-            onSelect={() => choose("avalanche")}
+        <>
+          <div className="grid gap-4 sm:grid-cols-2">
+            <StrategyCard
+              id="avalanche"
+              title="Avalanche"
+              tagline="Math-optimal. Save more interest."
+              icon={Mountain}
+              description="Pay off the highest interest rate first. Saves the most money over time."
+              result={compare.ava}
+              selected={strategy === "avalanche"}
+              recommended={recommended === "avalanche"}
+              onSelect={() => choose("avalanche")}
+            />
+            <StrategyCard
+              id="snowball"
+              title="Snowball"
+              tagline="Quick wins. Big motivation."
+              icon={Snowflake}
+              description="Pay off the smallest balance first. Builds momentum fast."
+              result={compare.snow}
+              selected={strategy === "snowball"}
+              recommended={recommended === "snowball"}
+              onSelect={() => choose("snowball")}
+            />
+          </div>
+
+          <PayoffRoadmap
+            debts={debts}
+            payments={payments}
+            strategy={strategy}
+            extraMonthly={extraMonthly}
           />
-          <StrategyCard
-            id="snowball"
-            title="Snowball"
-            tagline="Quick wins. Big motivation."
-            icon={Snowflake}
-            description="Pay off the smallest balance first. Builds momentum fast."
-            result={compare.snow}
-            selected={strategy === "snowball"}
-            recommended={recommended === "snowball"}
-            onSelect={() => choose("snowball")}
-          />
-        </div>
+        </>
       )}
     </div>
   );
