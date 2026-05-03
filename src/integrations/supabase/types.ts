@@ -196,30 +196,37 @@ export type Database = {
       profiles: {
         Row: {
           created_at: string
+          debt_free_reason: string | null
           display_name: string | null
           extra_monthly: number
           id: string
+          onboarding_completed: boolean
           strategy: string
           updated_at: string
         }
         Insert: {
           created_at?: string
+          debt_free_reason?: string | null
           display_name?: string | null
           extra_monthly?: number
           id: string
+          onboarding_completed?: boolean
           strategy?: string
           updated_at?: string
         }
         Update: {
           created_at?: string
+          debt_free_reason?: string | null
           display_name?: string | null
           extra_monthly?: number
           id?: string
+          onboarding_completed?: boolean
           strategy?: string
           updated_at?: string
         }
         Relationships: []
       }
+
       streaks: {
         Row: {
           created_at: string

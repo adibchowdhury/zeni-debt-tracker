@@ -1,8 +1,9 @@
 import { createFileRoute, Link, Outlet, useNavigate, useLocation } from "@tanstack/react-router";
 import { useEffect } from "react";
-import { LayoutDashboard, ListPlus, Target, SlidersHorizontal, LogOut, Trophy, Icon, Receipt } from "lucide-react";
+import { LayoutDashboard, ListPlus, Target, SlidersHorizontal, LogOut, Trophy, Receipt } from "lucide-react";
 import { useAuth } from "@/lib/auth";
 import { Logo } from "@/components/Logo";
+import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/app")({
   component: AppLayout,
@@ -23,10 +24,27 @@ function AppLayout() {
   const location = useLocation();
 
   useEffect(() => {
-    if (!loading && !user) {
+    if (loading) return;
+    if (!user) {
       navigate({ to: "/login" });
+      return;
     }
+    let cancelled = false;
+    (async () => {
+      const { data } = await supabase
+        .from("profiles")
+        .select("onboarding_completed")
+        .eq("id", user.id)
+        .maybeSingle();
+      if (!cancelled && data && !data.onboarding_completed) {
+        navigate({ to: "/onboarding" });
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
   }, [loading, user, navigate]);
+
 
   const logout = async () => {
     await signOut();
