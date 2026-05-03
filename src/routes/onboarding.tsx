@@ -71,13 +71,12 @@ function OnboardingPage() {
 
   const totalSteps = 4;
 
-  const reasonValue = reason === "Custom" ? customReason.trim() : reason ?? "";
+  const reasonValue = reason === "Custom" ? customReason.trim() : (reason ?? "");
   const canContinueStep1 =
     reason !== null && (reason !== "Custom" || customReason.trim().length > 0);
 
   const balanceNum = parseFloat(debt.balance.replace(/,/g, "."));
-  const canContinueStep2 =
-    debt.name.trim().length > 0 && !isNaN(balanceNum) && balanceNum > 0;
+  const canContinueStep2 = debt.name.trim().length > 0 && !isNaN(balanceNum) && balanceNum > 0;
 
   const extraNum = parseFloat((extra || "0").replace(/,/g, "."));
   const canContinueStep3 = !isNaN(extraNum) && extraNum >= 0;
@@ -177,9 +176,7 @@ function OnboardingPage() {
             <span>
               Step {step} of {totalSteps}
             </span>
-            <span className="text-primary">
-              {Math.round((step / totalSteps) * 100)}%
-            </span>
+            <span className="text-primary">{Math.round((step / totalSteps) * 100)}%</span>
           </div>
           <ProgressBar value={(step / totalSteps) * 100} />
         </div>
@@ -270,9 +267,7 @@ function OnboardingPage() {
                 <Field
                   label="Balance"
                   value={debt.balance}
-                  onChange={(v) =>
-                    setDebt({ ...debt, balance: v.replace(/[^0-9.,]/g, "") })
-                  }
+                  onChange={(v) => setDebt({ ...debt, balance: v.replace(/[^0-9.,]/g, "") })}
                   placeholder="2500"
                   inputMode="decimal"
                   prefix="$"
@@ -280,9 +275,7 @@ function OnboardingPage() {
                 <Field
                   label="Interest rate (optional)"
                   value={debt.interestRate}
-                  onChange={(v) =>
-                    setDebt({ ...debt, interestRate: v.replace(/[^0-9.,]/g, "") })
-                  }
+                  onChange={(v) => setDebt({ ...debt, interestRate: v.replace(/[^0-9.,]/g, "") })}
                   placeholder="19.99"
                   inputMode="decimal"
                   suffix="%"
@@ -290,9 +283,7 @@ function OnboardingPage() {
                 <Field
                   label="Minimum payment (optional)"
                   value={debt.minPayment}
-                  onChange={(v) =>
-                    setDebt({ ...debt, minPayment: v.replace(/[^0-9.,]/g, "") })
-                  }
+                  onChange={(v) => setDebt({ ...debt, minPayment: v.replace(/[^0-9.,]/g, "") })}
                   placeholder="50"
                   inputMode="decimal"
                   prefix="$"
@@ -327,9 +318,7 @@ function OnboardingPage() {
                 prefix="$"
                 autoFocus
               />
-              <p className="text-xs text-muted-foreground">
-                Even $50/month makes a difference.
-              </p>
+              <p className="text-xs text-muted-foreground">Even $50/month makes a difference.</p>
 
               <ContinueButton
                 disabled={!canContinueStep3 || submitting}
@@ -407,8 +396,8 @@ function OnboardingPage() {
                 i + 1 === step
                   ? "w-6 bg-primary"
                   : i + 1 < step
-                  ? "w-1.5 bg-primary/60"
-                  : "w-1.5 bg-border"
+                    ? "w-1.5 bg-primary/60"
+                    : "w-1.5 bg-border"
               }`}
             />
           ))}

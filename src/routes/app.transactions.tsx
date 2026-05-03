@@ -18,15 +18,9 @@ function TransactionsPage() {
   }, [debts]);
 
   // newest first
-  const sorted = useMemo(
-    () => [...payments].sort((a, b) => b.date - a.date),
-    [payments],
-  );
+  const sorted = useMemo(() => [...payments].sort((a, b) => b.date - a.date), [payments]);
 
-  const total = useMemo(
-    () => sorted.reduce((sum, p) => sum + p.amount, 0),
-    [sorted],
-  );
+  const total = useMemo(() => sorted.reduce((sum, p) => sum + p.amount, 0), [sorted]);
 
   // Group by month label
   const groups = useMemo(() => {
@@ -51,20 +45,14 @@ function TransactionsPage() {
           >
             <ArrowLeft className="h-3.5 w-3.5" /> Back
           </Link>
-          <h1 className="mt-2 font-display text-2xl font-bold sm:text-3xl">
-            Transactions
-          </h1>
-          <p className="text-sm text-muted-foreground">
-            Every payment you've logged.
-          </p>
+          <h1 className="mt-2 font-display text-2xl font-bold sm:text-3xl">Transactions</h1>
+          <p className="text-sm text-muted-foreground">Every payment you've logged.</p>
         </div>
         <div className="rounded-2xl bg-card px-4 py-3 text-right shadow-soft">
           <div className="text-[11px] uppercase tracking-wide text-muted-foreground">
             Total paid
           </div>
-          <div className="font-display text-xl font-bold text-primary">
-            {formatMoney(total)}
-          </div>
+          <div className="font-display text-xl font-bold text-primary">{formatMoney(total)}</div>
         </div>
       </div>
 
@@ -87,19 +75,12 @@ function TransactionsPage() {
             return (
               <section key={month}>
                 <div className="mb-2 flex items-baseline justify-between px-1">
-                  <h2 className="text-sm font-semibold text-muted-foreground">
-                    {month}
-                  </h2>
-                  <span className="text-xs text-muted-foreground">
-                    {formatMoney(monthTotal)}
-                  </span>
+                  <h2 className="text-sm font-semibold text-muted-foreground">{month}</h2>
+                  <span className="text-xs text-muted-foreground">{formatMoney(monthTotal)}</span>
                 </div>
                 <ul className="divide-y divide-border overflow-hidden rounded-2xl bg-card shadow-soft">
                   {items.map((p) => (
-                    <li
-                      key={p.id}
-                      className="flex items-center justify-between gap-3 px-4 py-3"
-                    >
+                    <li key={p.id} className="flex items-center justify-between gap-3 px-4 py-3">
                       <div className="min-w-0">
                         <div className="truncate font-medium">
                           {debtNameById.get(p.debtId) ?? "Unknown debt"}

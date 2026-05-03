@@ -27,7 +27,7 @@ export function AnimatedSection({
           observer.unobserve(el);
         }
       },
-      { threshold: 0.15 }
+      { threshold: 0.15 },
     );
 
     observer.observe(el);

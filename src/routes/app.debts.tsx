@@ -59,7 +59,9 @@ function DebtsPage() {
                   </div>
                   <div className="text-right">
                     <div className="font-display text-lg font-bold">{formatMoney(d.balance)}</div>
-                    <div className="text-xs text-muted-foreground">of {formatMoney(d.initialBalance)}</div>
+                    <div className="text-xs text-muted-foreground">
+                      of {formatMoney(d.initialBalance)}
+                    </div>
                   </div>
                 </div>
                 <div className="mt-3">
@@ -155,7 +157,10 @@ function DebtForm({ debt, onClose }: { debt: Debt | null; onClose: () => void })
       >
         <div className="mb-4 flex items-center justify-between">
           <h2 className="font-display text-xl font-bold">{debt ? "Edit debt" : "Add a debt"}</h2>
-          <button onClick={onClose} className="rounded-full p-1 text-muted-foreground hover:bg-secondary">
+          <button
+            onClick={onClose}
+            className="rounded-full p-1 text-muted-foreground hover:bg-secondary"
+          >
             <X className="h-5 w-5" />
           </button>
         </div>

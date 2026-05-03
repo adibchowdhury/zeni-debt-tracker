@@ -29,9 +29,7 @@ export function InsightCard({ insight }: { insight: Insight }) {
         <Icon className="h-4 w-4" />
       </div>
       <div className="flex-1">
-        <div className="text-[10px] font-semibold uppercase tracking-wider opacity-70">
-          Insight
-        </div>
+        <div className="text-[10px] font-semibold uppercase tracking-wider opacity-70">Insight</div>
         <div className="font-display text-sm font-bold text-foreground">{insight.title}</div>
         <div className="mt-0.5 text-sm text-muted-foreground">{insight.body}</div>
       </div>

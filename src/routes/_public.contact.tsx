@@ -8,7 +8,10 @@ export const Route = createFileRoute("/_public/contact")({
   head: () => ({
     meta: [
       { title: "Contact — Zeni Personal Finance" },
-      { name: "description", content: "Have questions? We're here to help. Reach out to the Zeni team." },
+      {
+        name: "description",
+        content: "Have questions? We're here to help. Reach out to the Zeni team.",
+      },
       { property: "og:title", content: "Contact — Zeni Personal Finance" },
       { property: "og:description", content: "Questions about Zeni? We'd love to hear from you." },
     ],
@@ -33,7 +36,8 @@ function ContactPage() {
             Get in <span className="text-gradient-primary">Touch</span>
           </h1>
           <p className="mx-auto mt-4 max-w-2xl text-lg text-muted-foreground">
-            Questions, feedback, or just want to say hi? We're real people and we'd love to hear from you.
+            Questions, feedback, or just want to say hi? We're real people and we'd love to hear
+            from you.
           </p>
         </AnimatedSection>
 
@@ -50,7 +54,9 @@ function ContactPage() {
                     <item.icon className="h-5 w-5 text-primary" />
                   </div>
                   <div>
-                    <h3 className="font-display text-sm font-semibold text-foreground">{item.title}</h3>
+                    <h3 className="font-display text-sm font-semibold text-foreground">
+                      {item.title}
+                    </h3>
                     <p className="mt-1 text-sm text-muted-foreground">{item.detail}</p>
                   </div>
                 </div>
@@ -71,8 +77,12 @@ function ContactPage() {
                   <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-success/10">
                     <Mail className="h-8 w-8 text-success" />
                   </div>
-                  <h3 className="font-display text-xl font-semibold text-foreground">Message Sent!</h3>
-                  <p className="mt-2 text-sm text-muted-foreground">We'll get back to you within 24 hours.</p>
+                  <h3 className="font-display text-xl font-semibold text-foreground">
+                    Message Sent!
+                  </h3>
+                  <p className="mt-2 text-sm text-muted-foreground">
+                    We'll get back to you within 24 hours.
+                  </p>
                 </div>
               ) : (
                 <form
@@ -84,7 +94,9 @@ function ContactPage() {
                 >
                   <div className="grid gap-6 sm:grid-cols-2">
                     <div>
-                      <label className="mb-2 block text-sm font-medium text-foreground">First Name</label>
+                      <label className="mb-2 block text-sm font-medium text-foreground">
+                        First Name
+                      </label>
                       <input
                         type="text"
                         required
@@ -93,7 +105,9 @@ function ContactPage() {
                       />
                     </div>
                     <div>
-                      <label className="mb-2 block text-sm font-medium text-foreground">Last Name</label>
+                      <label className="mb-2 block text-sm font-medium text-foreground">
+                        Last Name
+                      </label>
                       <input
                         type="text"
                         required
@@ -112,7 +126,9 @@ function ContactPage() {
                     />
                   </div>
                   <div>
-                    <label className="mb-2 block text-sm font-medium text-foreground">Message</label>
+                    <label className="mb-2 block text-sm font-medium text-foreground">
+                      Message
+                    </label>
                     <textarea
                       required
                       rows={5}

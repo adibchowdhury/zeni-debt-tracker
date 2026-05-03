@@ -18,7 +18,10 @@ export function WinsPageConfetti({ active }: { active: boolean }) {
 
   const dots = Array.from({ length: 18 });
   return (
-    <div className="pointer-events-none fixed inset-x-0 top-0 z-40 mx-auto flex h-48 max-w-lg justify-center px-6" aria-hidden>
+    <div
+      className="pointer-events-none fixed inset-x-0 top-0 z-40 mx-auto flex h-48 max-w-lg justify-center px-6"
+      aria-hidden
+    >
       <div className="relative h-full w-full overflow-hidden rounded-b-[3rem]">
         {dots.map((_, i) => {
           const left = ((i * 51) % 100) / 100;

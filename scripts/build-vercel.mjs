@@ -119,10 +119,7 @@ export default async function handler(req, res) {
 
 await writeFile(path.join(fnDir, "index.mjs"), handler);
 
-await writeFile(
-  path.join(fnDir, "package.json"),
-  JSON.stringify({ type: "module" }, null, 2),
-);
+await writeFile(path.join(fnDir, "package.json"), JSON.stringify({ type: "module" }, null, 2));
 
 await writeFile(
   path.join(fnDir, ".vc-config.json"),

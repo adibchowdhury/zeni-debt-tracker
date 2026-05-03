@@ -98,9 +98,7 @@ export function WinsMilestoneCard({
       initial={reduce ? { opacity: 0 } : { opacity: 0, y: 18, scale: 0.98 }}
       animate={{ opacity: 1, y: 0, scale: 1 }}
       transition={
-        reduce
-          ? { duration: 0.2 }
-          : { duration: 0.38, delay: index * 0.04, ease: "easeOut" }
+        reduce ? { duration: 0.2 } : { duration: 0.38, delay: index * 0.04, ease: "easeOut" }
       }
       whileHover={hoverLift}
       onHoverStart={() => setHovered(true)}
@@ -110,14 +108,19 @@ export function WinsMilestoneCard({
         achieved && !reduce && !isMajorVisual
           ? "hover:shadow-[0_18px_42px_rgba(249,115,22,0.22)]"
           : "",
-        achieved && !reduce && isMajorVisual ? "hover:shadow-[0_22px_50px_rgba(234,88,12,0.26)]" : "",
+        achieved && !reduce && isMajorVisual
+          ? "hover:shadow-[0_22px_50px_rgba(234,88,12,0.26)]"
+          : "",
         justUnlocked && achieved && !reduce ? "animate-milestone-pop" : "",
       ]
         .filter(Boolean)
         .join(" ")}
     >
       {achieved && !isMajorVisual && (
-        <div className="pointer-events-none absolute -right-6 -top-6 h-24 w-24 rounded-full bg-[#F97316]/10 blur-2xl" aria-hidden />
+        <div
+          className="pointer-events-none absolute -right-6 -top-6 h-24 w-24 rounded-full bg-[#F97316]/10 blur-2xl"
+          aria-hidden
+        />
       )}
 
       <div className={`relative flex flex-col gap-4 sm:flex-row sm:gap-5 ${padded}`}>
@@ -145,16 +148,12 @@ export function WinsMilestoneCard({
             className={`shrink-0 ${iconInnerClass}`}
             style={{ width: iconSize, height: iconSize }}
             animate={
-              reduce || !achieved
-                ? {}
-                : { rotate: hovered ? -6 : 0, scale: hovered ? 1.08 : 1 }
+              reduce || !achieved ? {} : { rotate: hovered ? -6 : 0, scale: hovered ? 1.08 : 1 }
             }
             transition={{ type: "spring", stiffness: 400, damping: 22 }}
           >
             <Icon
-              className={
-                isMajorVisual ? "h-9 w-9" : tier === "big" ? "h-8 w-8" : "h-7 w-7"
-              }
+              className={isMajorVisual ? "h-9 w-9" : tier === "big" ? "h-8 w-8" : "h-7 w-7"}
               strokeWidth={1.85}
               aria-hidden
             />
@@ -172,7 +171,11 @@ export function WinsMilestoneCard({
           <div className="flex flex-wrap items-baseline gap-2">
             <h3
               className={`font-display font-bold tracking-tight ${
-                isMajorVisual ? "text-2xl sm:text-3xl" : tier === "big" ? "text-xl sm:text-2xl" : "text-lg sm:text-xl"
+                isMajorVisual
+                  ? "text-2xl sm:text-3xl"
+                  : tier === "big"
+                    ? "text-xl sm:text-2xl"
+                    : "text-lg sm:text-xl"
               } ${achieved ? "text-foreground" : "text-[#57534E] dark:text-zinc-400"}`}
             >
               {title}

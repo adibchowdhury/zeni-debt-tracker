@@ -72,8 +72,7 @@ function MilestonesPage() {
           achieved = u.has("first-clear") || debtsCleared >= 1;
           break;
         case "all-clear":
-          achieved =
-            u.has("all-clear") || (debts.length > 0 && debtsCleared === debts.length);
+          achieved = u.has("all-clear") || (debts.length > 0 && debtsCleared === debts.length);
           break;
         default:
           break;
@@ -199,17 +198,22 @@ function MilestonesPage() {
               <Sparkles className="h-5 w-5" aria-hidden />
               <span className="text-[11px] font-bold uppercase tracking-widest">Your journey</span>
             </div>
-            <h1 className="mt-2 font-display text-3xl font-bold tracking-tight sm:text-4xl">Wins & milestones</h1>
+            <h1 className="mt-2 font-display text-3xl font-bold tracking-tight sm:text-4xl">
+              Wins & milestones
+            </h1>
           </div>
           <div className="rounded-2xl border border-[#F97316]/35 bg-gradient-to-br from-[#FFF7ED] to-[#FFEDD5] px-4 py-2 text-right shadow-soft dark:border-[#F97316]/25 dark:from-zinc-900 dark:to-zinc-900">
-            <div className="font-display text-3xl font-black tabular-nums text-[#C2410C]">{unlocked}</div>
+            <div className="font-display text-3xl font-black tabular-nums text-[#C2410C]">
+              {unlocked}
+            </div>
             <div className="text-[11px] font-semibold uppercase tracking-wide text-[#78716C] dark:text-zinc-500">
               of {rows.length} unlocked
             </div>
           </div>
         </div>
         <p className="max-w-xl text-sm text-[#57534E] dark:text-zinc-400">
-          Every badge is leverage on your habits. Locked ones aren’t skipped — they’re waiting for you.
+          Every badge is leverage on your habits. Locked ones aren’t skipped — they’re waiting for
+          you.
         </p>
         <div className="max-w-md">
           <div className="mb-2 flex justify-between text-xs font-semibold uppercase tracking-wider text-[#78716C] dark:text-zinc-500">
@@ -265,9 +269,7 @@ function MilestonesPage() {
 
               <div
                 className={
-                  section === "debt-free"
-                    ? "grid gap-4"
-                    : "grid gap-4 sm:gap-5 lg:grid-cols-2"
+                  section === "debt-free" ? "grid gap-4" : "grid gap-4 sm:gap-5 lg:grid-cols-2"
                 }
               >
                 {inSection.map((m) => (
@@ -277,7 +279,10 @@ function MilestonesPage() {
                     tier={m.tier}
                     achieved={m.achieved}
                     justUnlocked={popIds.has(m.id)}
-                    index={Math.max(0, orderedCards.findIndex((r) => r.id === m.id))}
+                    index={Math.max(
+                      0,
+                      orderedCards.findIndex((r) => r.id === m.id),
+                    )}
                     Icon={m.Icon}
                     title={m.title}
                     subtitle={m.subtitle}

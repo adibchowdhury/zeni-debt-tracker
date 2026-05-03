@@ -29,7 +29,7 @@ function Simulator() {
   }, [debts, strategy]);
   const withExtra = useMemo(
     () => (extra <= 0 ? baseline : simulatePayoff(debts, strategy, extra)),
-    [debts, strategy, extra, baseline]
+    [debts, strategy, extra, baseline],
   );
 
   const monthsSaved = Math.max(0, baseline.months - withExtra.months);

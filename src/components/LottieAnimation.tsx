@@ -28,11 +28,6 @@ export function LottieAnimation({
   }
 
   return (
-    <Lottie
-      animationData={animationData}
-      loop={loop}
-      autoplay={autoplay}
-      className={className}
-    />
+    <Lottie animationData={animationData} loop={loop} autoplay={autoplay} className={className} />
   );
 }

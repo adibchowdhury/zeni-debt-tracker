@@ -20,12 +20,7 @@ interface PayoffRoadmapProps {
   extraMonthly: number;
 }
 
-export function PayoffRoadmap({
-  debts,
-  payments,
-  strategy,
-  extraMonthly,
-}: PayoffRoadmapProps) {
+export function PayoffRoadmap({ debts, payments, strategy, extraMonthly }: PayoffRoadmapProps) {
   const { ordered, sim } = useMemo(
     () => payoffRoadmapOrder(debts, strategy, extraMonthly),
     [debts, strategy, extraMonthly],
@@ -34,9 +29,7 @@ export function PayoffRoadmap({
   const allPaid = debts.length > 0 && debts.every((d) => d.balance <= 0);
 
   const redirectMonthly = useMemo(
-    () =>
-      debts.filter((d) => d.balance > 0).reduce((s, d) => s + d.minPayment, 0) +
-      extraMonthly,
+    () => debts.filter((d) => d.balance > 0).reduce((s, d) => s + d.minPayment, 0) + extraMonthly,
     [debts, extraMonthly],
   );
 
@@ -72,8 +65,8 @@ export function PayoffRoadmap({
 
       {simHitCap && (
         <p className="mb-6 rounded-xl border border-border bg-muted/50 px-4 py-3 text-sm text-muted-foreground">
-          Payoff timeline could not be estimated for every debt — ensure minimum payments are above monthly
-          interest so balances can shrink.
+          Payoff timeline could not be estimated for every debt — ensure minimum payments are above
+          monthly interest so balances can shrink.
         </p>
       )}
 
@@ -142,7 +135,9 @@ export function PayoffRoadmap({
                       <div className="font-display text-xl font-bold tabular-nums sm:text-2xl">
                         {formatMoney(debt.balance)}
                       </div>
-                      <div className="mt-1 text-xs text-muted-foreground sm:text-sm">{payoffLine}</div>
+                      <div className="mt-1 text-xs text-muted-foreground sm:text-sm">
+                        {payoffLine}
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -176,17 +171,19 @@ function DebtFreeMilestone({
         <div className="font-display text-lg font-bold text-success sm:text-xl">Debt-free</div>
         {allPaid ? (
           <p className="mt-3 text-sm leading-relaxed text-muted-foreground dark:text-success-foreground/85">
-            You’ve cleared everything on your plan. Aim your cash flow toward an emergency fund, retirement,
-            or other goals.
+            You’ve cleared everything on your plan. Aim your cash flow toward an emergency fund,
+            retirement, or other goals.
           </p>
         ) : redirectMonthly > 0 ? (
           <p className="mt-3 text-sm leading-relaxed text-muted-foreground dark:text-success-foreground/85">
-            At that point, you could redirect <span className="font-semibold text-foreground">{formatMoney(redirectMonthly)}</span>
+            At that point, you could redirect{" "}
+            <span className="font-semibold text-foreground">{formatMoney(redirectMonthly)}</span>
             /mo toward investments and savings.
           </p>
         ) : (
           <p className="mt-3 text-sm leading-relaxed text-muted-foreground dark:text-success-foreground/85">
-            When the last balance hits zero, you’ll free up the payments you’d been stacking toward debt.
+            When the last balance hits zero, you’ll free up the payments you’d been stacking toward
+            debt.
           </p>
         )}
       </div>

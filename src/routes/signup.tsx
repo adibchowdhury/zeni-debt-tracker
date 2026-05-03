@@ -49,51 +49,75 @@ function SignupPage() {
     navigate({ to: "/login" });
   };
 
-  return <AuthShell title="Create your account" subtitle="Start your debt-free journey today.">
-    <form onSubmit={submit} className="space-y-4">
-      <Field label="Name (optional)">
-        <input value={name} onChange={(e) => setName(e.target.value)}
-          className="w-full rounded-xl border border-input bg-background px-4 py-3 text-base outline-none focus:ring-2 focus:ring-ring"
-          placeholder="Alex" />
-      </Field>
-      <Field label="Email">
-        <input type="email" required value={email} onChange={(e) => setEmail(e.target.value)}
-          className="w-full rounded-xl border border-input bg-background px-4 py-3 text-base outline-none focus:ring-2 focus:ring-ring"
-          placeholder="you@email.com" />
-      </Field>
-      <Field label="Password">
-        <div className="relative">
+  return (
+    <AuthShell title="Create your account" subtitle="Start your debt-free journey today.">
+      <form onSubmit={submit} className="space-y-4">
+        <Field label="Name (optional)">
           <input
-            type={showPassword ? "text" : "password"}
-            required
-            minLength={6}
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="w-full rounded-xl border border-input bg-background px-4 py-3 pr-12 text-base outline-none focus:ring-2 focus:ring-ring"
-            placeholder="At least 6 characters"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            className="w-full rounded-xl border border-input bg-background px-4 py-3 text-base outline-none focus:ring-2 focus:ring-ring"
+            placeholder="Alex"
           />
+        </Field>
+        <Field label="Email">
+          <input
+            type="email"
+            required
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            className="w-full rounded-xl border border-input bg-background px-4 py-3 text-base outline-none focus:ring-2 focus:ring-ring"
+            placeholder="you@email.com"
+          />
+        </Field>
+        <Field label="Password">
+          <div className="relative">
+            <input
+              type={showPassword ? "text" : "password"}
+              required
+              minLength={6}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="w-full rounded-xl border border-input bg-background px-4 py-3 pr-12 text-base outline-none focus:ring-2 focus:ring-ring"
+              placeholder="At least 6 characters"
+            />
 
-          <button
-            type="button"
-            onClick={() => setShowPassword((prev) => !prev)}
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
-          >
-            {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-          </button>
-        </div>
-      </Field>
-      <button type="submit" disabled={loading}
-        className="w-full rounded-full bg-primary px-5 py-3.5 text-base font-semibold text-primary-foreground shadow-glow hover:-translate-y-0.5 transition-transform disabled:opacity-60">
-        {loading ? "Creating…" : "Create account"}
-      </button>
-    </form>
-    <p className="mt-6 text-center text-sm text-muted-foreground">
-      Already have an account? <Link to="/login" className="font-medium text-primary hover:underline">Log in</Link>
-    </p>
-  </AuthShell>;
+            <button
+              type="button"
+              onClick={() => setShowPassword((prev) => !prev)}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+            >
+              {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+            </button>
+          </div>
+        </Field>
+        <button
+          type="submit"
+          disabled={loading}
+          className="w-full rounded-full bg-primary px-5 py-3.5 text-base font-semibold text-primary-foreground shadow-glow hover:-translate-y-0.5 transition-transform disabled:opacity-60"
+        >
+          {loading ? "Creating…" : "Create account"}
+        </button>
+      </form>
+      <p className="mt-6 text-center text-sm text-muted-foreground">
+        Already have an account?{" "}
+        <Link to="/login" className="font-medium text-primary hover:underline">
+          Log in
+        </Link>
+      </p>
+    </AuthShell>
+  );
 }
 
-export function AuthShell({ title, subtitle, children }: { title: string; subtitle: string; children: React.ReactNode }) {
+export function AuthShell({
+  title,
+  subtitle,
+  children,
+}: {
+  title: string;
+  subtitle: string;
+  children: React.ReactNode;
+}) {
   return (
     <div className="min-h-screen bg-gradient-hero px-5 py-10">
       <div className="mx-auto mb-10 flex w-fit items-center">

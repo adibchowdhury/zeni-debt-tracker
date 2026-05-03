@@ -24,11 +24,7 @@ export function WinsWarmProgressBar({ value, className = "" }: Props) {
         className="h-full rounded-full bg-gradient-to-r from-[#F97316] via-[#FB923C] to-[#FACC15] shadow-[0_0_12px_rgba(249,115,22,0.35)]"
         initial={reduce ? { width: `${v}%` } : { width: 0 }}
         animate={{ width: `${v}%` }}
-        transition={
-          reduce
-            ? { duration: 0.2 }
-            : { duration: 0.8, delay: 0.25, ease: "easeOut" }
-        }
+        transition={reduce ? { duration: 0.2 } : { duration: 0.8, delay: 0.25, ease: "easeOut" }}
       />
     </div>
   );

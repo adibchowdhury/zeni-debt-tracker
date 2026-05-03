@@ -52,9 +52,7 @@ export function payoffRoadmapOrder(
 
   function snapshotCmp(a: Debt, b: Debt): number {
     if (strategy === "snowball") return a.balance - b.balance || a.name.localeCompare(b.name);
-    return (
-      b.interestRate - a.interestRate || a.balance - b.balance || a.name.localeCompare(b.name)
-    );
+    return b.interestRate - a.interestRate || a.balance - b.balance || a.name.localeCompare(b.name);
   }
 
   if (active.length === 0) return { ordered: [], sim };
@@ -85,11 +83,9 @@ export function payoffDateAfterMonths(monthsFromNow: number): Date {
 export function simulatePayoff(
   debtsInput: Debt[],
   strategy: Strategy,
-  extraMonthly: number
+  extraMonthly: number,
 ): PayoffResult {
-  const debts = debtsInput
-    .filter((d) => d.balance > 0)
-    .map((d) => ({ ...d }));
+  const debts = debtsInput.filter((d) => d.balance > 0).map((d) => ({ ...d }));
   if (debts.length === 0) {
     return { months: 0, totalInterest: 0, payoffDate: new Date(), perDebtMonths: {} };
   }

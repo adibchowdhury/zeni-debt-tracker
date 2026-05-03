@@ -84,14 +84,13 @@ function FeaturesPage() {
     <div className="min-h-screen bg-[#fdf8f1]">
       <main className="mx-auto max-w-6xl px-5 py-16 sm:py-20">
         <section className="mx-auto max-w-3xl text-center">
-
           <h1 className="text-4xl font-semibold tracking-tight text-[#1f2933] sm:text-5xl md:text-6xl">
             Features that help debt payoff feel less overwhelming.
           </h1>
 
           <p className="mx-auto mt-5 max-w-2xl text-base leading-7 text-[#6b5f55] sm:text-lg">
-            Zeni helps you track your debt, stay consistent, and turn the long
-            road to zero into small wins you can actually feel.
+            Zeni helps you track your debt, stay consistent, and turn the long road to zero into
+            small wins you can actually feel.
           </p>
         </section>
 
@@ -105,13 +104,9 @@ function FeaturesPage() {
                 <feature.icon className="h-6 w-6" />
               </div>
 
-              <h3 className="text-lg font-semibold text-[#1f2933]">
-                {feature.title}
-              </h3>
+              <h3 className="text-lg font-semibold text-[#1f2933]">{feature.title}</h3>
 
-              <p className="mt-3 text-sm leading-6 text-[#7a6f66]">
-                {feature.desc}
-              </p>
+              <p className="mt-3 text-sm leading-6 text-[#7a6f66]">{feature.desc}</p>
             </div>
           ))}
         </section>
@@ -122,8 +117,8 @@ function FeaturesPage() {
           </h2>
 
           <p className="mx-auto mt-3 max-w-2xl text-sm leading-6 text-[#7a6f66] sm:text-base">
-            Most apps only show numbers. Zeni is built to keep you emotionally
-            motivated while you pay off debt, one payment at a time.
+            Most apps only show numbers. Zeni is built to keep you emotionally motivated while you
+            pay off debt, one payment at a time.
           </p>
         </section>
       </main>

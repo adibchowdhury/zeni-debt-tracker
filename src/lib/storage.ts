@@ -44,7 +44,9 @@ export interface DebtStore {
 }
 
 interface DebtStoreActions {
-  addDebt: (d: Omit<Debt, "id" | "initialBalance" | "createdAt"> & { initialBalance?: number }) => Promise<void>;
+  addDebt: (
+    d: Omit<Debt, "id" | "initialBalance" | "createdAt"> & { initialBalance?: number },
+  ) => Promise<void>;
   updateDebt: (id: string, patch: Partial<Omit<Debt, "id">>) => Promise<void>;
   removeDebt: (id: string) => Promise<void>;
   logPayment: (debtId: string, amount: number) => Promise<{ cleared: boolean; debtName: string }>;
@@ -75,8 +77,16 @@ export function useDebtStore(): DebtStore & DebtStoreActions {
       return;
     }
     const [debtsRes, paymentsRes, profileRes] = await Promise.all([
-      supabase.from("debts").select("*").eq("user_id", user.id).order("created_at", { ascending: true }),
-      supabase.from("payments").select("*").eq("user_id", user.id).order("paid_at", { ascending: false }),
+      supabase
+        .from("debts")
+        .select("*")
+        .eq("user_id", user.id)
+        .order("created_at", { ascending: true }),
+      supabase
+        .from("payments")
+        .select("*")
+        .eq("user_id", user.id)
+        .order("paid_at", { ascending: false }),
       supabase.from("profiles").select("strategy, extra_monthly").eq("id", user.id).maybeSingle(),
     ]);
     const debts: Debt[] = (debtsRes.data ?? []).map((r) => ({
@@ -145,7 +155,11 @@ export function useDebtStore(): DebtStore & DebtStoreActions {
     if (patch.minPayment !== undefined) dbPatch.minimum_payment = patch.minPayment;
     if (patch.debtType !== undefined) dbPatch.debt_type = patch.debtType;
     if (patch.dueDay !== undefined) dbPatch.due_day = patch.dueDay;
-    await supabase.from("debts").update(dbPatch as never).eq("id", id).eq("user_id", user.id);
+    await supabase
+      .from("debts")
+      .update(dbPatch as never)
+      .eq("id", id)
+      .eq("user_id", user.id);
     bump();
   };
 
@@ -159,9 +173,8 @@ export function useDebtStore(): DebtStore & DebtStoreActions {
     if (!user) return { cleared: false, debtName: "" };
     const debt = state.debts.find((d) => d.id === debtId);
     const debtName = debt?.name ?? "";
-    const remainingAfter = !!debt ? Math.max(0, debt.balance - amount) : 0;
-    const willClear =
-      !!debt && debt.balance > 0 && remainingAfter <= 0.005;
+    const remainingAfter = debt ? Math.max(0, debt.balance - amount) : 0;
+    const willClear = !!debt && debt.balance > 0 && remainingAfter <= 0.005;
 
     const { error } = await supabase.from("payments").insert({
       user_id: user.id,
@@ -186,7 +199,16 @@ export function useDebtStore(): DebtStore & DebtStoreActions {
     bump();
   };
 
-  return { ...state, addDebt, updateDebt, removeDebt, logPayment, setStrategy, setExtraMonthly, refresh };
+  return {
+    ...state,
+    addDebt,
+    updateDebt,
+    removeDebt,
+    logPayment,
+    setStrategy,
+    setExtraMonthly,
+    refresh,
+  };
 }
 
 // Backwards-compat shim used by a few places — same shape as the v1 hook
@@ -203,7 +225,9 @@ export function useAppState() {
   const store = useDebtStore();
   const { user } = useAuth();
   const state: AppStateLegacy = {
-    user: user ? { email: user.email ?? "", name: (user.user_metadata?.display_name as string | undefined) } : null,
+    user: user
+      ? { email: user.email ?? "", name: user.user_metadata?.display_name as string | undefined }
+      : null,
     debts: store.debts,
     payments: store.payments,
     strategy: store.strategy,

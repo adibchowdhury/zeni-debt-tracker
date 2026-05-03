@@ -18,7 +18,9 @@ export function ChallengeCard({ eng }: { eng: Engagement }) {
           </div>
           <div className="flex-1">
             <div className="font-display text-base font-bold">Pick a challenge for this week</div>
-            <p className="mt-0.5 text-sm text-muted-foreground">Optional — but small wins build big habits.</p>
+            <p className="mt-0.5 text-sm text-muted-foreground">
+              Optional — but small wins build big habits.
+            </p>
           </div>
         </div>
         <div className="mt-4 grid gap-2 sm:grid-cols-2">
@@ -49,24 +51,43 @@ export function ChallengeCard({ eng }: { eng: Engagement }) {
 
   const c = eng.challenge;
   const completed = c.status === "completed";
-  const goalText = c.kind === "extra_payment" ? `Pay an extra ${formatMoney(c.goalAmount)} this week` : "Log at least 1 payment this week";
-  const progressPct = c.kind === "log_one" ? Math.min(100, c.progress * 100) : Math.min(100, (c.progress / Math.max(1, c.goalAmount)) * 100);
-  const progressLabel = c.kind === "log_one"
-    ? completed ? "Done!" : "0 / 1"
-    : `${formatMoney(c.progress)} / ${formatMoney(c.goalAmount)}`;
+  const goalText =
+    c.kind === "extra_payment"
+      ? `Pay an extra ${formatMoney(c.goalAmount)} this week`
+      : "Log at least 1 payment this week";
+  const progressPct =
+    c.kind === "log_one"
+      ? Math.min(100, c.progress * 100)
+      : Math.min(100, (c.progress / Math.max(1, c.goalAmount)) * 100);
+  const progressLabel =
+    c.kind === "log_one"
+      ? completed
+        ? "Done!"
+        : "0 / 1"
+      : `${formatMoney(c.progress)} / ${formatMoney(c.goalAmount)}`;
 
   return (
-    <section className={`rounded-3xl border p-6 shadow-soft transition-colors ${completed ? "border-success/40 bg-success-soft/40" : "border-border bg-card"}`}>
+    <section
+      className={`rounded-3xl border p-6 shadow-soft transition-colors ${completed ? "border-success/40 bg-success-soft/40" : "border-border bg-card"}`}
+    >
       <div className="flex items-start gap-3">
-        <div className={`flex h-9 w-9 items-center justify-center rounded-xl ${completed ? "bg-success text-success-foreground" : "bg-primary-soft text-primary"}`}>
+        <div
+          className={`flex h-9 w-9 items-center justify-center rounded-xl ${completed ? "bg-success text-success-foreground" : "bg-primary-soft text-primary"}`}
+        >
           {completed ? <Check className="h-4 w-4" /> : <Target className="h-4 w-4" />}
         </div>
         <div className="flex-1">
-          <div className="text-[11px] uppercase tracking-wider text-muted-foreground">This week's challenge</div>
+          <div className="text-[11px] uppercase tracking-wider text-muted-foreground">
+            This week's challenge
+          </div>
           <div className="font-display text-base font-bold">{goalText}</div>
         </div>
         {!completed && (
-          <button onClick={() => setPicking(true)} className="rounded-full p-1 text-muted-foreground hover:bg-secondary" aria-label="Change">
+          <button
+            onClick={() => setPicking(true)}
+            className="rounded-full p-1 text-muted-foreground hover:bg-secondary"
+            aria-label="Change"
+          >
             <X className="h-4 w-4" />
           </button>
         )}
@@ -86,13 +107,19 @@ export function ChallengeCard({ eng }: { eng: Engagement }) {
       {picking && (
         <div className="mt-4 grid gap-2 sm:grid-cols-2">
           <button
-            onClick={() => { eng.acceptChallenge("extra_payment", 50); setPicking(false); }}
+            onClick={() => {
+              eng.acceptChallenge("extra_payment", 50);
+              setPicking(false);
+            }}
             className="rounded-xl border border-border bg-background p-3 text-left text-sm font-medium hover:border-primary"
           >
             Pay an extra $50
           </button>
           <button
-            onClick={() => { eng.acceptChallenge("log_one", 1); setPicking(false); }}
+            onClick={() => {
+              eng.acceptChallenge("log_one", 1);
+              setPicking(false);
+            }}
             className="rounded-xl border border-border bg-background p-3 text-left text-sm font-medium hover:border-primary"
           >
             Log 1 payment

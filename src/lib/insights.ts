@@ -69,10 +69,7 @@ export function useCountdown(
       payoffDate.setFullYear(payoffDate.getFullYear() + 100);
     } else {
       payoffDate.setMonth(payoffDate.getMonth() + months);
-      days = Math.max(
-        0,
-        Math.round((payoffDate.getTime() - Date.now()) / (24 * 60 * 60 * 1000)),
-      );
+      days = Math.max(0, Math.round((payoffDate.getTime() - Date.now()) / (24 * 60 * 60 * 1000)));
     }
     return {
       days,
@@ -140,7 +137,15 @@ export function buildInsights(ctx: InsightsCtx): Insight[] {
     const dayIdx = buckets.indexOf(max);
     const total = buckets.reduce((s, n) => s + n, 0);
     if (max / total >= 0.35) {
-      const days = ["Sundays", "Mondays", "Tuesdays", "Wednesdays", "Thursdays", "Fridays", "Saturdays"];
+      const days = [
+        "Sundays",
+        "Mondays",
+        "Tuesdays",
+        "Wednesdays",
+        "Thursdays",
+        "Fridays",
+        "Saturdays",
+      ];
       out.push({
         id: "day-pattern",
         icon: "clock",

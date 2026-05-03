@@ -90,7 +90,10 @@ function Dialog({ onClose }: { onClose: () => void }) {
       >
         <div className="mb-4 flex items-center justify-between">
           <h2 className="font-display text-xl font-bold">Log a payment</h2>
-          <button onClick={onClose} className="rounded-full p-1 text-muted-foreground hover:bg-secondary">
+          <button
+            onClick={onClose}
+            className="rounded-full p-1 text-muted-foreground hover:bg-secondary"
+          >
             <X className="h-5 w-5" />
           </button>
         </div>

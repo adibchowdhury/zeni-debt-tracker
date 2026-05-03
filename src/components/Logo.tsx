@@ -20,11 +20,7 @@ const SIZE_MAP = {
  */
 export function Logo({ to = "/", className = "", size = "md" }: LogoProps) {
   const content = (
-      <img
-        src={logoUrl}
-        alt="zeni"
-        className={`${SIZE_MAP[size]} w-auto block ${className}`}
-      />
+    <img src={logoUrl} alt="zeni" className={`${SIZE_MAP[size]} w-auto block ${className}`} />
   );
 
   if (!to) return content;

@@ -38,14 +38,13 @@ function PricingPage() {
     <div className="min-h-screen bg-[#fdf8f1]">
       <main className="mx-auto max-w-6xl px-5 py-16 sm:py-20">
         <section className="mx-auto max-w-3xl text-center">
-
           <h1 className="text-4xl font-semibold tracking-tight text-[#1f2933] sm:text-5xl md:text-6xl">
             Simple pricing for staying motivated with debt.
           </h1>
 
           <p className="mx-auto mt-5 max-w-2xl text-base leading-7 text-[#6b5f55] sm:text-lg">
-            Start free, build your payoff plan, and keep turning debt progress
-            into small wins. No confusing tiers. No pressure.
+            Start free, build your payoff plan, and keep turning debt progress into small wins. No
+            confusing tiers. No pressure.
           </p>
         </section>
 
@@ -54,30 +53,21 @@ function PricingPage() {
           <div className="relative rounded-[2rem] border border-orange-100 bg-white p-8 shadow-[0_24px_80px_rgba(120,72,24,0.08)] sm:p-10">
             <div className="mb-6">
               <h2 className="text-xl font-semibold text-[#1f2933]">Monthly</h2>
-              <p className="mt-1 text-sm text-[#7a6f66]">
-                Flexible access after your free month.
-              </p>
+              <p className="mt-1 text-sm text-[#7a6f66]">Flexible access after your free month.</p>
             </div>
 
             <div className="rounded-2xl bg-[#fdf8f1] p-5">
               <div className="flex items-end gap-1">
-                <span className="text-5xl font-semibold tracking-tight text-[#1f2933]">
-                  $5
-                </span>
+                <span className="text-5xl font-semibold tracking-tight text-[#1f2933]">$5</span>
                 <span className="pb-1 text-sm text-[#7a6f66]">/month</span>
               </div>
 
-              <p className="mt-2 text-sm text-[#7a6f66]">
-                Billed monthly. Cancel anytime.
-              </p>
+              <p className="mt-2 text-sm text-[#7a6f66]">Billed monthly. Cancel anytime.</p>
             </div>
 
             <ul className="mt-8 space-y-3">
               {features.map((feature) => (
-                <li
-                  key={feature}
-                  className="flex items-start gap-3 text-sm text-[#3f3a35]"
-                >
+                <li key={feature} className="flex items-start gap-3 text-sm text-[#3f3a35]">
                   <Check className="mt-0.5 h-4 w-4 shrink-0 text-orange-500" />
                   <span>{feature}</span>
                 </li>
@@ -101,12 +91,8 @@ function PricingPage() {
             <div className="relative">
               <div className="mb-6 flex items-center justify-between gap-4">
                 <div>
-                  <h2 className="text-xl font-semibold text-[#1f2933]">
-                    Yearly
-                  </h2>
-                  <p className="mt-1 text-sm text-[#7a6f66]">
-                    Best for staying committed longer.
-                  </p>
+                  <h2 className="text-xl font-semibold text-[#1f2933]">Yearly</h2>
+                  <p className="mt-1 text-sm text-[#7a6f66]">Best for staying committed longer.</p>
                 </div>
 
                 <div className="rounded-full bg-orange-500 px-3 py-1 text-xs font-semibold text-white">
@@ -116,27 +102,19 @@ function PricingPage() {
 
               <div className="rounded-2xl bg-[#fdf8f1] p-5">
                 <div className="flex items-end gap-1">
-                  <span className="text-5xl font-semibold tracking-tight text-[#1f2933]">
-                    $3
-                  </span>
+                  <span className="text-5xl font-semibold tracking-tight text-[#1f2933]">$3</span>
                   <span className="pb-1 text-sm text-[#7a6f66]">/month</span>
                 </div>
 
                 <p className="mt-2 text-sm text-[#7a6f66]">
-                  Billed as{" "}
-                  <span className="font-semibold text-[#1f2933]">
-                    $36/year
-                  </span>{" "}
-                  instead of <span className="line-through">$60/year</span>.
+                  Billed as <span className="font-semibold text-[#1f2933]">$36/year</span> instead
+                  of <span className="line-through">$60/year</span>.
                 </p>
               </div>
 
               <ul className="mt-8 space-y-3">
                 {features.map((feature) => (
-                  <li
-                    key={feature}
-                    className="flex items-start gap-3 text-sm text-[#3f3a35]"
-                  >
+                  <li key={feature} className="flex items-start gap-3 text-sm text-[#3f3a35]">
                     <Check className="mt-0.5 h-4 w-4 shrink-0 text-orange-500" />
                     <span>{feature}</span>
                   </li>
@@ -178,12 +156,8 @@ function PricingPage() {
               key={item.q}
               className="rounded-3xl border border-orange-100 bg-white/75 p-6 shadow-sm"
             >
-              <h3 className="text-sm font-semibold text-[#1f2933]">
-                {item.q}
-              </h3>
-              <p className="mt-2 text-sm leading-6 text-[#7a6f66]">
-                {item.a}
-              </p>
+              <h3 className="text-sm font-semibold text-[#1f2933]">{item.q}</h3>
+              <p className="mt-2 text-sm leading-6 text-[#7a6f66]">{item.a}</p>
             </div>
           ))}
         </section>

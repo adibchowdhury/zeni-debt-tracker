@@ -20,31 +20,31 @@ import {
   Twitter,
   Linkedin,
   Instagram,
-  Facebook
+  Facebook,
 } from "lucide-react";
 import { Logo } from "@/components/Logo";
 
-
 export function SiteFooter() {
-   const scrollToTop = () => {
+  const scrollToTop = () => {
     if (typeof window === "undefined") return;
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   const siteMap: Array<
-    { label: string; to: "/signup" | "/contact" | "/about" | "/security" } | { label: string; href: string }
+    | { label: string; to: "/signup" | "/contact" | "/about" | "/security" }
+    | { label: string; href: string }
   > = [
     { label: "How it works", href: "#how-it-works" },
     { label: "Get started", to: "/signup" },
-    { label: "About", to: "/about"},
-    { label: "Contact/Support", to: "/contact"},
+    { label: "About", to: "/about" },
+    { label: "Contact/Support", to: "/contact" },
   ];
 
   const legal = [
     { label: "Privacy Policy", href: "/privacy" },
     { label: "Terms of Service", href: "/terms" },
     { label: "Cookie Policy", href: "/cookies" },
-    { label: "How We Protect Your Data", href: "/security"},
+    { label: "How We Protect Your Data", href: "/security" },
   ];
 
   return (
@@ -55,8 +55,8 @@ export function SiteFooter() {
           <div>
             <Logo to="/" size="md" className="[&_image]:brightness-0 [&_image]:invert" />
             <p className="mt-5 max-w-sm text-sm leading-relaxed text-[#2A2F36]">
-              Your supportive debt-free coach. Track every payment, stay motivated,
-              and turn the long road to zero into small, encouraging wins.
+              Your supportive debt-free coach. Track every payment, stay motivated, and turn the
+              long road to zero into small, encouraging wins.
             </p>
 
             {/* Social icons */}
@@ -64,7 +64,12 @@ export function SiteFooter() {
               <Link to="/privacy" aria-label="Twitter" className="transition hover:text-primary">
                 <Twitter className="h-5 w-5" />
               </Link>
-              <Link to="/privacy" href="#" aria-label="LinkedIn" className="transition hover:text-primary">
+              <Link
+                to="/privacy"
+                href="#"
+                aria-label="LinkedIn"
+                className="transition hover:text-primary"
+              >
                 <Linkedin className="h-5 w-5" />
               </Link>
               <Link to="/privacy" aria-label="Instagram" className="transition hover:text-primary">
@@ -95,19 +100,13 @@ export function SiteFooter() {
               {siteMap.map((item) =>
                 "to" in item ? (
                   <li key={item.label}>
-                    <Link
-                      to={item.to}
-                      className="text-[#2A2F36] transition hover:text-primary"
-                    >
+                    <Link to={item.to} className="text-[#2A2F36] transition hover:text-primary">
                       {item.label}
                     </Link>
                   </li>
                 ) : (
                   <li key={item.label}>
-                    <Link
-                      to={item.href}
-                      className="text-[#2A2F36] transition hover:text-primary"
-                    >
+                    <Link to={item.href} className="text-[#2A2F36] transition hover:text-primary">
                       {item.label}
                     </Link>
                   </li>
@@ -124,10 +123,7 @@ export function SiteFooter() {
             <ul className="mt-5 space-y-3 text-sm">
               {legal.map((item) => (
                 <li key={item.label}>
-                  <a
-                    href={item.href}
-                    className="text-[#2A2F36] transition hover:text-primary"
-                  >
+                  <a href={item.href} className="text-[#2A2F36] transition hover:text-primary">
                     {item.label}
                   </a>
                 </li>

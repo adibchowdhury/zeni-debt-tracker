@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useEffect, useState } from "react"; 
+import { useEffect, useState } from "react";
 import {
   ArrowRight,
   Check,
@@ -14,7 +14,7 @@ import {
   Flame,
   Zap,
   CheckCircle2,
-  ChevronDown
+  ChevronDown,
 } from "lucide-react";
 import { DotLottieReact, setWasmUrl } from "@lottiefiles/dotlottie-react";
 setWasmUrl("/dotlottie-player.wasm");
@@ -74,12 +74,13 @@ function Hero() {
           <div className="mb-6 h-[26px]" aria-hidden="true" />
 
           <h1 className="font-display text-[2.75rem] font-semibold leading-[1.04] tracking-tight text-foreground sm:text-6xl lg:text-[4.25rem]">
-            A clear path to becoming <span className="font-extrabold text-primary">debt-free</span> — without the stress
+            A clear path to becoming <span className="font-extrabold text-primary">debt-free</span>{" "}
+            — without the stress
           </h1>
 
           <p className="mt-7 max-w-xl text-base text-muted-foreground sm:text-lg lg:text-xl">
-            Pay off debt faster without the stress.
-            Track progress, stay motivated, and turn every payment into a win. 
+            Pay off debt faster without the stress. Track progress, stay motivated, and turn every
+            payment into a win.
           </p>
 
           <div className="mt-10 flex flex-col gap-3 sm:flex-row">
@@ -143,12 +144,8 @@ function SellingBar() {
             </div>
 
             <div>
-              <h3 className="text-sm font-semibold text-foreground">
-                {item.title}
-              </h3>
-              <p className="mt-0.5 text-xs leading-5 text-muted-foreground">
-                {item.body}
-              </p>
+              <h3 className="text-sm font-semibold text-foreground">{item.title}</h3>
+              <p className="mt-0.5 text-xs leading-5 text-muted-foreground">{item.body}</p>
             </div>
           </div>
         ))}
@@ -300,9 +297,7 @@ function HeroVisual() {
             </div>
           </div>
           <div className="ml-auto">
-            <div className="text-[11px] uppercase tracking-wider text-muted-foreground">
-              Goal
-            </div>
+            <div className="text-[11px] uppercase tracking-wider text-muted-foreground">Goal</div>
             <div className="font-display text-2xl font-bold text-success">$0</div>
           </div>
         </div>
@@ -351,7 +346,10 @@ function HeroVisual() {
           </div>
           <div className="mt-2 flex justify-between text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
             {[0, 25, 50, 75, 100].map((m) => (
-              <span key={m} className={m <= pct ? "text-primary transition-colors" : "transition-colors"}>
+              <span
+                key={m}
+                className={m <= pct ? "text-primary transition-colors" : "transition-colors"}
+              >
                 {m}%
               </span>
             ))}
@@ -369,7 +367,6 @@ function HeroVisual() {
     </div>
   );
 }
-
 
 /* -------------------------------------------------------------------------- */
 /* Problem                                                                    */
@@ -395,7 +392,7 @@ function ProblemSection() {
     <section className="relative mx-auto max-w-6xl px-5 py-20 sm:py-24">
       <div className="grid items-center gap-10 lg:grid-cols-[1fr_1.2fr]">
         {/* Visual: lottie illustration — turning struggle into something tangible */}
-         <div className="order-2 flex justify-center overflow-visible lg:order-1">
+        <div className="order-2 flex justify-center overflow-visible lg:order-1">
           <div className="w-full max-w-3xl scale-100 lg:scale-110">
             <DotLottieReact
               src={stressedWomanLottie}
@@ -553,7 +550,8 @@ function HowItWorks() {
           Three simple steps to your debt-free date.
         </h2>
         <p className="mt-3 text-muted-foreground">
-          Zeni gives you a simple payoff system, shows you what to focus on next, and keeps you motivated as your balance goes down.
+          Zeni gives you a simple payoff system, shows you what to focus on next, and keeps you
+          motivated as your balance goes down.
         </p>
       </div>
 
@@ -568,9 +566,7 @@ function HowItWorks() {
             return (
               <div
                 key={s.n}
-                className={`relative flex ${
-                  isRight ? "md:justify-end" : "md:justify-start"
-                }`}
+                className={`relative flex ${isRight ? "md:justify-end" : "md:justify-start"}`}
               >
                 <div className="pointer-events-none absolute left-1/2 top-8 hidden h-4 w-4 -translate-x-1/2 rounded-full border-4 border-background bg-primary shadow-glow md:block" />
 
@@ -591,12 +587,8 @@ function HowItWorks() {
                     )}
                   </div>
 
-                  <h3 className="mt-5 font-display text-xl font-bold">
-                    {s.title}
-                  </h3>
-                  <p className="mt-2 text-sm leading-6 text-muted-foreground">
-                    {s.body}
-                  </p>
+                  <h3 className="mt-5 font-display text-xl font-bold">{s.title}</h3>
+                  <p className="mt-2 text-sm leading-6 text-muted-foreground">{s.body}</p>
                 </div>
               </div>
             );
@@ -699,9 +691,7 @@ function Stat({
         : "bg-secondary text-foreground";
   return (
     <div className={`rounded-2xl px-4 py-3 ${toneClass}`}>
-      <div className="text-[10px] font-semibold uppercase tracking-wider opacity-80">
-        {label}
-      </div>
+      <div className="text-[10px] font-semibold uppercase tracking-wider opacity-80">{label}</div>
       <div className="font-display text-lg font-bold">{value}</div>
     </div>
   );
@@ -759,21 +749,13 @@ function SocialProof() {
 
             <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-1">
               <div>
-                <div className="font-display text-4xl font-extrabold text-primary">
-                  5/5
-                </div>
-                <p className="mt-1 text-sm font-semibold text-foreground">
-                  Early user feedback
-                </p>
+                <div className="font-display text-4xl font-extrabold text-primary">5/5</div>
+                <p className="mt-1 text-sm font-semibold text-foreground">Early user feedback</p>
               </div>
 
               <div>
-                <div className="font-display text-4xl font-extrabold text-primary">
-                  100%
-                </div>
-                <p className="mt-1 text-sm font-semibold text-foreground">
-                  Built for motivation
-                </p>
+                <div className="font-display text-4xl font-extrabold text-primary">100%</div>
+                <p className="mt-1 text-sm font-semibold text-foreground">Built for motivation</p>
               </div>
             </div>
 
@@ -808,9 +790,7 @@ function SocialProof() {
                   <span className="text-xs text-muted-foreground">5/5</span>
                 </div>
 
-                <p className="text-sm leading-6 text-foreground">
-                  "{review.body}"
-                </p>
+                <p className="text-sm leading-6 text-foreground">"{review.body}"</p>
 
                 <div className="mt-5 flex items-center gap-3">
                   <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary-soft font-display text-sm font-bold text-primary">
@@ -818,12 +798,8 @@ function SocialProof() {
                   </div>
 
                   <div>
-                    <div className="text-sm font-semibold text-foreground">
-                      {review.name}
-                    </div>
-                    <div className="text-xs text-muted-foreground">
-                      {review.role}
-                    </div>
+                    <div className="text-sm font-semibold text-foreground">{review.name}</div>
+                    <div className="text-xs text-muted-foreground">{review.role}</div>
                   </div>
                 </div>
               </div>
@@ -942,7 +918,8 @@ function FinalCTA() {
             Start your debt-free journey your way.
           </h2>
           <p className="mx-auto mt-3 max-w-xl text-base text-primary-foreground/90 sm:text-lg">
-            Add your debts and payments manually, or connect your bank account so Zeni can help track transactions and debt payments automatically.
+            Add your debts and payments manually, or connect your bank account so Zeni can help
+            track transactions and debt payments automatically.
           </p>
           <div className="mt-7 flex flex-col items-center justify-center gap-3 sm:flex-row">
             <Link
@@ -964,4 +941,3 @@ function FinalCTA() {
     </section>
   );
 }
-

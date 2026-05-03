@@ -15,7 +15,8 @@ function timeAgo(iso: string): string {
 
 function describe(item: ActivityItem): string {
   if (item.kind === "debt_cleared") return `Someone became debt-free 🎉`;
-  if (item.kind === "payment" && item.amount) return `Someone paid off ${formatMoney(item.amount)} 💪`;
+  if (item.kind === "payment" && item.amount)
+    return `Someone paid off ${formatMoney(item.amount)} 💪`;
   return "Someone made progress";
 }
 
@@ -33,7 +34,10 @@ export function ActivityFeed({ activity }: { activity: ActivityItem[] }) {
       </div>
       <div className="space-y-2">
         {activity.slice(0, 5).map((a) => (
-          <div key={a.id} className="flex items-center justify-between rounded-xl bg-secondary/40 px-3 py-2.5 text-sm">
+          <div
+            key={a.id}
+            className="flex items-center justify-between rounded-xl bg-secondary/40 px-3 py-2.5 text-sm"
+          >
             <span className="text-foreground">{describe(a)}</span>
             <span className="text-xs text-muted-foreground">{timeAgo(a.createdAt)}</span>
           </div>

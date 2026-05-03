@@ -29,7 +29,9 @@ function StrategyPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="font-display text-2xl font-bold tracking-tight sm:text-3xl">Your payoff plan</h1>
+        <h1 className="font-display text-2xl font-bold tracking-tight sm:text-3xl">
+          Your payoff plan
+        </h1>
         <p className="text-sm text-muted-foreground">
           Pick a strategy. Both work — pick what feels right.
         </p>
@@ -132,7 +134,9 @@ function StrategyCard({
         </div>
         <div>
           <div className="text-[11px] uppercase tracking-wider text-muted-foreground">Interest</div>
-          <div className="font-display text-base font-bold">{formatMoney(result.totalInterest)}</div>
+          <div className="font-display text-base font-bold">
+            {formatMoney(result.totalInterest)}
+          </div>
         </div>
       </div>
 

@@ -58,9 +58,7 @@ export function WinsPersonalBestHero({ eng }: Props) {
     <motion.section
       initial={reduce ? { opacity: 1 } : { opacity: 0, y: 14 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={
-        reduce ? { duration: 0.15 } : { duration: 0.45, ease: "easeOut", delay: 0.1 }
-      }
+      transition={reduce ? { duration: 0.15 } : { duration: 0.45, ease: "easeOut", delay: 0.1 }}
       className="relative overflow-hidden rounded-3xl border-2 border-[#F97316]/35 bg-gradient-to-br from-[#FFF8E8] via-[#FFF4E6] to-[#FFE8D8] p-5 shadow-[0_22px_55px_rgba(249,115,22,0.22)] sm:p-8 dark:border-[#F97316]/25 dark:from-zinc-900 dark:via-zinc-900 dark:to-zinc-900 dark:shadow-[0_18px_45px_rgba(249,115,22,0.12)]"
     >
       <div className="pointer-events-none absolute -right-16 -top-16 h-52 w-52 rounded-full bg-[#F97316]/25 blur-3xl" />
@@ -158,7 +156,9 @@ function HeroStatBlock({
               <div className="text-[11px] font-medium uppercase tracking-wider text-[#78716C] dark:text-zinc-500">
                 {currentLabel}
               </div>
-              <div className="font-display text-xl font-bold tabular-nums text-[#EA580C]">{currentAmount}</div>
+              <div className="font-display text-xl font-bold tabular-nums text-[#EA580C]">
+                {currentAmount}
+              </div>
             </div>
             {hot && (
               <span className="shrink-0 rounded-full bg-gradient-to-r from-[#F97316] to-[#EA580C] px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wide text-white">
@@ -168,7 +168,9 @@ function HeroStatBlock({
           </div>
         </div>
       </div>
-      <p className="mt-4 text-sm font-medium leading-snug text-[#44403C] dark:text-zinc-300">{motivation}</p>
+      <p className="mt-4 text-sm font-medium leading-snug text-[#44403C] dark:text-zinc-300">
+        {motivation}
+      </p>
       {progress !== null && (
         <div className="mt-4">
           <div className="mb-2 flex justify-between text-[11px] font-semibold uppercase tracking-wider text-[#78716C] dark:text-zinc-500">

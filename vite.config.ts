@@ -13,10 +13,5 @@ export default defineConfig({
   optimizeDeps: {
     include: ["react", "react-dom", "react/jsx-runtime", "framer-motion"],
   },
-  plugins: [
-    tsConfigPaths(),
-    tailwindcss(),
-    tanstackStart(),
-    viteReact(),
-  ],
+  plugins: [tsConfigPaths(), tailwindcss(), tanstackStart(), viteReact()],
 });

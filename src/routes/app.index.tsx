@@ -1,6 +1,17 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
-import { ArrowRight, Plus, TrendingDown, Wallet, Sparkles, Flame, Trophy, Bell, Zap, Heart } from "lucide-react";
+import {
+  ArrowRight,
+  Plus,
+  TrendingDown,
+  Wallet,
+  Sparkles,
+  Flame,
+  Trophy,
+  Bell,
+  Zap,
+  Heart,
+} from "lucide-react";
 import { useDebtStore, type Debt, type Payment, type Strategy } from "@/lib/storage";
 import { useAuth } from "@/lib/auth";
 import { useEngagement } from "@/lib/engagement";
@@ -9,7 +20,6 @@ import {
   formatDate,
   formatMoney,
   formatMonths,
-  paidTowardDebt,
   payoffDateAfterMonths,
   payoffRoadmapOrder,
 } from "@/lib/debt-math";
@@ -31,12 +41,21 @@ export const Route = createFileRoute("/app/")({
 });
 
 const CELEBRATABLE: Record<string, { title: string; subtitle: string }> = {
-  "first-payment": { title: "First payment logged 🎉", subtitle: "Momentum begins. You're on your way." },
+  "first-payment": {
+    title: "First payment logged 🎉",
+    subtitle: "Momentum begins. You're on your way.",
+  },
   "10pct": { title: "10% paid off", subtitle: "Real progress is showing. Keep stacking." },
   "500-paid": { title: "$500 paid off", subtitle: "First big chunk down — huge win." },
-  "1k-paid": { title: "$1,000 paid off 💪", subtitle: "Four-figure milestone. You're building real momentum." },
+  "1k-paid": {
+    title: "$1,000 paid off 💪",
+    subtitle: "Four-figure milestone. You're building real momentum.",
+  },
   halfway: { title: "Halfway there!", subtitle: "More behind you than ahead. Stay focused." },
-  "first-clear": { title: "First debt cleared 🎊", subtitle: "One down — that feeling is freedom." },
+  "first-clear": {
+    title: "First debt cleared 🎊",
+    subtitle: "One down — that feeling is freedom.",
+  },
   "all-clear": { title: "You're debt-free! 🏆", subtitle: "You actually did it. Truly." },
 };
 
@@ -78,7 +97,8 @@ function Dashboard() {
     }
   }, [eng.unlockedMilestones]);
 
-  const displayName = (user?.user_metadata?.display_name as string | undefined) ?? user?.email?.split("@")[0];
+  const displayName =
+    (user?.user_metadata?.display_name as string | undefined) ?? user?.email?.split("@")[0];
   const greeting = displayName ? `Hey ${displayName.split(" ")[0]}` : "Welcome back";
 
   if (store.loading) {
@@ -92,12 +112,12 @@ function Dashboard() {
     countdown.pct < 5
       ? "You've started — that's the hardest part 💪"
       : countdown.pct < 33
-      ? `You're ${countdown.pct.toFixed(0)}% closer to being debt-free 🎉`
-      : countdown.pct < 66
-      ? `You're ${countdown.pct.toFixed(0)}% closer to being debt-free 🎉`
-      : countdown.pct < 95
-      ? `${countdown.pct.toFixed(0)}% done — the finish line is in sight 🎯`
-      : "You're almost there. Don't stop now!";
+        ? `You're ${countdown.pct.toFixed(0)}% closer to being debt-free 🎉`
+        : countdown.pct < 66
+          ? `You're ${countdown.pct.toFixed(0)}% closer to being debt-free 🎉`
+          : countdown.pct < 95
+            ? `${countdown.pct.toFixed(0)}% done — the finish line is in sight 🎯`
+            : "You're almost there. Don't stop now!";
 
   const nearComplete = countdown.pct >= 80 && countdown.totalRemaining > 0;
 
@@ -133,13 +153,17 @@ function Dashboard() {
           {motivational}
         </h1>
         <p className="mt-1.5 text-sm text-muted-foreground">
-          You've paid off <span className="font-semibold text-foreground">{formatMoney(countdown.totalPaid)}</span> so far — keep going!
+          You've paid off{" "}
+          <span className="font-semibold text-foreground">{formatMoney(countdown.totalPaid)}</span>{" "}
+          so far — keep going!
         </p>
 
         <div className="mt-5">
           <div className="mb-2 flex justify-between text-sm">
             <span className="font-medium">Overall progress</span>
-            <span className="font-display font-semibold text-primary">{countdown.pct.toFixed(1)}%</span>
+            <span className="font-display font-semibold text-primary">
+              {countdown.pct.toFixed(1)}%
+            </span>
           </div>
           <ProgressBar value={countdown.pct} />
         </div>
@@ -168,8 +192,18 @@ function Dashboard() {
 
       {/* 8. KEY STATS */}
       <section className="grid gap-3 sm:grid-cols-2">
-        <Stat icon={Wallet} label="Still to go" value={formatMoney(countdown.totalRemaining)} tone="default" />
-        <Stat icon={TrendingDown} label="Paid off" value={formatMoney(countdown.totalPaid)} tone="success" />
+        <Stat
+          icon={Wallet}
+          label="Still to go"
+          value={formatMoney(countdown.totalRemaining)}
+          tone="default"
+        />
+        <Stat
+          icon={TrendingDown}
+          label="Paid off"
+          value={formatMoney(countdown.totalPaid)}
+          tone="success"
+        />
       </section>
 
       {/* 9. WHAT-IF SIMULATOR */}
@@ -181,8 +215,12 @@ function Dashboard() {
           <Zap className="h-6 w-6" />
         </div>
         <div className="flex-1">
-          <div className="font-display text-base font-bold sm:text-lg">See how much faster you can be debt-free</div>
-          <div className="mt-0.5 text-sm text-muted-foreground">Add an extra $25/mo and watch your payoff date jump forward.</div>
+          <div className="font-display text-base font-bold sm:text-lg">
+            See how much faster you can be debt-free
+          </div>
+          <div className="mt-0.5 text-sm text-muted-foreground">
+            Add an extra $25/mo and watch your payoff date jump forward.
+          </div>
         </div>
         <ArrowRight className="hidden h-5 w-5 text-primary sm:block" />
       </Link>
@@ -198,48 +236,20 @@ function Dashboard() {
           label="This week"
           value={formatMoney(eng.weekPaid)}
           highlight={eng.beatLastWeek || eng.newWeekBest}
-          subtitle={eng.beatLastWeek ? "Beat last week 🎉" : eng.weekPaid === 0 ? "No payments yet" : undefined}
+          subtitle={
+            eng.beatLastWeek
+              ? "Beat last week 🎉"
+              : eng.weekPaid === 0
+                ? "No payments yet"
+                : undefined
+          }
         />
       </section>
 
       {/* 11. LIFE AFTER DEBT — gentle, only when near finish line */}
       {nearComplete && <LifeAfterDebt pct={countdown.pct} />}
 
-      {/* 12. DEBTS */}
-      <section>
-        <div className="mb-3 flex items-center justify-between">
-          <h2 className="font-display text-lg font-semibold">Your debts</h2>
-          <Link to="/app/debts" className="inline-flex items-center gap-1 text-sm font-medium text-primary hover:underline">
-            Manage <ArrowRight className="h-3.5 w-3.5" />
-          </Link>
-        </div>
-        <div className="space-y-3">
-          {debts.map((d) => {
-            const paid = paidTowardDebt(d, payments);
-            const pct = debtPayoffPercent(d, payments);
-            return (
-              <div key={d.id} className="rounded-2xl border border-border bg-card p-5 shadow-soft">
-                <div className="flex items-baseline justify-between gap-3">
-                  <div className="font-display text-base font-semibold">{d.name}</div>
-                  <div className="text-right">
-                    <div className="font-display text-lg font-bold">{formatMoney(d.balance)}</div>
-                    <div className="text-xs text-muted-foreground">{d.interestRate}% APR</div>
-                  </div>
-                </div>
-                <div className="mt-3">
-                  <ProgressBar value={pct} />
-                  <div className="mt-1.5 flex justify-between text-xs text-muted-foreground">
-                    <span>{formatMoney(paid)} paid</span>
-                    <span>{pct.toFixed(0)}% done</span>
-                  </div>
-                </div>
-              </div>
-            );
-          })}
-        </div>
-      </section>
-
-      {/* 13. ACTIVITY FEED */}
+      {/* 12. ACTIVITY FEED */}
       <ActivityFeed activity={eng.activity} />
 
       <MobileStickyCTA />
@@ -308,7 +318,10 @@ function FocusDebtSection({
               <Flame className="h-3.5 w-3.5 shrink-0" aria-hidden />
               Current target
             </div>
-            <Link to="/app/strategy" className="shrink-0 pt-0.5 text-xs font-medium text-primary hover:underline">
+            <Link
+              to="/app/strategy"
+              className="shrink-0 pt-0.5 text-xs font-medium text-primary hover:underline"
+            >
               Plan settings
             </Link>
           </div>
@@ -316,10 +329,14 @@ function FocusDebtSection({
           <h2 className="mt-4 font-display text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
             {focusDebt.name}
           </h2>
-          <p className="mt-2 max-w-xl text-sm leading-relaxed text-muted-foreground">{description}</p>
+          <p className="mt-2 max-w-xl text-sm leading-relaxed text-muted-foreground">
+            {description}
+          </p>
 
           <div className="mt-6">
-            <div className="text-xs font-medium uppercase tracking-wider text-muted-foreground">Balance</div>
+            <div className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
+              Balance
+            </div>
             <div className="mt-1 font-display text-3xl font-bold tabular-nums tracking-tight sm:text-4xl">
               {formatMoney(focusDebt.balance)}
             </div>
@@ -327,27 +344,37 @@ function FocusDebtSection({
 
           <div className="mt-6 grid grid-cols-3 gap-2 sm:gap-3">
             <div className="rounded-xl border border-border/80 bg-muted/40 px-3 py-3 dark:bg-muted/25">
-              <div className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">Monthly</div>
+              <div className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+                Monthly
+              </div>
               <div className="mt-1 font-display text-base font-bold tabular-nums sm:text-lg">
                 {formatMoney(focusDebt.minPayment)}
               </div>
             </div>
             <div className="rounded-xl border border-border/80 bg-muted/40 px-3 py-3 dark:bg-muted/25">
-              <div className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">APR</div>
+              <div className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+                APR
+              </div>
               <div className="mt-1 font-display text-base font-bold tabular-nums sm:text-lg">
                 {focusDebt.interestRate}%
               </div>
             </div>
             <div className="rounded-xl border border-border/80 bg-muted/40 px-3 py-3 dark:bg-muted/25">
-              <div className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">Payoff</div>
-              <div className="mt-1 font-display text-base font-bold tabular-nums sm:text-lg">{payoffLabel}</div>
+              <div className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+                Payoff
+              </div>
+              <div className="mt-1 font-display text-base font-bold tabular-nums sm:text-lg">
+                {payoffLabel}
+              </div>
             </div>
           </div>
 
           <div className="mt-6 space-y-2">
             <div className="flex items-center justify-between text-xs font-medium text-muted-foreground">
               <span>{pct.toFixed(0)}% paid</span>
-              <span className="tabular-nums">{monthsLeftLabel === "—" ? "—" : `${monthsLeftLabel} left`}</span>
+              <span className="tabular-nums">
+                {monthsLeftLabel === "—" ? "—" : `${monthsLeftLabel} left`}
+              </span>
             </div>
             <ProgressBar value={pct} />
           </div>
@@ -355,15 +382,22 @@ function FocusDebtSection({
 
         {nextDebt ? (
           <div className="flex flex-col rounded-3xl border border-border bg-card p-5 shadow-soft sm:p-6 lg:col-span-1">
-            <div className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Up next</div>
+            <div className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+              Up next
+            </div>
             <h3 className="mt-3 font-display text-lg font-bold text-foreground">{nextDebt.name}</h3>
             <p className="mt-0.5 text-sm text-muted-foreground">{nextDebt.debtType}</p>
-            <div className="mt-4 font-display text-2xl font-bold tabular-nums">{formatMoney(nextDebt.balance)}</div>
+            <div className="mt-4 font-display text-2xl font-bold tabular-nums">
+              {formatMoney(nextDebt.balance)}
+            </div>
             <p className="mt-2 text-sm text-muted-foreground">
               {formatMoney(nextDebt.minPayment)}/mo · {nextDebt.interestRate}% APR
             </p>
             <div className="mt-auto flex items-start gap-2 border-t border-border pt-4 text-xs text-muted-foreground">
-              <ArrowRight className="mt-0.5 h-3.5 w-3.5 shrink-0 text-muted-foreground" aria-hidden />
+              <ArrowRight
+                className="mt-0.5 h-3.5 w-3.5 shrink-0 text-muted-foreground"
+                aria-hidden
+              />
               <span>Starts after {focusDebt.name} is cleared</span>
             </div>
           </div>
@@ -386,13 +420,15 @@ function StreakBanner({ streak, active }: { streak: number; active: boolean }) {
         active
           ? "border-primary bg-primary-soft"
           : hot
-          ? "border-primary/40 bg-primary-soft/60"
-          : "border-border bg-card"
+            ? "border-primary/40 bg-primary-soft/60"
+            : "border-border bg-card"
       }`}
     >
       <div
         className={`flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl text-2xl shadow-soft ${
-          hot ? "bg-primary text-primary-foreground animate-pulse-glow" : "bg-muted text-muted-foreground"
+          hot
+            ? "bg-primary text-primary-foreground animate-pulse-glow"
+            : "bg-muted text-muted-foreground"
         }`}
       >
         <Flame className="h-7 w-7" />
@@ -405,8 +441,8 @@ function StreakBanner({ streak, active }: { streak: number; active: boolean }) {
           {streak === 0
             ? "Log a payment to start your streak"
             : active
-            ? `🔥 ${streak} week streak — keep it going!`
-            : `🔥 ${streak} week streak — don't break it`}
+              ? `🔥 ${streak} week streak — keep it going!`
+              : `🔥 ${streak} week streak — don't break it`}
         </div>
       </div>
     </div>
@@ -427,7 +463,9 @@ function BestChip({
   return (
     <div
       className={`rounded-2xl border p-4 shadow-soft transition-all ${
-        highlight ? "border-success bg-success-soft/40 ring-2 ring-success/30" : "border-border bg-card"
+        highlight
+          ? "border-success bg-success-soft/40 ring-2 ring-success/30"
+          : "border-border bg-card"
       }`}
     >
       <div className="flex items-center gap-2">
@@ -440,7 +478,13 @@ function BestChip({
   );
 }
 
-function SmartNudge({ eng, totalRemaining }: { eng: ReturnType<typeof useEngagement>; totalRemaining: number }) {
+function SmartNudge({
+  eng,
+  totalRemaining,
+}: {
+  eng: ReturnType<typeof useEngagement>;
+  totalRemaining: number;
+}) {
   let title = "";
   let body = "";
   let tone: "primary" | "success" = "primary";
@@ -481,18 +525,24 @@ function SmartNudge({ eng, totalRemaining }: { eng: ReturnType<typeof useEngagem
   return (
     <div
       className={`flex items-start gap-3 rounded-2xl border p-4 shadow-soft ${
-        tone === "success" ? "border-success/40 bg-success-soft/40" : "border-primary/30 bg-primary-soft/60"
+        tone === "success"
+          ? "border-success/40 bg-success-soft/40"
+          : "border-primary/30 bg-primary-soft/60"
       }`}
     >
       <div
         className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${
-          tone === "success" ? "bg-success text-success-foreground" : "bg-primary text-primary-foreground"
+          tone === "success"
+            ? "bg-success text-success-foreground"
+            : "bg-primary text-primary-foreground"
         }`}
       >
         <Bell className="h-4 w-4" />
       </div>
       <div className="flex-1">
-        <div className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Next step</div>
+        <div className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+          Next step
+        </div>
         <div className="font-display text-sm font-bold">{title}</div>
         <div className="mt-0.5 text-sm text-muted-foreground">{body}</div>
       </div>
@@ -515,7 +565,8 @@ function LifeAfterDebt({ pct }: { pct: number }) {
             You're {pct.toFixed(0)}% there — what's next?
           </div>
           <p className="mt-1 text-sm text-muted-foreground">
-            When you're done, redirect those payments into a starter emergency fund. Aim for $1,000 first, then 3 months of expenses.
+            When you're done, redirect those payments into a starter emergency fund. Aim for $1,000
+            first, then 3 months of expenses.
           </p>
         </div>
       </div>

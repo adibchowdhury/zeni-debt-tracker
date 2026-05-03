@@ -33,10 +33,12 @@ export function CountdownHero({ countdown }: { countdown: CountdownInfo }) {
           <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-muted-foreground">
             <span className="inline-flex items-center gap-1.5">
               <Calendar className="h-3.5 w-3.5" />
-              Target: <span className="font-semibold text-foreground">{formatDate(payoffDate)}</span>
+              Target:{" "}
+              <span className="font-semibold text-foreground">{formatDate(payoffDate)}</span>
             </span>
             <span>
-              <span className="font-semibold text-foreground">{formatMoney(totalRemaining)}</span> to go
+              <span className="font-semibold text-foreground">{formatMoney(totalRemaining)}</span>{" "}
+              to go
             </span>
           </div>
         )}

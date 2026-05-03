@@ -132,16 +132,33 @@ export function useEngagement(): Engagement {
     }
     const [bestsRes, challengesRes, milestonesRes, activityRes] = await Promise.all([
       supabase.from("personal_bests").select("*").eq("user_id", user.id),
-      supabase.from("challenges").select("*").eq("user_id", user.id).order("week_start", { ascending: false }).limit(1),
+      supabase
+        .from("challenges")
+        .select("*")
+        .eq("user_id", user.id)
+        .order("week_start", { ascending: false })
+        .limit(1),
       supabase.from("milestones").select("milestone_key").eq("user_id", user.id),
       supabase.from("activity_feed").select("*").order("created_at", { ascending: false }).limit(8),
     ]);
 
     const bests = bestsRes.data ?? [];
-    const week = bests.filter((b) => b.period === "week").sort((a, b) => Number(b.total_amount) - Number(a.total_amount))[0];
-    const month = bests.filter((b) => b.period === "month").sort((a, b) => Number(b.total_amount) - Number(a.total_amount))[0];
-    setBestWeek(week ? { period: "week", amount: Number(week.total_amount), periodStart: week.period_start } : null);
-    setBestMonth(month ? { period: "month", amount: Number(month.total_amount), periodStart: month.period_start } : null);
+    const week = bests
+      .filter((b) => b.period === "week")
+      .sort((a, b) => Number(b.total_amount) - Number(a.total_amount))[0];
+    const month = bests
+      .filter((b) => b.period === "month")
+      .sort((a, b) => Number(b.total_amount) - Number(a.total_amount))[0];
+    setBestWeek(
+      week
+        ? { period: "week", amount: Number(week.total_amount), periodStart: week.period_start }
+        : null,
+    );
+    setBestMonth(
+      month
+        ? { period: "month", amount: Number(month.total_amount), periodStart: month.period_start }
+        : null,
+    );
 
     const c = challengesRes.data?.[0];
     if (c && c.week_start === isoDate(stats.weekStart)) {
@@ -158,12 +175,14 @@ export function useEngagement(): Engagement {
     }
 
     setUnlocked(new Set((milestonesRes.data ?? []).map((m) => m.milestone_key)));
-    setActivity((activityRes.data ?? []).map((a) => ({
-      id: a.id,
-      kind: a.kind,
-      amount: a.amount !== null ? Number(a.amount) : null,
-      createdAt: a.created_at,
-    })));
+    setActivity(
+      (activityRes.data ?? []).map((a) => ({
+        id: a.id,
+        kind: a.kind,
+        amount: a.amount !== null ? Number(a.amount) : null,
+        createdAt: a.created_at,
+      })),
+    );
 
     setLoading(false);
   }, [user, stats.weekStart]);
@@ -176,7 +195,6 @@ export function useEngagement(): Engagement {
     };
     window.addEventListener("debtfree:refresh", handler);
     return () => window.removeEventListener("debtfree:refresh", handler);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [load]);
 
   // Side-effects: persist personal bests + check milestones + update challenge progress
@@ -192,17 +210,27 @@ export function useEngagement(): Engagement {
     if (stats.weekPaid > 0) {
       tasks.push(
         supabase.from("personal_bests").upsert(
-          { user_id: user.id, period: "week", period_start: thisWeekStart, total_amount: stats.weekPaid },
-          { onConflict: "user_id,period,period_start" }
-        )
+          {
+            user_id: user.id,
+            period: "week",
+            period_start: thisWeekStart,
+            total_amount: stats.weekPaid,
+          },
+          { onConflict: "user_id,period,period_start" },
+        ),
       );
     }
     if (stats.monthPaid > 0) {
       tasks.push(
         supabase.from("personal_bests").upsert(
-          { user_id: user.id, period: "month", period_start: thisMonthStart, total_amount: stats.monthPaid },
-          { onConflict: "user_id,period,period_start" }
-        )
+          {
+            user_id: user.id,
+            period: "month",
+            period_start: thisMonthStart,
+            total_amount: stats.monthPaid,
+          },
+          { onConflict: "user_id,period,period_start" },
+        ),
       );
     }
 
@@ -228,9 +256,9 @@ export function useEngagement(): Engagement {
     }
     if (newlyUnlocked.length > 0) {
       tasks.push(
-        supabase.from("milestones").insert(
-          newlyUnlocked.map((key) => ({ user_id: user.id, milestone_key: key }))
-        )
+        supabase
+          .from("milestones")
+          .insert(newlyUnlocked.map((key) => ({ user_id: user.id, milestone_key: key }))),
       );
     }
 
@@ -239,16 +267,22 @@ export function useEngagement(): Engagement {
       let newProgress = challenge.progress;
       if (challenge.kind === "extra_payment") newProgress = stats.weekPaid;
       else if (challenge.kind === "log_one") {
-        const paymentsThisWeek = store.payments.filter((p: Payment) => new Date(p.date) >= stats.weekStart).length;
+        const paymentsThisWeek = store.payments.filter(
+          (p: Payment) => new Date(p.date) >= stats.weekStart,
+        ).length;
         newProgress = paymentsThisWeek;
       }
-      const completed = challenge.kind === "log_one" ? newProgress >= 1 : newProgress >= challenge.goalAmount;
+      const completed =
+        challenge.kind === "log_one" ? newProgress >= 1 : newProgress >= challenge.goalAmount;
       if (newProgress !== challenge.progress || (completed && challenge.status === "active")) {
         tasks.push(
-          supabase.from("challenges").update({
-            progress: newProgress,
-            status: completed ? "completed" : "active",
-          }).eq("id", challenge.id)
+          supabase
+            .from("challenges")
+            .update({
+              progress: newProgress,
+              status: completed ? "completed" : "active",
+            })
+            .eq("id", challenge.id),
         );
       }
     }
@@ -257,7 +291,15 @@ export function useEngagement(): Engagement {
       Promise.all(tasks).then(() => load());
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [stats.weekPaid, stats.monthPaid, store.debts, store.payments, store.loading, user, refreshTick]);
+  }, [
+    stats.weekPaid,
+    stats.monthPaid,
+    store.debts,
+    store.payments,
+    store.loading,
+    user,
+    refreshTick,
+  ]);
 
   const acceptChallenge = useCallback(
     async (kind: WeeklyChallenge["kind"], goal: number) => {
@@ -271,11 +313,11 @@ export function useEngagement(): Engagement {
           status: "active",
           progress: 0,
         },
-        { onConflict: "user_id,week_start" }
+        { onConflict: "user_id,week_start" },
       );
       load();
     },
-    [user, stats.weekStart, load]
+    [user, stats.weekStart, load],
   );
 
   const skipChallenge = useCallback(async () => {
@@ -289,14 +331,22 @@ export function useEngagement(): Engagement {
         status: "skipped",
         progress: 0,
       },
-      { onConflict: "user_id,week_start" }
+      { onConflict: "user_id,week_start" },
     );
     load();
   }, [user, stats.weekStart, load]);
 
   const beatLastWeek = stats.weekPaid > stats.prevWeekPaid && stats.prevWeekPaid > 0;
-  const newWeekBest = !!bestWeek && stats.weekPaid >= bestWeek.amount && bestWeek.periodStart === isoDate(stats.weekStart) && stats.weekPaid > 0;
-  const newMonthBest = !!bestMonth && stats.monthPaid >= bestMonth.amount && bestMonth.periodStart === isoDate(stats.monthStart) && stats.monthPaid > 0;
+  const newWeekBest =
+    !!bestWeek &&
+    stats.weekPaid >= bestWeek.amount &&
+    bestWeek.periodStart === isoDate(stats.weekStart) &&
+    stats.weekPaid > 0;
+  const newMonthBest =
+    !!bestMonth &&
+    stats.monthPaid >= bestMonth.amount &&
+    bestMonth.periodStart === isoDate(stats.monthStart) &&
+    stats.monthPaid > 0;
 
   return {
     loading,

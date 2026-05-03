@@ -53,25 +53,36 @@ function ResetPasswordPage() {
   return (
     <AuthShell title="Set a new password" subtitle="Choose something strong you'll remember.">
       {!ready ? (
-        <p className="text-center text-sm text-muted-foreground">
-          Validating your reset link…
-        </p>
+        <p className="text-center text-sm text-muted-foreground">Validating your reset link…</p>
       ) : (
         <form onSubmit={submit} className="space-y-4">
           <label className="block">
             <span className="mb-1.5 block text-sm font-medium">New password</span>
-            <input type="password" required value={password} onChange={(e) => setPassword(e.target.value)}
+            <input
+              type="password"
+              required
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
               className="w-full rounded-xl border border-input bg-background px-4 py-3 text-base outline-none focus:ring-2 focus:ring-ring"
-              placeholder="••••••••" />
+              placeholder="••••••••"
+            />
           </label>
           <label className="block">
             <span className="mb-1.5 block text-sm font-medium">Confirm password</span>
-            <input type="password" required value={confirm} onChange={(e) => setConfirm(e.target.value)}
+            <input
+              type="password"
+              required
+              value={confirm}
+              onChange={(e) => setConfirm(e.target.value)}
               className="w-full rounded-xl border border-input bg-background px-4 py-3 text-base outline-none focus:ring-2 focus:ring-ring"
-              placeholder="••••••••" />
+              placeholder="••••••••"
+            />
           </label>
-          <button type="submit" disabled={loading}
-            className="w-full rounded-full bg-primary px-5 py-3.5 text-base font-semibold text-primary-foreground shadow-glow hover:-translate-y-0.5 transition-transform disabled:opacity-60">
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full rounded-full bg-primary px-5 py-3.5 text-base font-semibold text-primary-foreground shadow-glow hover:-translate-y-0.5 transition-transform disabled:opacity-60"
+          >
             {loading ? "Updating…" : "Update password"}
           </button>
         </form>

@@ -1,6 +1,14 @@
 import { createFileRoute, Link, Outlet, useNavigate, useLocation } from "@tanstack/react-router";
 import { useEffect } from "react";
-import { LayoutDashboard, ListPlus, Target, SlidersHorizontal, LogOut, Trophy, Receipt } from "lucide-react";
+import {
+  LayoutDashboard,
+  ListPlus,
+  Target,
+  SlidersHorizontal,
+  LogOut,
+  Trophy,
+  Receipt,
+} from "lucide-react";
 import { useAuth } from "@/lib/auth";
 import { Logo } from "@/components/Logo";
 import { supabase } from "@/integrations/supabase/client";
@@ -45,7 +53,6 @@ function AppLayout() {
     };
   }, [loading, user, navigate]);
 
-
   const logout = async () => {
     await signOut();
     navigate({ to: "/" });
@@ -64,7 +71,6 @@ function AppLayout() {
       <header className="sticky top-0 z-30 border-b border-border/60 bg-background/80 backdrop-blur">
         <div className="mx-auto flex max-w-5xl items-center justify-between px-4 py-3 sm:px-6">
           <Logo to="/app" size="md" />
-
 
           <nav className="hidden items-center gap-1 sm:flex">
             {NAV.map((n) => {

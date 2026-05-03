@@ -2,7 +2,7 @@ import { Outlet, Link, createRootRoute, HeadContent, Scripts } from "@tanstack/r
 import { Toaster } from "@/components/ui/sonner";
 import { AuthProvider } from "@/lib/auth";
 import { Analytics } from "@vercel/analytics/react";
-import faviconUrl from "@/assets/logo_coin.png?url"
+import faviconUrl from "@/assets/logo_coin.png?url";
 
 import appCss from "../styles.css?url";
 
@@ -47,14 +47,25 @@ export const Route = createRootRoute({
       },
       { property: "og:type", content: "website" },
       { name: "twitter:title", content: "zeni — Pay off debt faster, without the stress" },
-      { name: "twitter:description", content: "zeni helps you pay off debt faster with a motivating, mobile-first web app." },
-      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/606690b9-631e-4503-9a9a-740d0773163b/id-preview-e3650c2a--5a194a91-60f4-4c3d-a8a9-0c50253cdbc1.lovable.app-1776977908643.png" },
-      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/606690b9-631e-4503-9a9a-740d0773163b/id-preview-e3650c2a--5a194a91-60f4-4c3d-a8a9-0c50253cdbc1.lovable.app-1776977908643.png" },
+      {
+        name: "twitter:description",
+        content: "zeni helps you pay off debt faster with a motivating, mobile-first web app.",
+      },
+      {
+        property: "og:image",
+        content:
+          "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/606690b9-631e-4503-9a9a-740d0773163b/id-preview-e3650c2a--5a194a91-60f4-4c3d-a8a9-0c50253cdbc1.lovable.app-1776977908643.png",
+      },
+      {
+        name: "twitter:image",
+        content:
+          "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/606690b9-631e-4503-9a9a-740d0773163b/id-preview-e3650c2a--5a194a91-60f4-4c3d-a8a9-0c50253cdbc1.lovable.app-1776977908643.png",
+      },
       { name: "twitter:card", content: "summary_large_image" },
     ],
     links: [
       { rel: "stylesheet", href: appCss },
-      { rel: "icon", type: "image/svg+xml", href: faviconUrl},
+      { rel: "icon", type: "image/svg+xml", href: faviconUrl },
     ],
   }),
   shellComponent: RootShell,
