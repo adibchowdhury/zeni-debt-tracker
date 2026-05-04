@@ -175,21 +175,6 @@ export function buildInsights(ctx: InsightsCtx): Insight[] {
     });
   }
 
-  // 5. No payments yet this week
-  if (weekPaid === 0 && payments.length > 0 && countdown.totalRemaining > 0) {
-    const lastPayment = payments[0];
-    const daysSince = Math.floor((Date.now() - lastPayment.date) / (24 * 60 * 60 * 1000));
-    if (daysSince >= 5) {
-      out.push({
-        id: "back-on-track",
-        icon: "target",
-        tone: "primary",
-        title: "Quick win: log a payment today",
-        body: `It's been ${daysSince} days. Even a small one keeps your streak going.`,
-      });
-    }
-  }
-
   return out.slice(0, 2);
 }
 

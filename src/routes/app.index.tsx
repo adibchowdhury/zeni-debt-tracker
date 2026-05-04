@@ -8,9 +8,9 @@ import {
   Sparkles,
   Flame,
   Trophy,
-  Bell,
   Zap,
   Heart,
+  Target,
 } from "lucide-react";
 import { useDebtStore, type Debt, type Payment, type Strategy } from "@/lib/storage";
 import { useAuth } from "@/lib/auth";
@@ -33,24 +33,36 @@ import {
   getCelebrated,
   markCelebrated,
 } from "@/components/debt/MilestoneCelebration";
-import { buildInsights, useCountdown, bestWeekGap } from "@/lib/insights";
-import { recordDashboardVisit } from "@/lib/achievements/signals";
+import { buildInsights, useCountdown } from "@/lib/insights";
+import { buildAchievementContext, type AchievementCtx } from "@/lib/achievements/context";
+import { ACHIEVEMENT_CATALOG } from "@/lib/achievements/catalog";
+import { readAchievementSignals, recordDashboardVisit } from "@/lib/achievements/signals";
 import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/app/")({
   component: Dashboard,
 });
 
-function NextStepCard() {
-  return (
-    <section className="rounded-2xl border border-[#E5E7EB] bg-white p-4 shadow-sm sm:p-5">
-      <div className="text-[11px] font-bold uppercase tracking-wide text-[#64748B]">Next step</div>
-      <p className="mt-1.5 text-sm font-semibold leading-snug text-[#0F172A]">
-        An extra $25 could move your payoff date forward.
-      </p>
-      <p className="mt-1 text-sm text-[#64748B]">Small, steady payments stack up faster than you think.</p>
-    </section>
-  );
+function milestoneDollarGap(id: string, ctx: AchievementCtx): number | null {
+  const paid = /^paid-(\d+)$/.exec(id);
+  if (paid) return Number(paid[1]) - ctx.totalPaid;
+  if (id === "500-paid") return 500 - ctx.totalPaid;
+  if (id === "1k-paid") return 1000 - ctx.totalPaid;
+  if (id === "10pct" && ctx.totalInitial > 0) return 0.1 * ctx.totalInitial - ctx.totalPaid;
+  if (id === "halfway" && ctx.totalInitial > 0) return 0.5 * ctx.totalInitial - ctx.totalPaid;
+  const pct = /^pct-(\d+)$/.exec(id);
+  if (pct && ctx.totalInitial > 0) return (Number(pct[1]) / 100) * ctx.totalInitial - ctx.totalPaid;
+  return null;
+}
+
+/** Next catalog milestone expressible as “$ more paid” (same order as achievements). */
+function nextPaymentMilestoneGap(ctx: AchievementCtx): number | null {
+  for (const a of ACHIEVEMENT_CATALOG) {
+    if (a.check(ctx)) continue;
+    const gap = milestoneDollarGap(a.id, ctx);
+    if (gap !== null && gap > 0.5) return gap;
+  }
+  return null;
 }
 
 const CELEBRATABLE: Record<string, { title: string; subtitle: string }> = {
@@ -95,6 +107,33 @@ function Dashboard() {
         countdown,
       }),
     [debts, payments, strategy, extraMonthly, eng.weekPaid, eng.prevWeekPaid, countdown],
+  );
+
+  const achievementCtx = useMemo(
+    () =>
+      buildAchievementContext(debts, payments, strategy, extraMonthly, readAchievementSignals(), {
+        newWeekBest: eng.newWeekBest,
+        newMonthBest: eng.newMonthBest,
+        weeklyStreak: eng.weeklyStreak,
+        weekPaid: eng.weekPaid,
+        monthPaid: eng.monthPaid,
+      }),
+    [
+      debts,
+      payments,
+      strategy,
+      extraMonthly,
+      eng.newWeekBest,
+      eng.newMonthBest,
+      eng.weeklyStreak,
+      eng.weekPaid,
+      eng.monthPaid,
+    ],
+  );
+
+  const nextMilestoneDollars = useMemo(
+    () => nextPaymentMilestoneGap(achievementCtx),
+    [achievementCtx],
   );
 
   // Detect newly unlocked milestones (compare against localStorage celebrated set)
@@ -185,6 +224,12 @@ function Dashboard() {
           <ProgressBar value={countdown.pct} />
         </div>
 
+        {nextMilestoneDollars != null && nextMilestoneDollars > 0 && (
+          <p className="mt-5 text-center text-xs text-muted-foreground">
+            You're {formatMoney(nextMilestoneDollars)} away from your next milestone.
+          </p>
+        )}
+
         <LogPaymentDialog>
           <Button type="button" variant="cta" className="mt-6 w-full gap-2">
             <Plus className="h-5 w-5" /> Log Payment
@@ -192,22 +237,20 @@ function Dashboard() {
         </LogPaymentDialog>
       </section>
 
-      {/* 5. SMARTER NUDGE */}
-      <SmartNudge eng={eng} totalRemaining={countdown.totalRemaining} />
+      {/* 5. YOUR NEXT MOVE */}
+      <YourNextMoveSection eng={eng} totalRemaining={countdown.totalRemaining} />
 
       {/* 6. PERSONALIZED INSIGHTS */}
       {insights.length > 0 && (
         <section className="grid gap-3 sm:grid-cols-2">
           {insights.map((ins) => (
-            <InsightCard key={ins.id} insight={ins} />
+            <InsightCard key={ins.id} insight={ins} subtle />
           ))}
         </section>
       )}
 
       {/* 7. WEEKLY CHALLENGE */}
       <ChallengeCard eng={eng} />
-
-      <NextStepCard />
 
       {/* 8. KEY STATS */}
       <section className="grid gap-3 sm:grid-cols-2">
@@ -244,7 +287,7 @@ function Dashboard() {
         <ArrowRight className="hidden h-5 w-5 text-primary sm:block" />
       </Link>
 
-      {/* 10. PERSONAL BESTS */}
+      {/* 10. WEEKLY STATS */}
       <section className="grid gap-3 sm:grid-cols-2">
         <BestChip
           label="Best week"
@@ -257,7 +300,7 @@ function Dashboard() {
           highlight={eng.beatLastWeek || eng.newWeekBest}
           subtitle={
             eng.beatLastWeek
-              ? "Beat last week 🎉"
+              ? "Beat last week"
               : eng.weekPaid === 0
                 ? "No payments yet"
                 : undefined
@@ -457,11 +500,59 @@ function StreakBanner({ streak, active }: { streak: number; active: boolean }) {
           {streak === 0
             ? "Log a payment to start your streak"
             : active
-              ? `🔥 ${streak} week streak — keep it going!`
-              : `🔥 ${streak} week streak — don't break it`}
+              ? `${streak} week streak — you're on track this week`
+              : `${streak} week streak — log a payment tomorrow to keep it alive`}
         </div>
       </div>
     </div>
+  );
+}
+
+function YourNextMoveSection({
+  eng,
+  totalRemaining,
+}: {
+  eng: ReturnType<typeof useEngagement>;
+  totalRemaining: number;
+}) {
+  if (totalRemaining <= 0) return null;
+
+  const lines: string[] = [];
+  if (!eng.thisWeekHasExtra) {
+    lines.push(
+      eng.weeklyStreak > 0
+        ? "Log a payment this week to keep your streak alive."
+        : "Log a payment this week to stay on track.",
+    );
+  }
+  lines.push("Add an extra $25 to move your payoff date forward.");
+
+  const display = lines.slice(0, 3);
+
+  return (
+    <section className="rounded-3xl border border-primary/30 bg-gradient-to-br from-[#FFF7ED] via-white to-white p-5 shadow-md ring-1 ring-primary/15 sm:p-6">
+      <div className="flex items-start gap-3">
+        <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-primary text-primary-foreground shadow-sm">
+          <Target className="h-5 w-5 shrink-0" aria-hidden />
+        </div>
+        <div className="min-w-0 flex-1">
+          <h2 className="font-display text-lg font-bold tracking-tight text-foreground sm:text-xl">
+            Your next move
+          </h2>
+          <ul className="mt-3 space-y-2.5">
+            {display.map((text) => (
+              <li
+                key={text}
+                className="flex gap-2.5 text-sm font-semibold leading-snug text-foreground sm:text-[15px]"
+              >
+                <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-primary" aria-hidden />
+                <span>{text}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+    </section>
   );
 }
 
@@ -478,90 +569,20 @@ function BestChip({
 }) {
   return (
     <div
-      className={`rounded-2xl border p-4 shadow-sm transition-all ${
+      className={`rounded-xl border px-3 py-3 shadow-none transition-all ${
         highlight
-          ? "border-success bg-success-soft/40 ring-2 ring-success/30"
-          : "border-border bg-card"
+          ? "border-success/35 bg-success-soft/30 ring-1 ring-success/20"
+          : "border-border/60 bg-muted/15"
       }`}
     >
-      <div className="flex items-center gap-2">
-        <Trophy className={`h-4 w-4 ${highlight ? "text-success" : "text-muted-foreground"}`} />
-        <div className="text-[11px] uppercase tracking-wider text-muted-foreground">{label}</div>
+      <div className="flex items-center gap-1.5">
+        <Trophy className={`h-3.5 w-3.5 ${highlight ? "text-success" : "text-muted-foreground"}`} />
+        <div className="text-[10px] uppercase tracking-wider text-muted-foreground">{label}</div>
       </div>
-      <div className="mt-1 font-display text-xl font-bold">{value}</div>
-      {subtitle && <div className="mt-0.5 text-xs font-medium text-success">{subtitle}</div>}
-    </div>
-  );
-}
-
-function SmartNudge({
-  eng,
-  totalRemaining,
-}: {
-  eng: ReturnType<typeof useEngagement>;
-  totalRemaining: number;
-}) {
-  let title = "";
-  let body = "";
-  let tone: "primary" | "success" = "primary";
-
-  const bestGap = bestWeekGap(eng.weekPaid, eng.bestWeek?.amount ?? null);
-
-  // Priority order: celebrations first, then risk, then opportunities.
-  if (eng.newWeekBest && eng.weekPaid > 0) {
-    title = "🎉 New personal best!";
-    body = `You've paid ${formatMoney(eng.weekPaid)} this week. Big deal.`;
-    tone = "success";
-  } else if (bestGap !== null && bestGap > 0 && bestGap <= 50 && eng.weekPaid > 0) {
-    // 1 payment away from beating personal best
-    title = "You're so close to a new personal best";
-    body = `Just ${formatMoney(bestGap)} more this week to beat your best ever.`;
-  } else if (eng.beatLastWeek) {
-    title = "👀 You beat last week";
-    body = `${formatMoney(eng.weekPaid)} this week vs ${formatMoney(eng.prevWeekPaid)} last week. Keep it going.`;
-    tone = "success";
-  } else if (eng.weeklyStreak >= 2 && eng.weekPaid === 0 && totalRemaining > 0) {
-    // Streak risk — supportive tone
-    title = `Keep your ${eng.weeklyStreak}-week streak alive`;
-    body = "Even a small payment this week keeps the momentum going.";
-  } else if (eng.weekPaid === 0 && totalRemaining > 0) {
-    title = "Next step: log a payment this week";
-    body = "Even a small payment keeps your streak alive.";
-  } else if (eng.prevWeekPaid > 0 && eng.weekPaid > 0 && eng.weekPaid < eng.prevWeekPaid) {
-    const diff = eng.prevWeekPaid - eng.weekPaid;
-    title = "You're close to last week's progress";
-    body = `Just ${formatMoney(diff)} more to match last week.`;
-  } else if (totalRemaining > 0) {
-    title = "An extra $25 could move your payoff date forward";
-    body = "Small, steady payments stack up faster than you think.";
-  } else {
-    return null;
-  }
-
-  return (
-    <div
-      className={`flex items-start gap-3 rounded-2xl border p-4 shadow-sm ${
-        tone === "success"
-          ? "border-success/40 bg-success-soft/40"
-          : "border-[#FF6A00]/20 bg-[#FFF7ED]"
-      }`}
-    >
-      <div
-        className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${
-          tone === "success"
-            ? "bg-success text-success-foreground"
-            : "bg-primary text-primary-foreground"
-        }`}
-      >
-        <Bell className="h-4 w-4" />
-      </div>
-      <div className="flex-1">
-        <div className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
-          Next step
-        </div>
-        <div className="font-display text-sm font-bold">{title}</div>
-        <div className="mt-0.5 text-sm text-muted-foreground">{body}</div>
-      </div>
+      <div className="mt-0.5 font-display text-base font-bold tabular-nums text-foreground">{value}</div>
+      {subtitle && (
+        <div className="mt-0.5 text-[11px] font-medium text-muted-foreground">{subtitle}</div>
+      )}
     </div>
   );
 }

@@ -25,18 +25,19 @@ export function ChallengeCard({ eng }: { eng: Engagement }) {
         </div>
         <div className="mt-4 grid gap-2 sm:grid-cols-2">
           <button
-            onClick={() => eng.acceptChallenge("extra_payment", 50)}
-            className="rounded-2xl border border-border bg-card p-4 text-left transition-all hover:-translate-y-0.5 hover:border-primary"
+            onClick={() => eng.acceptChallenge("log_one", 1)}
+            className="rounded-2xl border-2 border-primary bg-[#FFF7ED] p-4 text-left shadow-sm ring-1 ring-primary/15 transition-all hover:-translate-y-0.5"
           >
-            <div className="font-display text-sm font-bold">Pay an extra $50</div>
-            <div className="mt-0.5 text-xs text-muted-foreground">Beyond your minimums</div>
+            <div className="text-[10px] font-bold uppercase tracking-wide text-primary">Recommended</div>
+            <div className="mt-1 font-display text-sm font-bold">Log at least 1 payment</div>
+            <div className="mt-0.5 text-xs text-muted-foreground">Build the habit</div>
           </button>
           <button
-            onClick={() => eng.acceptChallenge("log_one", 1)}
-            className="rounded-2xl border border-border bg-card p-4 text-left transition-all hover:-translate-y-0.5 hover:border-primary"
+            onClick={() => eng.acceptChallenge("extra_payment", 50)}
+            className="rounded-2xl border border-border/80 bg-muted/20 p-4 text-left transition-all hover:border-primary/40 hover:bg-card"
           >
-            <div className="font-display text-sm font-bold">Log at least 1 payment</div>
-            <div className="mt-0.5 text-xs text-muted-foreground">Build the habit</div>
+            <div className="font-display text-sm font-bold text-foreground/90">Pay an extra $50</div>
+            <div className="mt-0.5 text-xs text-muted-foreground">Beyond your minimums</div>
           </button>
         </div>
         <button
@@ -108,21 +109,21 @@ export function ChallengeCard({ eng }: { eng: Engagement }) {
         <div className="mt-4 grid gap-2 sm:grid-cols-2">
           <button
             onClick={() => {
-              eng.acceptChallenge("extra_payment", 50);
-              setPicking(false);
-            }}
-            className="rounded-xl border border-border bg-background p-3 text-left text-sm font-medium hover:border-primary"
-          >
-            Pay an extra $50
-          </button>
-          <button
-            onClick={() => {
               eng.acceptChallenge("log_one", 1);
               setPicking(false);
             }}
-            className="rounded-xl border border-border bg-background p-3 text-left text-sm font-medium hover:border-primary"
+            className="rounded-xl border-2 border-primary bg-[#FFF7ED] p-3 text-left text-sm font-semibold hover:bg-[#FFF7ED]/90"
           >
             Log 1 payment
+          </button>
+          <button
+            onClick={() => {
+              eng.acceptChallenge("extra_payment", 50);
+              setPicking(false);
+            }}
+            className="rounded-xl border border-border bg-muted/20 p-3 text-left text-sm font-medium text-muted-foreground hover:border-primary/40 hover:text-foreground"
+          >
+            Pay an extra $50
           </button>
         </div>
       )}
