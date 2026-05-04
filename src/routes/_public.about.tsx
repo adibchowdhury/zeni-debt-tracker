@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/_public/about")({
   head: () => ({
@@ -121,19 +122,13 @@ function AboutPage() {
         <p className="mt-3 text-muted-foreground leading-relaxed">
           Sign up in under a minute. No bank linking, no credit check.
         </p>
-        <div className="mt-6 flex items-center justify-center gap-3">
-          <Link
-            to="/signup"
-            className="inline-flex items-center justify-center rounded-full bg-primary px-6 py-3 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
-          >
-            Get started
-          </Link>
-          <Link
-            to="/login"
-            className="inline-flex items-center justify-center rounded-full border border-input bg-background px-6 py-3 text-sm font-medium text-foreground transition-colors hover:bg-accent"
-          >
-            Log in
-          </Link>
+        <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
+          <Button asChild variant="default">
+            <Link to="/signup">Get started</Link>
+          </Button>
+          <Button asChild variant="outline" className="font-semibold">
+            <Link to="/login">Log in</Link>
+          </Button>
         </div>
       </section>
     </div>

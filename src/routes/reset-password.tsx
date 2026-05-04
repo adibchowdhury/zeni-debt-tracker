@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { AuthShell } from "./signup";
 import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/reset-password")({
   component: ResetPasswordPage,
@@ -78,13 +79,9 @@ function ResetPasswordPage() {
               placeholder="••••••••"
             />
           </label>
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full rounded-full bg-primary px-5 py-3.5 text-base font-semibold text-primary-foreground shadow-glow hover:-translate-y-0.5 transition-transform disabled:opacity-60"
-          >
+          <Button type="submit" disabled={loading} variant="default" size="lg" className="w-full">
             {loading ? "Updating…" : "Update password"}
-          </button>
+          </Button>
         </form>
       )}
     </AuthShell>

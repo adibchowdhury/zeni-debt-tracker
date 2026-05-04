@@ -8,9 +8,9 @@ export function CountdownHero({ countdown }: { countdown: CountdownInfo }) {
   const done = totalRemaining <= 0.01;
 
   return (
-    <section className="relative overflow-hidden rounded-3xl border-2 border-primary/30 bg-gradient-to-br from-primary-soft via-primary-soft/60 to-card p-6 shadow-soft sm:p-8">
+    <section className="relative overflow-hidden rounded-3xl border-2 border-[#FF6A00]/25 bg-gradient-to-br from-[#FFF7ED] via-white to-white p-6 shadow-sm sm:p-8 dark:border-[#FF6A00]/20 dark:from-zinc-900 dark:via-zinc-900 dark:to-zinc-900">
       {/* Decorative blob */}
-      <div className="pointer-events-none absolute -right-12 -top-12 h-48 w-48 rounded-full bg-primary/15 blur-3xl" />
+      <div className="pointer-events-none absolute -right-12 -top-12 h-48 w-48 rounded-full bg-[#FF6A00]/10 blur-3xl" />
 
       <div className="relative">
         <div className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-wider text-primary">

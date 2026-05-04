@@ -4,6 +4,8 @@ import { Sparkles, Calendar, TrendingDown, Clock } from "lucide-react";
 import { useDebtStore } from "@/lib/storage";
 import { simulatePayoff, formatMoney, formatMonths, formatDate } from "@/lib/debt-math";
 import { minPaymentPayoffMonths } from "@/lib/insights";
+import { recordSimulatorRun } from "@/lib/achievements/signals";
+import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/app/simulator")({
   component: Simulator,
@@ -17,6 +19,10 @@ function Simulator() {
   useEffect(() => {
     setExtra(extraMonthly);
   }, [extraMonthly]);
+
+  useEffect(() => {
+    recordSimulatorRun();
+  }, []);
 
   // Baseline = paying ONLY minimum payments (matches home page countdown).
   const baseline = useMemo(() => {
@@ -56,7 +62,7 @@ function Simulator() {
         </p>
       </div>
 
-      <div className="rounded-3xl border border-border bg-card p-6 shadow-soft sm:p-8">
+      <div className="rounded-3xl border border-border bg-card p-6 shadow-sm sm:p-8">
         <div className="text-xs uppercase tracking-wider text-muted-foreground">
           Extra payment / month
         </div>
@@ -115,7 +121,7 @@ function Simulator() {
         />
       </div>
 
-      <div className="rounded-3xl border border-border bg-card p-6 shadow-soft">
+      <div className="rounded-3xl border border-border bg-card p-6 shadow-sm">
         <div className="font-display text-base font-semibold">Side by side</div>
         <div className="mt-4 grid grid-cols-2 gap-4">
           <CompareCol
@@ -131,14 +137,16 @@ function Simulator() {
           />
         </div>
 
-        <button
+        <Button
+          type="button"
+          variant="default"
+          className="mt-6 w-full gap-2 text-sm"
           onClick={save}
           disabled={extra === extraMonthly}
-          className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-full bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground shadow-glow hover:-translate-y-0.5 transition-transform disabled:opacity-50 disabled:hover:translate-y-0"
         >
           <Sparkles className="h-4 w-4" />
           {extra === extraMonthly ? "Saved" : "Save this plan"}
-        </button>
+        </Button>
       </div>
     </div>
   );
@@ -161,7 +169,7 @@ function ImpactCard({
     success: "bg-success-soft text-success",
   }[tone];
   return (
-    <div className="rounded-2xl border border-border bg-card p-5 shadow-soft">
+    <div className="rounded-2xl border border-border bg-card p-5 shadow-sm">
       <div className={`flex h-9 w-9 items-center justify-center rounded-xl ${toneClasses}`}>
         <Icon className="h-4 w-4" />
       </div>

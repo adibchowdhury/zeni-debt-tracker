@@ -25,7 +25,6 @@ import {
 } from "@/lib/debt-math";
 import { ProgressBar } from "@/components/debt/ProgressBar";
 import { LogPaymentDialog } from "@/components/debt/LogPaymentDialog";
-import { ActivityFeed } from "@/components/debt/ActivityFeed";
 import { ChallengeCard } from "@/components/debt/ChallengeCard";
 import { CountdownHero } from "@/components/debt/CountdownHero";
 import { InsightCard } from "@/components/debt/InsightCard";
@@ -35,10 +34,24 @@ import {
   markCelebrated,
 } from "@/components/debt/MilestoneCelebration";
 import { buildInsights, useCountdown, bestWeekGap } from "@/lib/insights";
+import { recordDashboardVisit } from "@/lib/achievements/signals";
+import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/app/")({
   component: Dashboard,
 });
+
+function NextStepCard() {
+  return (
+    <section className="rounded-2xl border border-[#E5E7EB] bg-white p-4 shadow-sm sm:p-5">
+      <div className="text-[11px] font-bold uppercase tracking-wide text-[#64748B]">Next step</div>
+      <p className="mt-1.5 text-sm font-semibold leading-snug text-[#0F172A]">
+        An extra $25 could move your payoff date forward.
+      </p>
+      <p className="mt-1 text-sm text-[#64748B]">Small, steady payments stack up faster than you think.</p>
+    </section>
+  );
+}
 
 const CELEBRATABLE: Record<string, { title: string; subtitle: string }> = {
   "first-payment": {
@@ -63,6 +76,10 @@ function Dashboard() {
   const store = useDebtStore();
   const { user } = useAuth();
   const eng = useEngagement();
+
+  useEffect(() => {
+    recordDashboardVisit();
+  }, []);
   const { debts, payments, strategy, extraMonthly } = store;
   const countdown = useCountdown(debts, payments, strategy, extraMonthly);
 
@@ -147,7 +164,7 @@ function Dashboard() {
       <StreakBanner streak={eng.weeklyStreak} active={eng.thisWeekHasExtra} />
 
       {/* 4. PRIMARY ACTION */}
-      <section className="rounded-3xl border border-border bg-card p-6 shadow-soft sm:p-8">
+      <section className="rounded-3xl border border-border bg-card p-6 shadow-sm sm:p-8">
         <div className="text-xs uppercase tracking-wider text-muted-foreground">{greeting}</div>
         <h1 className="mt-1 font-display text-2xl font-bold tracking-tight sm:text-3xl">
           {motivational}
@@ -169,9 +186,9 @@ function Dashboard() {
         </div>
 
         <LogPaymentDialog>
-          <button className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-full bg-primary px-6 py-4 text-base font-semibold text-primary-foreground shadow-glow transition-transform hover:-translate-y-0.5 active:translate-y-0">
+          <Button type="button" variant="cta" className="mt-6 w-full gap-2">
             <Plus className="h-5 w-5" /> Log Payment
-          </button>
+          </Button>
         </LogPaymentDialog>
       </section>
 
@@ -189,6 +206,8 @@ function Dashboard() {
 
       {/* 7. WEEKLY CHALLENGE */}
       <ChallengeCard eng={eng} />
+
+      <NextStepCard />
 
       {/* 8. KEY STATS */}
       <section className="grid gap-3 sm:grid-cols-2">
@@ -209,9 +228,9 @@ function Dashboard() {
       {/* 9. WHAT-IF SIMULATOR */}
       <Link
         to="/app/simulator"
-        className="flex items-center gap-4 rounded-3xl border border-primary/30 bg-gradient-to-br from-primary-soft/60 to-card p-5 shadow-soft transition-transform hover:-translate-y-0.5 sm:p-6"
+        className="flex items-center gap-4 rounded-3xl border border-[#E5E7EB] bg-white p-5 shadow-sm transition-transform hover:-translate-y-0.5 hover:border-[#D1D5DB] sm:p-6"
       >
-        <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary text-primary-foreground shadow-glow">
+        <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary text-primary-foreground shadow-[0_0_12px_rgba(255,106,0,0.22)]">
           <Zap className="h-6 w-6" />
         </div>
         <div className="flex-1">
@@ -249,9 +268,6 @@ function Dashboard() {
       {/* 11. LIFE AFTER DEBT — gentle, only when near finish line */}
       {nearComplete && <LifeAfterDebt pct={countdown.pct} />}
 
-      {/* 12. ACTIVITY FEED */}
-      <ActivityFeed activity={eng.activity} />
-
       <MobileStickyCTA />
     </div>
   );
@@ -285,7 +301,7 @@ function FocusDebtSection({
 
   if (!focusDebt) {
     return (
-      <section className="rounded-3xl border border-border bg-card p-6 shadow-soft sm:p-8">
+      <section className="rounded-3xl border border-border bg-card p-6 shadow-sm sm:p-8">
         <p className="text-center text-sm text-muted-foreground">
           No active focus — all your debts are at zero balance. Nice work.
         </p>
@@ -312,9 +328,9 @@ function FocusDebtSection({
   return (
     <section>
       <div className="grid gap-4 lg:grid-cols-3">
-        <div className="rounded-3xl border border-border bg-card p-5 shadow-soft sm:p-7 lg:col-span-2">
+        <div className="rounded-3xl border border-border bg-card p-5 shadow-sm sm:p-7 lg:col-span-2">
           <div className="flex flex-wrap items-start justify-between gap-3">
-            <div className="inline-flex items-center gap-1.5 rounded-full bg-violet-600 px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider text-white shadow-sm dark:bg-violet-500">
+            <div className="inline-flex items-center gap-1.5 rounded-full bg-[#FF6A00] px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider text-white shadow-sm">
               <Flame className="h-3.5 w-3.5 shrink-0" aria-hidden />
               Current target
             </div>
@@ -381,7 +397,7 @@ function FocusDebtSection({
         </div>
 
         {nextDebt ? (
-          <div className="flex flex-col rounded-3xl border border-border bg-card p-5 shadow-soft sm:p-6 lg:col-span-1">
+          <div className="flex flex-col rounded-3xl border border-border bg-card p-5 shadow-sm sm:p-6 lg:col-span-1">
             <div className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
               Up next
             </div>
@@ -416,16 +432,16 @@ function StreakBanner({ streak, active }: { streak: number; active: boolean }) {
   const hot = streak > 0;
   return (
     <div
-      className={`flex items-center gap-4 rounded-3xl border-2 p-5 shadow-soft transition-all ${
+      className={`flex items-center gap-4 rounded-3xl border-2 p-5 shadow-sm transition-all ${
         active
-          ? "border-primary bg-primary-soft"
+          ? "border-[#FF6A00]/35 bg-[#FFF7ED]"
           : hot
-            ? "border-primary/40 bg-primary-soft/60"
-            : "border-border bg-card"
+            ? "border-[#FF6A00]/25 bg-[#FFF7ED]/80"
+            : "border-[#E5E7EB] bg-white"
       }`}
     >
       <div
-        className={`flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl text-2xl shadow-soft ${
+        className={`flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl text-2xl shadow-sm ${
           hot
             ? "bg-primary text-primary-foreground animate-pulse-glow"
             : "bg-muted text-muted-foreground"
@@ -462,7 +478,7 @@ function BestChip({
 }) {
   return (
     <div
-      className={`rounded-2xl border p-4 shadow-soft transition-all ${
+      className={`rounded-2xl border p-4 shadow-sm transition-all ${
         highlight
           ? "border-success bg-success-soft/40 ring-2 ring-success/30"
           : "border-border bg-card"
@@ -524,10 +540,10 @@ function SmartNudge({
 
   return (
     <div
-      className={`flex items-start gap-3 rounded-2xl border p-4 shadow-soft ${
+      className={`flex items-start gap-3 rounded-2xl border p-4 shadow-sm ${
         tone === "success"
           ? "border-success/40 bg-success-soft/40"
-          : "border-primary/30 bg-primary-soft/60"
+          : "border-[#FF6A00]/20 bg-[#FFF7ED]"
       }`}
     >
       <div
@@ -552,7 +568,7 @@ function SmartNudge({
 
 function LifeAfterDebt({ pct }: { pct: number }) {
   return (
-    <section className="rounded-3xl border border-teal/30 bg-gradient-to-br from-accent/40 to-card p-6 shadow-soft">
+    <section className="rounded-3xl border border-[#E5E7EB] bg-white p-6 shadow-sm dark:border-zinc-700 dark:bg-zinc-900">
       <div className="flex items-start gap-3">
         <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-teal text-teal-foreground">
           <Heart className="h-5 w-5" />
@@ -586,12 +602,12 @@ function Stat({
   tone: "default" | "success" | "teal";
 }) {
   const toneClasses = {
-    default: "bg-primary-soft text-primary",
+    default: "bg-[#FFF7ED] text-[#FF6A00]",
     success: "bg-success-soft text-success",
     teal: "bg-accent text-teal-foreground",
   }[tone];
   return (
-    <div className="rounded-2xl border border-border bg-card p-4 shadow-soft">
+    <div className="rounded-2xl border border-border bg-card p-4 shadow-sm">
       <div className={`flex h-8 w-8 items-center justify-center rounded-lg ${toneClasses}`}>
         <Icon className="h-4 w-4" />
       </div>
@@ -605,9 +621,9 @@ function MobileStickyCTA() {
   return (
     <div className="fixed inset-x-0 bottom-16 z-20 px-4 sm:hidden">
       <LogPaymentDialog>
-        <button className="flex w-full items-center justify-center gap-2 rounded-full bg-primary px-6 py-3.5 text-sm font-semibold text-primary-foreground shadow-glow active:scale-[0.98] transition-transform">
+        <Button type="button" variant="cta" className="w-full gap-2 text-sm">
           <Plus className="h-4 w-4" /> Log Payment
-        </button>
+        </Button>
       </LogPaymentDialog>
     </div>
   );
@@ -615,8 +631,8 @@ function MobileStickyCTA() {
 
 function EmptyState({ greeting }: { greeting: string }) {
   return (
-    <div className="rounded-3xl border border-border bg-card p-8 text-center shadow-soft sm:p-12">
-      <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-primary-soft text-primary">
+    <div className="rounded-3xl border border-border bg-card p-8 text-center shadow-sm sm:p-12">
+      <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-[#FFF7ED] text-[#FF6A00]">
         <Sparkles className="h-7 w-7" />
       </div>
       <h1 className="mt-5 font-display text-2xl font-bold tracking-tight sm:text-3xl">
@@ -625,12 +641,11 @@ function EmptyState({ greeting }: { greeting: string }) {
       <p className="mx-auto mt-2 max-w-md text-muted-foreground">
         Let's get started — add your first debt and we'll show you exactly when you'll be debt-free.
       </p>
-      <Link
-        to="/app/debts"
-        className="mt-6 inline-flex items-center gap-2 rounded-full bg-primary px-6 py-3.5 text-sm font-semibold text-primary-foreground shadow-glow hover:-translate-y-0.5 transition-transform"
-      >
-        <Plus className="h-4 w-4" /> Add your first debt
-      </Link>
+      <Button asChild variant="default" className="mt-6 gap-2">
+        <Link to="/app/debts">
+          <Plus className="h-4 w-4" /> Add your first debt
+        </Link>
+      </Button>
     </div>
   );
 }

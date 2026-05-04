@@ -16,6 +16,7 @@ import {
   CheckCircle2,
   ChevronDown,
 } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { DotLottieReact, setWasmUrl } from "@lottiefiles/dotlottie-react";
 setWasmUrl("/dotlottie-player.wasm");
 import stressedWomanLottie from "@/assets/lottie/stressed-woman.lottie?url";
@@ -63,10 +64,10 @@ function Landing() {
 
 function Hero() {
   return (
-    <section className="relative overflow-hidden bg-gradient-hero lg:min-h-[calc(100vh-73px)]">
-      {/* Soft decorative orange blobs */}
-      <div className="pointer-events-none absolute -top-24 -left-24 h-72 w-72 rounded-full bg-primary/20 blur-3xl" />
-      <div className="pointer-events-none absolute -bottom-32 -right-24 h-80 w-80 rounded-full bg-[oklch(0.86_0.17_92/0.35)] blur-3xl" />
+    <section className="relative overflow-hidden bg-white lg:min-h-[calc(100vh-73px)]">
+      {/* Soft brand accents — energetic, not beige */}
+      <div className="pointer-events-none absolute -top-24 -left-24 h-72 w-72 rounded-full bg-primary/12 blur-3xl" />
+      <div className="pointer-events-none absolute -bottom-32 -right-24 h-80 w-80 rounded-full bg-[#FACC15]/20 blur-3xl" />
 
       <div className="mx-auto grid max-w-6xl gap-12 px-5 pt-14 pb-20 sm:pt-20 sm:pb-28 lg:min-h-[calc(100vh-73px)] lg:grid-cols-[1.05fr_1fr] lg:items-center lg:gap-16 lg:py-16">
         {/* Left — copy */}
@@ -84,19 +85,20 @@ function Hero() {
           </p>
 
           <div className="mt-10 flex flex-col gap-3 sm:flex-row">
-            <Link
-              to="/signup"
-              className="group inline-flex w-full items-center justify-center gap-2 rounded-full bg-primary px-7 py-4 text-base font-semibold text-primary-foreground shadow-glow transition-transform hover:-translate-y-0.5 sm:w-auto lg:text-lg"
+            <Button asChild variant="cta" className="group w-full sm:w-auto lg:text-lg">
+              <Link to="/signup">
+                Start My Debt-Free Plan
+                <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+              </Link>
+            </Button>
+            <Button
+              asChild
+              variant="outline"
+              size="lg"
+              className="w-full font-semibold sm:w-auto lg:text-lg"
             >
-              Start My Debt-Free Plan
-              <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
-            </Link>
-            <a
-              href="#how-it-works"
-              className="inline-flex w-full items-center justify-center rounded-full border border-border bg-card px-7 py-4 text-base font-medium text-foreground hover:bg-secondary sm:w-auto lg:text-lg"
-            >
-              See how it works
-            </a>
+              <a href="#how-it-works">See how it works</a>
+            </Button>
           </div>
         </div>
 
@@ -133,7 +135,7 @@ function SellingBar() {
 
   return (
     <section className="relative z-10 px-5">
-      <div className="mx-auto -mt-8 grid max-w-6xl gap-4 rounded-[2rem] border border-border bg-card/90 p-4 shadow-soft backdrop-blur sm:grid-cols-2 lg:grid-cols-4 lg:p-5">
+      <div className="mx-auto -mt-8 grid max-w-6xl gap-4 rounded-[2rem] border border-border bg-white p-4 shadow-sm sm:grid-cols-2 lg:grid-cols-4 lg:p-5">
         {items.map((item) => (
           <div
             key={item.title}
@@ -225,7 +227,7 @@ function HeroVisual() {
   return (
     <div className="relative">
       {/* Floating "debt-free date" badge */}
-      <div className="absolute -top-4 -left-2 z-20 hidden rounded-2xl border border-border bg-card p-3 shadow-soft sm:flex sm:items-center sm:gap-2">
+      <div className="absolute -top-4 -left-2 z-20 hidden rounded-2xl border border-border bg-card p-3 shadow-sm sm:flex sm:items-center sm:gap-2">
         <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-success-soft text-success">
           <Calendar className="h-4 w-4" />
         </div>
@@ -243,7 +245,7 @@ function HeroVisual() {
       </div>
 
       {/* Floating streak chip */}
-      <div className="absolute -bottom-3 -right-2 z-20 hidden rounded-2xl border border-border bg-card p-3 shadow-soft sm:flex sm:items-center sm:gap-2">
+      <div className="absolute -bottom-3 -right-2 z-20 hidden rounded-2xl border border-border bg-card p-3 shadow-sm sm:flex sm:items-center sm:gap-2">
         <div
           className={`flex h-8 w-8 items-center justify-center rounded-xl bg-primary text-primary-foreground transition-transform duration-300 ${
             pulse ? "scale-110" : "scale-100"
@@ -263,7 +265,7 @@ function HeroVisual() {
 
       {/* Main card */}
       <div
-        className={`relative rounded-3xl border border-border bg-card p-6 shadow-soft sm:p-8 lg:scale-[1.04] lg:p-9 transition-shadow duration-500 ${
+        className={`relative rounded-3xl border border-border bg-card p-6 shadow-sm sm:p-8 lg:scale-[1.04] lg:p-9 transition-shadow duration-500 ${
           pulse ? "shadow-[0_0_0_4px_color-mix(in_oklab,var(--primary)_20%,transparent)]" : ""
         }`}
       >
@@ -415,7 +417,7 @@ function ProblemSection() {
             {pains.map((p) => (
               <div
                 key={p.title}
-                className="flex gap-4 rounded-2xl border border-border bg-card p-5 shadow-soft"
+                className="flex gap-4 rounded-2xl border border-border bg-card p-5 shadow-sm"
               >
                 <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-secondary text-muted-foreground">
                   <span className="font-display text-base font-bold">!</span>
@@ -457,7 +459,7 @@ function SolutionSection() {
   ];
 
   return (
-    <section className="bg-gradient-to-b from-background to-primary-soft/40 py-20 sm:py-24">
+    <section className="bg-gradient-to-b from-white to-[#FAFAFA] py-20 sm:py-24">
       <div className="mx-auto max-w-6xl px-5">
         <div className="mx-auto max-w-2xl text-center">
           <h2 className="font-display text-3xl font-bold tracking-tight sm:text-4xl">
@@ -471,7 +473,7 @@ function SolutionSection() {
 
         {/* Lottie: filling progress bar — momentum visualised */}
         <div className="mx-auto mt-10 max-w-xl">
-          <div className="relative overflow-hidden rounded-3xl border border-border bg-card px-6 py-5 shadow-soft">
+          <div className="relative overflow-hidden rounded-3xl border border-border bg-card px-6 py-5 shadow-sm">
             <div className="flex items-center justify-between">
               <div>
                 <div className="text-[11px] font-semibold uppercase tracking-wider text-primary">
@@ -502,9 +504,9 @@ function SolutionSection() {
           {wins.map((w) => (
             <div
               key={w.title}
-              className="group rounded-3xl border border-border bg-card p-6 shadow-soft transition-transform hover:-translate-y-1"
+              className="group rounded-3xl border border-border bg-card p-6 shadow-sm transition-transform hover:-translate-y-1"
             >
-              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary text-primary-foreground shadow-glow">
+              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary text-primary-foreground shadow-sm">
                 <w.icon className="h-5 w-5" />
               </div>
               <h3 className="mt-5 font-display text-lg font-bold">{w.title}</h3>
@@ -568,11 +570,11 @@ function HowItWorks() {
                 key={s.n}
                 className={`relative flex ${isRight ? "md:justify-end" : "md:justify-start"}`}
               >
-                <div className="pointer-events-none absolute left-1/2 top-8 hidden h-4 w-4 -translate-x-1/2 rounded-full border-4 border-background bg-primary shadow-glow md:block" />
+                <div className="pointer-events-none absolute left-1/2 top-8 hidden h-4 w-4 -translate-x-1/2 rounded-full border-4 border-background bg-primary shadow-sm md:block" />
 
-                <div className="relative w-full overflow-hidden rounded-3xl border border-border bg-card p-6 shadow-soft transition-transform hover:-translate-y-1 md:w-[46%]">
+                <div className="relative w-full overflow-hidden rounded-3xl border border-border bg-card p-6 shadow-sm transition-transform hover:-translate-y-1 md:w-[46%]">
                   <div className="flex items-center justify-between">
-                    <div className="flex h-11 w-11 items-center justify-center rounded-full bg-primary font-display text-base font-bold text-primary-foreground shadow-glow">
+                    <div className="flex h-11 w-11 items-center justify-center rounded-full bg-primary font-display text-base font-bold text-primary-foreground shadow-sm">
                       {s.n}
                     </div>
 
@@ -605,7 +607,7 @@ function HowItWorks() {
 
 function PreviewSection() {
   return (
-    <section className="bg-gradient-to-b from-primary-soft/40 to-background py-20 sm:py-24">
+    <section className="bg-gradient-to-b from-[#FAFAFA] to-white py-20 sm:py-24">
       <div className="mx-auto max-w-6xl px-5">
         <div className="mx-auto max-w-2xl text-center">
           <h2 className="font-display text-3xl font-bold tracking-tight sm:text-4xl">
@@ -614,7 +616,7 @@ function PreviewSection() {
         </div>
         <div className="mt-12 grid gap-5 lg:grid-cols-3">
           {/* Dashboard preview */}
-          <div className="rounded-3xl border border-border bg-card p-6 shadow-soft lg:col-span-2">
+          <div className="rounded-3xl border border-border bg-card p-6 shadow-sm lg:col-span-2">
             <div className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
               Dashboard
             </div>
@@ -639,7 +641,7 @@ function PreviewSection() {
           </div>
 
           {/* Timeline preview */}
-          <div className="rounded-3xl border border-border bg-card p-6 shadow-soft">
+          <div className="rounded-3xl border border-border bg-card p-6 shadow-sm">
             <div className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
               Payoff timeline
             </div>
@@ -732,7 +734,7 @@ function SocialProof() {
 
   return (
     <section className="px-5 py-20 sm:py-24">
-      <div className="mx-auto max-w-6xl rounded-[2rem] border border-border bg-gradient-to-br from-card via-primary-soft/30 to-background p-6 shadow-soft sm:p-10">
+      <div className="mx-auto max-w-6xl rounded-[2rem] border border-border bg-white p-6 shadow-sm sm:p-10">
         <div className="grid gap-10 lg:grid-cols-[0.75fr_1.25fr] lg:items-start">
           <div className="text-center lg:text-left">
             <div className="mb-3 inline-flex rounded-full bg-primary-soft px-3 py-1 text-xs font-semibold uppercase tracking-wider text-primary">
@@ -760,20 +762,16 @@ function SocialProof() {
             </div>
 
             <div className="mt-8 flex flex-col gap-3 sm:flex-row lg:flex-col">
-              <Link
-                to="/signup"
-                className="inline-flex items-center justify-center gap-2 rounded-full bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground shadow-glow transition-transform hover:-translate-y-0.5"
-              >
-                Start free
-                <ArrowRight className="h-4 w-4" />
-              </Link>
+              <Button asChild variant="default" className="gap-2">
+                <Link to="/signup">
+                  Start free
+                  <ArrowRight className="h-4 w-4" />
+                </Link>
+              </Button>
 
-              <Link
-                to="/features"
-                className="inline-flex items-center justify-center rounded-full border border-border bg-card px-6 py-3 text-sm font-semibold text-foreground hover:bg-secondary"
-              >
-                See features
-              </Link>
+              <Button asChild variant="outline" className="gap-2 font-semibold">
+                <Link to="/features">See features</Link>
+              </Button>
             </div>
           </div>
 
@@ -781,7 +779,7 @@ function SocialProof() {
             {reviews.map((review, index) => (
               <div
                 key={`${review.name}-${index}`}
-                className={`rounded-3xl border border-border bg-card p-5 shadow-soft ${
+                className={`rounded-3xl border border-border bg-card p-5 shadow-sm ${
                   index === 0 ? "sm:row-span-2" : ""
                 }`}
               >
@@ -843,7 +841,7 @@ function FAQSection() {
   const [openIndex, setOpenIndex] = useState<number | null>(0);
 
   return (
-    <section className="bg-gradient-to-b from-background to-primary-soft/30 px-5 py-20 sm:py-24">
+    <section className="bg-gradient-to-b from-white to-[#FAFAFA] px-5 py-20 sm:py-24">
       <div className="mx-auto max-w-3xl">
         <div className="text-center">
           <div className="mb-3 inline-flex rounded-full bg-primary-soft px-3 py-1 text-xs font-semibold uppercase tracking-wider text-primary">
@@ -866,7 +864,7 @@ function FAQSection() {
             return (
               <div
                 key={faq.question}
-                className="overflow-hidden rounded-2xl border border-border bg-card shadow-soft"
+                className="overflow-hidden rounded-2xl border border-border bg-card shadow-sm"
               >
                 <button
                   type="button"
@@ -905,7 +903,7 @@ function FAQSection() {
 function FinalCTA() {
   return (
     <section className="px-5 pb-20 sm:pb-28">
-      <div className="relative mx-auto max-w-5xl overflow-hidden rounded-[2rem] border border-primary/30 bg-gradient-to-br from-primary via-[oklch(0.75_0.19_55)] to-[oklch(0.82_0.17_75)] p-10 text-center shadow-glow sm:p-14">
+      <div className="relative mx-auto max-w-5xl overflow-hidden rounded-[2rem] border border-[#FF6A00]/30 bg-gradient-to-br from-[#FF6A00] to-[#EA580C] p-10 text-center shadow-sm sm:p-14">
         <div className="pointer-events-none absolute -top-16 -left-16 h-56 w-56 rounded-full bg-white/20 blur-3xl" />
         <div className="pointer-events-none absolute -bottom-20 -right-12 h-64 w-64 rounded-full bg-white/15 blur-3xl" />
 
@@ -924,7 +922,7 @@ function FinalCTA() {
           <div className="mt-7 flex flex-col items-center justify-center gap-3 sm:flex-row">
             <Link
               to="/signup"
-              className="group inline-flex w-full items-center justify-center gap-2 rounded-full bg-card px-7 py-3.5 text-base font-semibold text-foreground shadow-soft transition-transform hover:-translate-y-0.5 sm:w-auto"
+              className="group inline-flex w-full items-center justify-center gap-2 rounded-full bg-white px-7 py-3.5 text-base font-semibold text-[#0F172A] shadow-sm transition-transform hover:-translate-y-0.5 hover:bg-[#FAFAFA] sm:w-auto"
             >
               Start My Debt-Free Plan
               <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />

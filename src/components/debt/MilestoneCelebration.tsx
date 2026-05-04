@@ -49,7 +49,7 @@ export function MilestoneCelebration({ milestoneKey, title, subtitle, onClose }:
         visible ? "translate-y-0 opacity-100" : "-translate-y-8 opacity-0"
       }`}
     >
-      <div className="relative w-full overflow-hidden rounded-3xl border-2 border-primary bg-card p-5 shadow-glow">
+      <div className="relative w-full overflow-hidden rounded-3xl border-2 border-primary bg-card p-5 shadow-sm">
         {/* Confetti dots */}
         <ConfettiBurst />
 
@@ -65,7 +65,7 @@ export function MilestoneCelebration({ milestoneKey, title, subtitle, onClose }:
         </button>
 
         <div className="relative flex items-center gap-4">
-          <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-primary text-primary-foreground shadow-glow animate-bounce">
+          <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-primary text-primary-foreground shadow-sm animate-bounce">
             <Trophy className="h-7 w-7" />
           </div>
           <div className="flex-1">

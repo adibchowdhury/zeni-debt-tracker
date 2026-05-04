@@ -11,7 +11,7 @@ export function ChallengeCard({ eng }: { eng: Engagement }) {
 
   if (!eng.challenge) {
     return (
-      <section className="rounded-3xl border border-primary/30 bg-primary-soft/40 p-6 shadow-soft">
+      <section className="rounded-3xl border border-[#E5E7EB] bg-white p-6 shadow-sm ring-1 ring-[#FF6A00]/10">
         <div className="flex items-start gap-3">
           <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary text-primary-foreground">
             <Target className="h-4 w-4" />
@@ -68,7 +68,7 @@ export function ChallengeCard({ eng }: { eng: Engagement }) {
 
   return (
     <section
-      className={`rounded-3xl border p-6 shadow-soft transition-colors ${completed ? "border-success/40 bg-success-soft/40" : "border-border bg-card"}`}
+      className={`rounded-3xl border p-6 shadow-sm transition-colors ${completed ? "border-success/40 bg-success-soft/40" : "border-[#E5E7EB] bg-white"}`}
     >
       <div className="flex items-start gap-3">
         <div

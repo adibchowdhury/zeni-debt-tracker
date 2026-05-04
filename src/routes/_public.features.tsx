@@ -81,14 +81,14 @@ const features = [
 
 function FeaturesPage() {
   return (
-    <div className="min-h-screen bg-[#fdf8f1]">
+    <div className="min-h-screen bg-white">
       <main className="mx-auto max-w-6xl px-5 py-16 sm:py-20">
         <section className="mx-auto max-w-3xl text-center">
-          <h1 className="text-4xl font-semibold tracking-tight text-[#1f2933] sm:text-5xl md:text-6xl">
+          <h1 className="text-4xl font-semibold tracking-tight text-[#0F172A] sm:text-5xl md:text-6xl">
             Features that help debt payoff feel less overwhelming.
           </h1>
 
-          <p className="mx-auto mt-5 max-w-2xl text-base leading-7 text-[#6b5f55] sm:text-lg">
+          <p className="mx-auto mt-5 max-w-2xl text-base leading-7 text-[#475569] sm:text-lg">
             Zeni helps you track your debt, stay consistent, and turn the long road to zero into
             small wins you can actually feel.
           </p>
@@ -98,25 +98,25 @@ function FeaturesPage() {
           {features.map((feature) => (
             <div
               key={feature.title}
-              className="group rounded-[1.75rem] border border-orange-100 bg-white/80 p-7 shadow-sm transition hover:-translate-y-1 hover:border-orange-200 hover:shadow-[0_24px_70px_rgba(120,72,24,0.10)]"
+              className="group rounded-[1.75rem] border border-[#E5E7EB] bg-white p-7 shadow-sm transition hover:-translate-y-1 hover:border-[#D1D5DB] hover:shadow-md"
             >
-              <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-2xl bg-orange-100 text-orange-600 transition group-hover:bg-orange-500 group-hover:text-white">
+              <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-2xl bg-[#FFF7ED] text-[#FF6A00] transition group-hover:bg-[#FF6A00] group-hover:text-white">
                 <feature.icon className="h-6 w-6" />
               </div>
 
-              <h3 className="text-lg font-semibold text-[#1f2933]">{feature.title}</h3>
+              <h3 className="text-lg font-semibold text-[#0F172A]">{feature.title}</h3>
 
-              <p className="mt-3 text-sm leading-6 text-[#7a6f66]">{feature.desc}</p>
+              <p className="mt-3 text-sm leading-6 text-[#475569]">{feature.desc}</p>
             </div>
           ))}
         </section>
 
-        <section className="mx-auto mt-16 max-w-4xl rounded-[2rem] border border-orange-100 bg-white/80 p-8 text-center shadow-sm sm:p-10">
-          <h2 className="text-2xl font-semibold tracking-tight text-[#1f2933]">
+        <section className="mx-auto mt-16 max-w-4xl rounded-[2rem] border border-[#E5E7EB] bg-white p-8 text-center shadow-sm sm:p-10">
+          <h2 className="text-2xl font-semibold tracking-tight text-[#0F172A]">
             Not just another debt tracker.
           </h2>
 
-          <p className="mx-auto mt-3 max-w-2xl text-sm leading-6 text-[#7a6f66] sm:text-base">
+          <p className="mx-auto mt-3 max-w-2xl text-sm leading-6 text-[#475569] sm:text-base">
             Most apps only show numbers. Zeni is built to keep you emotionally motivated while you
             pay off debt, one payment at a time.
           </p>

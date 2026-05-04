@@ -48,7 +48,7 @@ function TransactionsPage() {
           <h1 className="mt-2 font-display text-2xl font-bold sm:text-3xl">Transactions</h1>
           <p className="text-sm text-muted-foreground">Every payment you've logged.</p>
         </div>
-        <div className="rounded-2xl bg-card px-4 py-3 text-right shadow-soft">
+        <div className="rounded-2xl bg-card px-4 py-3 text-right shadow-sm">
           <div className="text-[11px] uppercase tracking-wide text-muted-foreground">
             Total paid
           </div>
@@ -57,11 +57,11 @@ function TransactionsPage() {
       </div>
 
       {loading ? (
-        <div className="rounded-2xl bg-card p-8 text-center text-sm text-muted-foreground shadow-soft">
+        <div className="rounded-2xl bg-card p-8 text-center text-sm text-muted-foreground shadow-sm">
           Loading…
         </div>
       ) : sorted.length === 0 ? (
-        <div className="rounded-2xl bg-card p-10 text-center shadow-soft">
+        <div className="rounded-2xl bg-card p-10 text-center shadow-sm">
           <Receipt className="mx-auto h-10 w-10 text-muted-foreground" />
           <p className="mt-3 font-medium">No transactions yet</p>
           <p className="mt-1 text-sm text-muted-foreground">
@@ -78,7 +78,7 @@ function TransactionsPage() {
                   <h2 className="text-sm font-semibold text-muted-foreground">{month}</h2>
                   <span className="text-xs text-muted-foreground">{formatMoney(monthTotal)}</span>
                 </div>
-                <ul className="divide-y divide-border overflow-hidden rounded-2xl bg-card shadow-soft">
+                <ul className="divide-y divide-border overflow-hidden rounded-2xl bg-card shadow-sm">
                   {items.map((p) => (
                     <li key={p.id} className="flex items-center justify-between gap-3 px-4 py-3">
                       <div className="min-w-0">

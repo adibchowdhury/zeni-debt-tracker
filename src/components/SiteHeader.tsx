@@ -14,7 +14,7 @@ export function SiteHeader() {
   ];
 
   return (
-    <header className="sticky top-0 z-40 border-b border-border/60 bg-background/80 backdrop-blur">
+    <header className="sticky top-0 z-40 border-b border-border bg-white">
       <div className="mx-auto flex max-w-6xl items-center justify-between px-5 py-4">
         <Logo to="/" size="md" />
 
@@ -24,7 +24,7 @@ export function SiteHeader() {
             <a
               key={item.label}
               href={item.href}
-              className="rounded-full px-4 py-2 text-sm font-medium text-foreground/80 transition-colors hover:text-foreground hover:bg-secondary/60"
+              className="rounded-full px-4 py-2 text-sm font-medium text-[#475569] transition-colors hover:bg-[#FAFAFA] hover:text-[#0F172A]"
             >
               {item.label}
             </a>
@@ -35,13 +35,13 @@ export function SiteHeader() {
         <div className="hidden items-center gap-2 md:flex">
           <Link
             to="/login"
-            className="rounded-full px-4 py-2 text-sm font-medium text-foreground/80 hover:text-foreground"
+            className="rounded-full px-4 py-2 text-sm font-medium text-[#475569] hover:text-[#0F172A]"
           >
             Log in
           </Link>
           <Link
             to="/signup"
-            className="rounded-full bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground shadow-soft transition-transform hover:-translate-y-0.5"
+            className="rounded-full bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground shadow-sm transition-transform hover:-translate-y-0.5 hover:bg-[#EA580C]"
           >
             Get started
           </Link>
@@ -60,14 +60,14 @@ export function SiteHeader() {
 
       {/* Mobile menu */}
       {open && (
-        <div className="border-t border-border/60 bg-background px-5 py-4 md:hidden">
+        <div className="border-t border-border bg-white px-5 py-4 md:hidden">
           <nav className="flex flex-col gap-4">
             {navLinks.map((item) => (
               <a
                 key={item.label}
                 href={item.href}
                 onClick={() => setOpen(false)}
-                className="rounded-full px-4 py-2 text-sm font-medium text-foreground/80 hover:text-foreground hover:bg-secondary/60"
+                className="rounded-full px-4 py-2 text-sm font-medium text-[#475569] hover:bg-[#FAFAFA] hover:text-[#0F172A]"
               >
                 {item.label}
               </a>
@@ -77,14 +77,14 @@ export function SiteHeader() {
               <Link
                 to="/login"
                 onClick={() => setOpen(false)}
-                className="rounded-full px-4 py-2 text-center text-sm font-medium text-foreground/80 hover:text-foreground"
+                className="rounded-full px-4 py-2 text-center text-sm font-medium text-[#475569] hover:text-[#0F172A]"
               >
                 Log in
               </Link>
               <Link
                 to="/signup"
                 onClick={() => setOpen(false)}
-                className="rounded-full bg-primary px-4 py-2 text-center text-sm font-semibold text-primary-foreground shadow-soft"
+                className="rounded-full bg-primary px-4 py-2 text-center text-sm font-semibold text-primary-foreground shadow-sm hover:bg-[#EA580C]"
               >
                 Get started
               </Link>

@@ -5,6 +5,7 @@ import { useDebtStore, type Debt, DEBT_TYPES, type DebtType } from "@/lib/storag
 import { debtPayoffPercent, formatMoney, paidTowardDebt } from "@/lib/debt-math";
 import { ProgressBar } from "@/components/debt/ProgressBar";
 import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/app/debts")({
   component: DebtsPage,
@@ -27,15 +28,18 @@ function DebtsPage() {
           <h1 className="font-display text-2xl font-bold tracking-tight sm:text-3xl">Your debts</h1>
           <p className="text-sm text-muted-foreground">Add, edit, or remove debts.</p>
         </div>
-        <button
+        <Button
+          type="button"
+          variant="default"
+          size="sm"
+          className="gap-2"
           onClick={() => {
             setEditing(null);
             setOpen(true);
           }}
-          className="inline-flex items-center gap-2 rounded-full bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground shadow-glow hover:-translate-y-0.5 transition-transform"
         >
           <Plus className="h-4 w-4" /> Add debt
-        </button>
+        </Button>
       </div>
 
       {store.debts.length === 0 ? (
@@ -48,7 +52,7 @@ function DebtsPage() {
             const paid = paidTowardDebt(d, store.payments);
             const pct = debtPayoffPercent(d, store.payments);
             return (
-              <div key={d.id} className="rounded-2xl border border-border bg-card p-5 shadow-soft">
+              <div key={d.id} className="rounded-2xl border border-border bg-card p-5 shadow-sm">
                 <div className="flex items-start justify-between gap-3">
                   <div>
                     <div className="font-display text-base font-semibold">{d.name}</div>
@@ -153,7 +157,7 @@ function DebtForm({ debt, onClose }: { debt: Debt | null; onClose: () => void })
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        className="w-full max-w-md rounded-t-3xl bg-card p-6 shadow-soft sm:rounded-3xl"
+        className="w-full max-w-md rounded-t-3xl bg-card p-6 shadow-sm sm:rounded-3xl"
       >
         <div className="mb-4 flex items-center justify-between">
           <h2 className="font-display text-xl font-bold">{debt ? "Edit debt" : "Add a debt"}</h2>
@@ -235,12 +239,9 @@ function DebtForm({ debt, onClose }: { debt: Debt | null; onClose: () => void })
               className="w-full rounded-xl border border-input bg-background px-4 py-3 outline-none focus:ring-2 focus:ring-ring"
             />
           </FormField>
-          <button
-            type="submit"
-            className="w-full rounded-full bg-primary px-5 py-3 text-base font-semibold text-primary-foreground shadow-glow hover:-translate-y-0.5 transition-transform"
-          >
+          <Button type="submit" variant="default" className="w-full">
             {debt ? "Save changes" : "Add debt"}
-          </button>
+          </Button>
         </form>
       </div>
     </div>

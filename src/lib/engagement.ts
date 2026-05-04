@@ -3,6 +3,9 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
 import { useDebtStore, type Payment } from "@/lib/storage";
 import { startOfWeek, startOfMonth, isoDate } from "@/lib/week";
+import { MILESTONE_SYNC_DEFS } from "@/lib/achievements/catalog";
+import { buildAchievementContext } from "@/lib/achievements/context";
+import { readAchievementSignals, stampAllClearIfNeeded } from "@/lib/achievements/signals";
 
 export interface PersonalBest {
   period: "week" | "month";
@@ -19,13 +22,6 @@ export interface WeeklyChallenge {
   progress: number;
 }
 
-export interface ActivityItem {
-  id: string;
-  kind: string;
-  amount: number | null;
-  createdAt: string;
-}
-
 export interface Engagement {
   loading: boolean;
   weeklyStreak: number;
@@ -40,21 +36,9 @@ export interface Engagement {
   newMonthBest: boolean;
   challenge: WeeklyChallenge | null;
   unlockedMilestones: Set<string>;
-  activity: ActivityItem[];
   acceptChallenge: (kind: WeeklyChallenge["kind"], goal: number) => Promise<void>;
   skipChallenge: () => Promise<void>;
 }
-
-const MILESTONE_DEFS = [
-  { key: "first-debt", check: (s: { debts: number }) => s.debts >= 1 },
-  { key: "first-payment", check: (s: { payments: number }) => s.payments >= 1 },
-  { key: "10pct", check: (s: { pctPaid: number }) => s.pctPaid >= 10 },
-  { key: "500-paid", check: (s: { totalPaid: number }) => s.totalPaid >= 500 },
-  { key: "1k-paid", check: (s: { totalPaid: number }) => s.totalPaid >= 1000 },
-  { key: "halfway", check: (s: { pctPaid: number }) => s.pctPaid >= 50 },
-  { key: "first-clear", check: (s: { debtsCleared: number }) => s.debtsCleared >= 1 },
-  { key: "all-clear", check: (s: { allClear: boolean }) => s.allClear },
-];
 
 export function useEngagement(): Engagement {
   const { user } = useAuth();
@@ -64,7 +48,6 @@ export function useEngagement(): Engagement {
   const [bestMonth, setBestMonth] = useState<PersonalBest | null>(null);
   const [challenge, setChallenge] = useState<WeeklyChallenge | null>(null);
   const [unlocked, setUnlocked] = useState<Set<string>>(new Set());
-  const [activity, setActivity] = useState<ActivityItem[]>([]);
   const [refreshTick, setRefreshTick] = useState(0);
 
   // Compute payment stats
@@ -130,7 +113,7 @@ export function useEngagement(): Engagement {
       setLoading(false);
       return;
     }
-    const [bestsRes, challengesRes, milestonesRes, activityRes] = await Promise.all([
+    const [bestsRes, challengesRes, milestonesRes] = await Promise.all([
       supabase.from("personal_bests").select("*").eq("user_id", user.id),
       supabase
         .from("challenges")
@@ -139,7 +122,6 @@ export function useEngagement(): Engagement {
         .order("week_start", { ascending: false })
         .limit(1),
       supabase.from("milestones").select("milestone_key").eq("user_id", user.id),
-      supabase.from("activity_feed").select("*").order("created_at", { ascending: false }).limit(8),
     ]);
 
     const bests = bestsRes.data ?? [];
@@ -175,14 +157,6 @@ export function useEngagement(): Engagement {
     }
 
     setUnlocked(new Set((milestonesRes.data ?? []).map((m) => m.milestone_key)));
-    setActivity(
-      (activityRes.data ?? []).map((a) => ({
-        id: a.id,
-        kind: a.kind,
-        amount: a.amount !== null ? Number(a.amount) : null,
-        createdAt: a.created_at,
-      })),
-    );
 
     setLoading(false);
   }, [user, stats.weekStart]);
@@ -240,19 +214,39 @@ export function useEngagement(): Engagement {
     const pctPaid = totalInitial > 0 ? (totalPaid / totalInitial) * 100 : 0;
     const debtsCleared = store.debts.filter((d) => d.balance <= 0.01).length;
     const allClear = store.debts.length > 0 && debtsCleared === store.debts.length;
-    const ctx = {
-      debts: store.debts.length,
-      payments: store.payments.length,
-      totalPaid,
-      pctPaid,
-      debtsCleared,
-      allClear,
-    };
+    stampAllClearIfNeeded(allClear);
+
+    const monthStartStr = isoDate(stats.monthStart);
+    const newWeekBestFlag =
+      !!bestWeek &&
+      stats.weekPaid >= bestWeek.amount &&
+      bestWeek.periodStart === isoDate(stats.weekStart) &&
+      stats.weekPaid > 0;
+    const newMonthBestFlag =
+      !!bestMonth &&
+      stats.monthPaid >= bestMonth.amount &&
+      bestMonth.periodStart === monthStartStr &&
+      stats.monthPaid > 0;
+
+    const achCtx = buildAchievementContext(
+      store.debts,
+      store.payments,
+      store.strategy,
+      store.extraMonthly,
+      readAchievementSignals(),
+      {
+        newWeekBest: newWeekBestFlag,
+        newMonthBest: newMonthBestFlag,
+        weeklyStreak: stats.streak,
+        weekPaid: stats.weekPaid,
+        monthPaid: stats.monthPaid,
+      },
+    );
 
     const newlyUnlocked: string[] = [];
-    for (const m of MILESTONE_DEFS) {
+    for (const m of MILESTONE_SYNC_DEFS) {
       if (unlocked.has(m.key)) continue;
-      if (m.check(ctx as never)) newlyUnlocked.push(m.key);
+      if (m.check(achCtx)) newlyUnlocked.push(m.key);
     }
     if (newlyUnlocked.length > 0) {
       tasks.push(
@@ -288,17 +282,24 @@ export function useEngagement(): Engagement {
     }
 
     if (tasks.length > 0) {
-      Promise.all(tasks).then(() => load());
+      void Promise.all(tasks).then(() => load());
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     stats.weekPaid,
     stats.monthPaid,
+    stats.streak,
+    stats.weekStart,
+    stats.monthStart,
     store.debts,
     store.payments,
+    store.strategy,
+    store.extraMonthly,
     store.loading,
     user,
     refreshTick,
+    unlocked,
+    bestWeek,
+    bestMonth,
   ]);
 
   const acceptChallenge = useCallback(
@@ -362,7 +363,6 @@ export function useEngagement(): Engagement {
     newMonthBest,
     challenge,
     unlockedMilestones: unlocked,
-    activity,
     acceptChallenge,
     skipChallenge,
   };

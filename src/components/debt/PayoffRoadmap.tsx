@@ -50,7 +50,7 @@ export function PayoffRoadmap({ debts, payments, strategy, extraMonthly }: Payof
   const simHitCap = sim.months >= MAX_SIM_MONTHS && debts.some((d) => d.balance > 0);
 
   return (
-    <section className="rounded-3xl border border-border bg-card p-5 shadow-soft sm:p-8">
+    <section className="rounded-3xl border border-border bg-card p-5 shadow-sm sm:p-8">
       <div className="mb-8 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div>
           <h2 className="font-display text-xl font-bold tracking-tight sm:text-2xl">{title}</h2>
@@ -99,17 +99,17 @@ export function PayoffRoadmap({ debts, payments, strategy, extraMonthly }: Payof
               <div key={debt.id} className="relative flex gap-4 sm:gap-5">
                 <div className="relative z-[1] flex w-10 shrink-0 flex-col items-center pt-5 sm:w-11">
                   {isFocus ? (
-                    <div className="flex h-11 w-11 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-glow ring-4 ring-card">
+                    <div className="flex h-11 w-11 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-[0_0_12px_rgba(255,106,0,0.28)] ring-4 ring-card">
                       <Flame className="h-5 w-5" aria-hidden />
                     </div>
                   ) : (
-                    <div className="flex h-11 w-11 items-center justify-center rounded-full border-2 border-primary/40 bg-card font-display text-sm font-bold tabular-nums text-primary ring-4 ring-card">
+                    <div className="flex h-11 w-11 items-center justify-center rounded-full border-2 border-[#FF6A00]/35 bg-white font-display text-sm font-bold tabular-nums text-primary ring-4 ring-card">
                       {index + 1}
                     </div>
                   )}
                 </div>
 
-                <div className="min-w-0 flex-1 rounded-2xl border border-border bg-secondary/35 p-4 shadow-soft sm:p-5 dark:bg-secondary/25">
+                <div className="min-w-0 flex-1 rounded-2xl border border-[#E5E7EB] bg-[#FAFAFA] p-4 shadow-sm sm:p-5 dark:border-zinc-700 dark:bg-zinc-900/40">
                   <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
                     <div className="min-w-0 flex-1 space-y-2">
                       <div className="font-display text-base font-semibold sm:text-lg">
@@ -162,12 +162,12 @@ function DebtFreeMilestone({
   return (
     <div className="relative flex gap-4 sm:gap-5">
       <div className="relative z-[1] flex w-10 shrink-0 flex-col items-center pt-5 sm:w-11">
-        <div className="flex h-11 w-11 items-center justify-center rounded-full bg-success text-success-foreground shadow-soft ring-4 ring-card">
+        <div className="flex h-11 w-11 items-center justify-center rounded-full bg-success text-success-foreground shadow-sm ring-4 ring-card">
           <Check className="h-5 w-5 stroke-[3]" aria-hidden />
         </div>
       </div>
 
-      <div className="min-w-0 flex-1 rounded-2xl border-2 border-success/55 bg-success-soft/50 p-4 shadow-soft dark:border-success/50 dark:bg-success/15 sm:p-5">
+      <div className="min-w-0 flex-1 rounded-2xl border-2 border-success/55 bg-success-soft/50 p-4 shadow-sm dark:border-success/50 dark:bg-success/15 sm:p-5">
         <div className="font-display text-lg font-bold text-success sm:text-xl">Debt-free</div>
         {allPaid ? (
           <p className="mt-3 text-sm leading-relaxed text-muted-foreground dark:text-success-foreground/85">

@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Logo } from "@/components/Logo";
 import { Eye, EyeOff } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/signup")({
   component: SignupPage,
@@ -91,13 +92,9 @@ function SignupPage() {
             </button>
           </div>
         </Field>
-        <button
-          type="submit"
-          disabled={loading}
-          className="w-full rounded-full bg-primary px-5 py-3.5 text-base font-semibold text-primary-foreground shadow-glow hover:-translate-y-0.5 transition-transform disabled:opacity-60"
-        >
+        <Button type="submit" disabled={loading} variant="default" size="lg" className="w-full">
           {loading ? "Creating…" : "Create account"}
-        </button>
+        </Button>
       </form>
       <p className="mt-6 text-center text-sm text-muted-foreground">
         Already have an account?{" "}
@@ -119,11 +116,11 @@ export function AuthShell({
   children: React.ReactNode;
 }) {
   return (
-    <div className="min-h-screen bg-gradient-hero px-5 py-10">
+    <div className="min-h-screen bg-white px-5 py-10">
       <div className="mx-auto mb-10 flex w-fit items-center">
         <Logo to="/" size="md" />
       </div>
-      <div className="mx-auto max-w-md rounded-3xl border border-border bg-card p-6 shadow-soft sm:p-8">
+      <div className="mx-auto max-w-md rounded-3xl border border-border bg-card p-6 shadow-sm sm:p-8">
         <h1 className="font-display text-2xl font-bold tracking-tight">{title}</h1>
         <p className="mt-1 text-sm text-muted-foreground">{subtitle}</p>
         <div className="mt-6">{children}</div>

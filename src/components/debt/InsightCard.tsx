@@ -12,9 +12,9 @@ const ICONS = {
 export function InsightCard({ insight }: { insight: Insight }) {
   const Icon = ICONS[insight.icon];
   const toneClasses = {
-    primary: "border-primary/30 bg-primary-soft/50 text-primary",
+    primary: "border-[#E5E7EB] bg-white text-[#0F172A]",
     success: "border-success/40 bg-success-soft/40 text-success",
-    info: "border-border bg-accent/40 text-teal-foreground",
+    info: "border-[#E5E7EB] bg-white text-[#0F172A]",
   }[insight.tone];
 
   const iconBg = {
@@ -24,7 +24,7 @@ export function InsightCard({ insight }: { insight: Insight }) {
   }[insight.tone];
 
   return (
-    <div className={`flex items-start gap-3 rounded-2xl border p-4 shadow-soft ${toneClasses}`}>
+    <div className={`flex items-start gap-3 rounded-2xl border p-4 shadow-sm ${toneClasses}`}>
       <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${iconBg}`}>
         <Icon className="h-4 w-4" />
       </div>

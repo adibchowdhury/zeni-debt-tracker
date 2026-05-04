@@ -1,8 +1,13 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { X, Plus } from "lucide-react";
 import { useDebtStore } from "@/lib/storage";
 import { formatMoney } from "@/lib/debt-math";
 import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
+import { useAuth } from "@/lib/auth";
+import { useEngagement } from "@/lib/engagement";
+import { supabase } from "@/integrations/supabase/client";
+import { MILESTONE_CATALOG } from "@/lib/milestone-catalog";
 
 export function LogPaymentDialog({ children }: { children: React.ReactNode }) {
   const [open, setOpen] = useState(false);
@@ -15,13 +20,15 @@ export function LogPaymentDialog({ children }: { children: React.ReactNode }) {
 }
 
 function Dialog({ onClose }: { onClose: () => void }) {
+  const { user } = useAuth();
   const store = useDebtStore();
+  const eng = useEngagement();
   const activeDebts = store.debts.filter((d) => d.balance > 0);
   const [debtId, setDebtId] = useState("");
   const [amount, setAmount] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const beforeMilestones = useRef<Set<string>>(new Set());
 
-  // Once debts load, default the selection to the first active debt
   useEffect(() => {
     if (!debtId && activeDebts.length > 0) {
       setDebtId(activeDebts[0].id);
@@ -41,14 +48,30 @@ function Dialog({ onClose }: { onClose: () => void }) {
       return;
     }
     setSubmitting(true);
+    beforeMilestones.current = new Set(eng.unlockedMilestones);
     try {
       const { cleared, debtName } = await store.logPayment(debtId, amt);
+
+      let badgeTitles: string[] = [];
+      if (user) {
+        await new Promise((r) => setTimeout(r, 450));
+        const { data: rows } = await supabase.from("milestones").select("milestone_key").eq("user_id", user.id);
+        const after = new Set((rows ?? []).map((r) => r.milestone_key as string));
+        const newKeys = [...after].filter((k) => !beforeMilestones.current.has(k));
+        badgeTitles = newKeys.map((k) => MILESTONE_CATALOG.find((e) => e.id === k)?.title ?? k);
+      }
+
+      const lines: string[] = [];
       if (cleared) {
         celebrate();
-        toast.success(`🎉 ${debtName} is paid off!`);
-      } else {
-        toast.success(`Logged ${formatMoney(amt)} — keep going!`);
+        lines.push(`${debtName} is paid off.`);
       }
+      lines.push("Payment logged. You're making progress.");
+      if (badgeTitles.length > 0) {
+        lines.push(`Badge unlocked: ${badgeTitles.join(", ")}`);
+      }
+      toast.success(lines.join(" "));
+
       onClose();
     } catch {
       toast.error("Couldn't log payment");
@@ -65,15 +88,12 @@ function Dialog({ onClose }: { onClose: () => void }) {
       >
         <div
           onClick={(e) => e.stopPropagation()}
-          className="w-full max-w-md rounded-3xl bg-card p-6 text-center shadow-soft"
+          className="w-full max-w-md rounded-3xl bg-card p-6 text-center shadow-sm"
         >
           <p className="text-muted-foreground">No active debts to pay against.</p>
-          <button
-            onClick={onClose}
-            className="mt-4 rounded-full bg-primary px-5 py-2 text-sm font-semibold text-primary-foreground"
-          >
+          <Button type="button" onClick={onClose} variant="default" size="sm" className="mt-4 w-full">
             Close
-          </button>
+          </Button>
         </div>
       </div>
     );
@@ -86,11 +106,12 @@ function Dialog({ onClose }: { onClose: () => void }) {
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        className="w-full max-w-md rounded-t-3xl bg-card p-6 shadow-soft sm:rounded-3xl"
+        className="w-full max-w-md rounded-t-3xl bg-card p-6 shadow-sm sm:rounded-3xl"
       >
         <div className="mb-4 flex items-center justify-between">
           <h2 className="font-display text-xl font-bold">Log a payment</h2>
           <button
+            type="button"
             onClick={onClose}
             className="rounded-full p-1 text-muted-foreground hover:bg-secondary"
           >
@@ -140,13 +161,9 @@ function Dialog({ onClose }: { onClose: () => void }) {
               </button>
             ))}
           </div>
-          <button
-            type="submit"
-            disabled={submitting}
-            className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-primary px-5 py-3 text-base font-semibold text-primary-foreground shadow-glow hover:-translate-y-0.5 transition-transform disabled:opacity-60 disabled:hover:translate-y-0"
-          >
+          <Button type="submit" variant="cta" disabled={submitting} className="w-full gap-2">
             <Plus className="h-4 w-4" /> {submitting ? "Logging…" : "Log payment"}
-          </button>
+          </Button>
         </form>
       </div>
     </div>
@@ -155,7 +172,7 @@ function Dialog({ onClose }: { onClose: () => void }) {
 
 function celebrate() {
   if (typeof window === "undefined") return;
-  const colors = ["#F97316", "#FDBA74", "#FACC15", "#3B82F6"];
+  const colors = ["#FF6A00", "#FDBA74", "#FACC15", "#3B82F6"];
   const count = 60;
   const container = document.createElement("div");
   container.style.cssText =

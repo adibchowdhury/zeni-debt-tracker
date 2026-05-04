@@ -7,6 +7,7 @@ import { useDebtStore } from "@/lib/storage";
 import { ProgressBar } from "@/components/debt/ProgressBar";
 import { simulatePayoff, formatMoney, formatDate } from "@/lib/debt-math";
 import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/onboarding")({
   component: OnboardingPage,
@@ -162,14 +163,14 @@ function OnboardingPage() {
 
   if (loading || checking) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-gradient-hero">
+      <div className="flex min-h-screen items-center justify-center bg-white">
         <div className="text-sm text-muted-foreground">Loading…</div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-hero px-4 py-8 sm:py-12">
+    <div className="min-h-screen bg-white px-4 py-8 sm:py-12">
       <div className="mx-auto w-full max-w-md">
         <div className="mb-6">
           <div className="mb-2 flex items-center justify-between text-xs font-semibold uppercase tracking-wider text-muted-foreground">
@@ -181,7 +182,7 @@ function OnboardingPage() {
           <ProgressBar value={(step / totalSteps) * 100} />
         </div>
 
-        <div className="rounded-3xl border border-border bg-card p-6 shadow-soft sm:p-8 animate-in fade-in slide-in-from-bottom-2 duration-300">
+        <div className="rounded-3xl border border-border bg-card p-6 shadow-sm sm:p-8 animate-in fade-in slide-in-from-bottom-2 duration-300">
           {step === 1 && (
             <div className="space-y-5">
               <div>
@@ -204,7 +205,7 @@ function OnboardingPage() {
                       onClick={() => setReason(r.key)}
                       className={`flex items-center gap-2 rounded-2xl border p-3.5 text-left text-sm font-medium transition-all ${
                         active
-                          ? "border-primary bg-primary-soft text-primary shadow-glow"
+                          ? "border-primary bg-primary-soft text-primary shadow-sm"
                           : "border-border bg-background hover:border-primary/40"
                       }`}
                     >
@@ -218,7 +219,7 @@ function OnboardingPage() {
                   onClick={() => setReason("Custom")}
                   className={`col-span-2 flex items-center gap-2 rounded-2xl border p-3.5 text-left text-sm font-medium transition-all ${
                     reason === "Custom"
-                      ? "border-primary bg-primary-soft text-primary shadow-glow"
+                      ? "border-primary bg-primary-soft text-primary shadow-sm"
                       : "border-border bg-background hover:border-primary/40"
                   }`}
                 >
@@ -468,13 +469,15 @@ function ContinueButton({
   icon?: React.ReactNode;
 }) {
   return (
-    <button
+    <Button
       type="button"
       onClick={onClick}
       disabled={disabled}
-      className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-primary px-6 py-3.5 text-base font-semibold text-primary-foreground shadow-glow transition-transform hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:translate-y-0"
+      variant="default"
+      size="lg"
+      className="w-full gap-2 disabled:cursor-not-allowed"
     >
       {label} {icon ?? <Check className="h-4 w-4" />}
-    </button>
+    </Button>
   );
 }

@@ -3,6 +3,7 @@ import { Mail, MapPin, Phone } from "lucide-react";
 import { useState } from "react";
 import { LottieAnimation } from "../components/LottieAnimation";
 import { AnimatedSection } from "../components/AnimatedSection";
+import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/_public/contact")({
   head: () => ({
@@ -136,12 +137,9 @@ function ContactPage() {
                       placeholder="Tell us about your needs..."
                     />
                   </div>
-                  <button
-                    type="submit"
-                    className="w-full rounded-xl bg-primary px-6 py-3.5 text-sm font-semibold text-primary-foreground transition-all hover:shadow-[var(--shadow-glow)]"
-                  >
+                  <Button type="submit" variant="default" className="w-full">
                     Send Message
-                  </button>
+                  </Button>
                 </form>
               )}
             </div>

@@ -1,5 +1,6 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { useMemo } from "react";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { useEffect, useMemo } from "react";
+import { recordStrategyPlanView } from "@/lib/achievements/signals";
 import { Snowflake, Mountain, Check } from "lucide-react";
 import { useDebtStore, type Strategy } from "@/lib/storage";
 import { simulatePayoff, formatMoney, formatMonths } from "@/lib/debt-math";
@@ -12,6 +13,10 @@ export const Route = createFileRoute("/app/strategy")({
 function StrategyPage() {
   const store = useDebtStore();
   const { debts, payments, strategy, extraMonthly } = store;
+
+  useEffect(() => {
+    if (debts.length > 0) recordStrategyPlanView();
+  }, [debts.length]);
 
   const compare = useMemo(() => {
     const snow = simulatePayoff(debts, "snowball", extraMonthly);
@@ -33,7 +38,13 @@ function StrategyPage() {
           Your payoff plan
         </h1>
         <p className="text-sm text-muted-foreground">
-          Pick a strategy. Both work — pick what feels right.
+          Pick a strategy. Both work — pick what feels right.{" "}
+          <Link
+            to="/app/simulator"
+            className="font-semibold text-[#FF6A00] underline-offset-2 hover:text-[#EA580C] hover:underline"
+          >
+            What-if simulator
+          </Link>
         </p>
       </div>
 
@@ -102,7 +113,7 @@ function StrategyCard({
 }) {
   return (
     <div
-      className={`relative rounded-3xl border bg-card p-6 shadow-soft transition-all ${
+      className={`relative rounded-3xl border bg-card p-6 shadow-sm transition-all ${
         selected ? "border-primary ring-2 ring-primary/30" : "border-border"
       }`}
     >
