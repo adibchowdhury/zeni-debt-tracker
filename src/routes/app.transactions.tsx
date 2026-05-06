@@ -1,6 +1,6 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { useMemo } from "react";
-import { Receipt, ArrowLeft } from "lucide-react";
+import { Receipt } from "lucide-react";
 import { useDebtStore } from "@/lib/storage";
 import { formatMoney } from "@/lib/debt-math";
 
@@ -39,13 +39,7 @@ function TransactionsPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <Link
-            to="/app"
-            className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground"
-          >
-            <ArrowLeft className="h-3.5 w-3.5" /> Back
-          </Link>
-          <h1 className="mt-2 font-display text-2xl font-bold sm:text-3xl">Transactions</h1>
+          <h1 className="font-display text-2xl font-bold sm:text-3xl">Transactions</h1>
           <p className="text-sm text-muted-foreground">Every payment you've logged.</p>
         </div>
         <div className="rounded-2xl bg-card px-4 py-3 text-right shadow-sm">

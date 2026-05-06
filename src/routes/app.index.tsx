@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, type ReactNode } from "react";
 import {
   ArrowRight,
   Plus,
@@ -22,22 +22,25 @@ import {
   formatMonths,
   payoffDateAfterMonths,
   payoffRoadmapOrder,
+  type PayoffResult,
 } from "@/lib/debt-math";
 import { ProgressBar } from "@/components/debt/ProgressBar";
 import { LogPaymentDialog } from "@/components/debt/LogPaymentDialog";
 import { ChallengeCard } from "@/components/debt/ChallengeCard";
 import { CountdownHero } from "@/components/debt/CountdownHero";
+import { PaymentActivityStrip } from "@/components/debt/PaymentActivityStrip";
 import { InsightCard } from "@/components/debt/InsightCard";
 import {
   MilestoneCelebration,
   getCelebrated,
   markCelebrated,
 } from "@/components/debt/MilestoneCelebration";
-import { buildInsights, useCountdown } from "@/lib/insights";
+import { buildInsights, useCountdown, type Insight } from "@/lib/insights";
 import { buildAchievementContext, type AchievementCtx } from "@/lib/achievements/context";
 import { ACHIEVEMENT_CATALOG } from "@/lib/achievements/catalog";
 import { readAchievementSignals, recordDashboardVisit } from "@/lib/achievements/signals";
 import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/app/")({
   component: Dashboard,
@@ -136,6 +139,13 @@ function Dashboard() {
     [achievementCtx],
   );
 
+  const { ordered, sim: roadmapSim } = useMemo(
+    () => payoffRoadmapOrder(debts, strategy, extraMonthly),
+    [debts, strategy, extraMonthly],
+  );
+  const focusDebt = ordered[0] ?? null;
+  const nextDebt = ordered[1] ?? null;
+
   // Detect newly unlocked milestones (compare against localStorage celebrated set)
   const [celebration, setCelebration] = useState<string | null>(null);
   useEffect(() => {
@@ -178,7 +188,7 @@ function Dashboard() {
   const nearComplete = countdown.pct >= 80 && countdown.totalRemaining > 0;
 
   return (
-    <div className="space-y-6">
+    <div className="relative pb-24 md:pb-10">
       {celebration && CELEBRATABLE[celebration] && (
         <MilestoneCelebration
           milestoneKey={celebration}
@@ -188,129 +198,77 @@ function Dashboard() {
         />
       )}
 
-      {/* 1. DEBT-FREE COUNTDOWN — hero of the dashboard */}
-      <CountdownHero countdown={countdown} />
-
-      {/* 2. FOCUS DEBT — avalanche/snowball target */}
-      <FocusDebtSection
-        debts={debts}
-        payments={payments}
-        strategy={strategy}
-        extraMonthly={extraMonthly}
-      />
-
-      {/* 3. STREAK */}
-      <StreakBanner streak={eng.weeklyStreak} active={eng.thisWeekHasExtra} />
-
-      {/* 4. PRIMARY ACTION */}
-      <section className="rounded-3xl border border-border bg-card p-6 shadow-sm sm:p-8">
-        <div className="text-xs uppercase tracking-wider text-muted-foreground">{greeting}</div>
-        <h1 className="mt-1 font-display text-2xl font-bold tracking-tight sm:text-3xl">
-          {motivational}
-        </h1>
-        <p className="mt-1.5 text-sm text-muted-foreground">
-          You've paid off{" "}
-          <span className="font-semibold text-foreground">{formatMoney(countdown.totalPaid)}</span>{" "}
-          so far — keep going!
-        </p>
-
-        <div className="mt-5">
-          <div className="mb-2 flex justify-between text-sm">
-            <span className="font-medium">Overall progress</span>
-            <span className="font-display font-semibold text-primary">
-              {countdown.pct.toFixed(1)}%
-            </span>
+      <div className="w-full">
+        <div className="space-y-8 lg:space-y-10">
+          <div className="space-y-3">
+            <CountdownHero countdown={countdown} />
+            <p className="text-sm leading-relaxed text-muted-foreground">
+              <span className="font-semibold text-foreground">{greeting}</span>
+              <span className="text-muted-foreground"> · </span>
+              <span>{motivational}</span>
+              {nextMilestoneDollars != null && nextMilestoneDollars > 0 && (
+                <span className="mt-1.5 block text-xs text-muted-foreground">
+                  {formatMoney(nextMilestoneDollars)} to your next milestone.
+                </span>
+              )}
+            </p>
           </div>
-          <ProgressBar value={countdown.pct} />
-        </div>
 
-        {nextMilestoneDollars != null && nextMilestoneDollars > 0 && (
-          <p className="mt-5 text-center text-xs text-muted-foreground">
-            You're {formatMoney(nextMilestoneDollars)} away from your next milestone.
-          </p>
-        )}
-
-        <LogPaymentDialog>
-          <Button type="button" variant="cta" className="mt-6 w-full gap-2">
-            <Plus className="h-5 w-5" /> Log Payment
-          </Button>
-        </LogPaymentDialog>
-      </section>
-
-      {/* 5. YOUR NEXT MOVE */}
-      <YourNextMoveSection eng={eng} totalRemaining={countdown.totalRemaining} />
-
-      {/* 6. PERSONALIZED INSIGHTS */}
-      {insights.length > 0 && (
-        <section className="grid gap-3 sm:grid-cols-2">
-          {insights.map((ins) => (
-            <InsightCard key={ins.id} insight={ins} subtle />
-          ))}
-        </section>
-      )}
-
-      {/* 7. WEEKLY CHALLENGE */}
-      <ChallengeCard eng={eng} />
-
-      {/* 8. KEY STATS */}
-      <section className="grid gap-3 sm:grid-cols-2">
-        <Stat
-          icon={Wallet}
-          label="Still to go"
-          value={formatMoney(countdown.totalRemaining)}
-          tone="default"
-        />
-        <Stat
-          icon={TrendingDown}
-          label="Paid off"
-          value={formatMoney(countdown.totalPaid)}
-          tone="success"
-        />
-      </section>
-
-      {/* 9. WHAT-IF SIMULATOR */}
-      <Link
-        to="/app/simulator"
-        className="flex items-center gap-4 rounded-3xl border border-[#E5E7EB] bg-white p-5 shadow-sm transition-transform hover:-translate-y-0.5 hover:border-[#D1D5DB] sm:p-6"
-      >
-        <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary text-primary-foreground shadow-[0_0_12px_rgba(255,106,0,0.22)]">
-          <Zap className="h-6 w-6" />
-        </div>
-        <div className="flex-1">
-          <div className="font-display text-base font-bold sm:text-lg">
-            See how much faster you can be debt-free
+          <div className="grid gap-6 lg:grid-cols-2 lg:gap-x-10 lg:gap-y-8">
+            {focusDebt ? (
+              <CurrentTargetCard
+                focusDebt={focusDebt}
+                payments={payments}
+                strategy={strategy}
+                sim={roadmapSim}
+              />
+            ) : (
+              <div className="flex min-h-[10rem] flex-col justify-center rounded-2xl border border-dashed border-border bg-muted/10 p-6 text-center">
+                <p className="text-sm text-muted-foreground">All balances at zero.</p>
+                <Link
+                  to="/app/strategy"
+                  className="mt-3 text-sm font-medium text-primary hover:underline"
+                >
+                  Plan settings
+                </Link>
+              </div>
+            )}
+            <NextDebtStreakCard
+              focusDebt={focusDebt}
+              nextDebt={nextDebt}
+              streak={eng.weeklyStreak}
+              active={eng.thisWeekHasExtra}
+              className="ring-1 ring-[#FF6A00]/10 bg-[#FFFCFA] dark:bg-zinc-950/40 dark:ring-primary/15"
+            />
           </div>
-          <div className="mt-0.5 text-sm text-muted-foreground">
-            Add an extra $25/mo and watch your payoff date jump forward.
+
+          <div className="grid gap-6 lg:grid-cols-2 lg:gap-x-10 lg:gap-y-8">
+            <NextStepCard eng={eng} totalRemaining={countdown.totalRemaining} />
+            <PaymentActivityStrip
+              payments={payments}
+              className="ring-1 ring-primary/25 shadow-sm dark:ring-primary/30"
+            />
           </div>
+
+          <div className="grid gap-6 lg:grid-cols-2 lg:gap-x-10 lg:gap-y-8">
+            <SimulatorTeaser />
+            <SnapshotInsightsCard
+              countdown={countdown}
+              eng={eng}
+              insights={insights}
+              className="bg-muted/20 dark:bg-muted/10"
+            />
+          </div>
+
+          <div className="[&_section]:rounded-2xl [&_section]:border-border [&_section]:p-6 [&_section]:shadow-sm">
+            <ChallengeCard eng={eng} />
+          </div>
+
+          {nearComplete && <LifeAfterDebt pct={countdown.pct} />}
         </div>
-        <ArrowRight className="hidden h-5 w-5 text-primary sm:block" />
-      </Link>
+      </div>
 
-      {/* 10. WEEKLY STATS */}
-      <section className="grid gap-3 sm:grid-cols-2">
-        <BestChip
-          label="Best week"
-          value={eng.bestWeek ? formatMoney(eng.bestWeek.amount) : "—"}
-          highlight={eng.newWeekBest}
-        />
-        <BestChip
-          label="This week"
-          value={formatMoney(eng.weekPaid)}
-          highlight={eng.beatLastWeek || eng.newWeekBest}
-          subtitle={
-            eng.beatLastWeek
-              ? "Beat last week"
-              : eng.weekPaid === 0
-                ? "No payments yet"
-                : undefined
-          }
-        />
-      </section>
-
-      {/* 11. LIFE AFTER DEBT — gentle, only when near finish line */}
-      {nearComplete && <LifeAfterDebt pct={countdown.pct} />}
-
+      <DesktopLogPaymentFab />
       <MobileStickyCTA />
     </div>
   );
@@ -318,45 +276,17 @@ function Dashboard() {
 
 const MAX_SIM_MONTHS = 12 * 80;
 
-function FocusDebtSection({
-  debts,
+function CurrentTargetCard({
+  focusDebt,
   payments,
   strategy,
-  extraMonthly,
+  sim,
 }: {
-  debts: Debt[];
+  focusDebt: Debt;
   payments: Payment[];
   strategy: Strategy;
-  extraMonthly: number;
+  sim: PayoffResult;
 }) {
-  const { ordered, sim } = useMemo(
-    () => payoffRoadmapOrder(debts, strategy, extraMonthly),
-    [debts, strategy, extraMonthly],
-  );
-
-  const focusDebt = ordered[0] ?? null;
-  const nextDebt = ordered[1] ?? null;
-
-  const description =
-    strategy === "avalanche"
-      ? "This is your highest-rate balance among what's left. Paying it down first saves the most interest, then roll that payment into the next debt."
-      : "This is your smallest balance. Clearing it first builds momentum, then roll that payment into the next debt.";
-
-  if (!focusDebt) {
-    return (
-      <section className="rounded-3xl border border-border bg-card p-6 shadow-sm sm:p-8">
-        <p className="text-center text-sm text-muted-foreground">
-          No active focus — all your debts are at zero balance. Nice work.
-        </p>
-        <div className="mt-4 text-center">
-          <Link to="/app/strategy" className="text-sm font-medium text-primary hover:underline">
-            Plan settings
-          </Link>
-        </div>
-      </section>
-    );
-  }
-
   const pct = debtPayoffPercent(focusDebt, payments);
   const monthsUntil = sim.perDebtMonths[focusDebt.id];
   const payoffOk =
@@ -367,192 +297,332 @@ function FocusDebtSection({
 
   const payoffLabel = payoffOk ? formatDate(payoffDateAfterMonths(monthsUntil)) : "—";
   const monthsLeftLabel = payoffOk ? formatMonths(monthsUntil) : "—";
+  const blurb =
+    strategy === "avalanche"
+      ? "Tackling highest APR first saves the most interest."
+      : "Snowball: smallest balance first for quick wins.";
 
   return (
-    <section>
-      <div className="grid gap-4 lg:grid-cols-3">
-        <div className="rounded-3xl border border-border bg-card p-5 shadow-sm sm:p-7 lg:col-span-2">
-          <div className="flex flex-wrap items-start justify-between gap-3">
-            <div className="inline-flex items-center gap-1.5 rounded-full bg-[#FF6A00] px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider text-white shadow-sm">
-              <Flame className="h-3.5 w-3.5 shrink-0" aria-hidden />
-              Current target
-            </div>
-            <Link
-              to="/app/strategy"
-              className="shrink-0 pt-0.5 text-xs font-medium text-primary hover:underline"
-            >
-              Plan settings
-            </Link>
+    <div className="flex h-full flex-col rounded-2xl border border-border bg-card p-5 shadow-sm sm:p-5">
+      <div className="flex items-start justify-between gap-3">
+        <span className="inline-flex items-center gap-1.5 rounded-full bg-[#FF6A00] px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-white">
+          <Flame className="h-3.5 w-3.5 shrink-0" aria-hidden />
+          Target
+        </span>
+        <Link
+          to="/app/strategy"
+          className="shrink-0 text-xs font-medium text-primary hover:underline sm:text-sm"
+        >
+          Plan settings
+        </Link>
+      </div>
+      <h3 className="mt-3 font-display text-xl font-bold leading-snug tracking-tight text-foreground sm:text-2xl">
+        {focusDebt.name}
+      </h3>
+      <p className="mt-1.5 text-xs leading-snug text-muted-foreground sm:text-sm">{blurb}</p>
+      <div className="mt-4 font-display text-3xl font-bold tabular-nums tracking-tight text-foreground">
+        {formatMoney(focusDebt.balance)}
+      </div>
+      <div className="mt-5 grid grid-cols-3 gap-2">
+        <div className="rounded-xl border border-border/80 bg-muted/25 px-2.5 py-2.5 dark:bg-muted/15">
+          <div className="text-[9px] font-semibold uppercase tracking-wider text-muted-foreground">
+            Min
           </div>
-
-          <h2 className="mt-4 font-display text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
-            {focusDebt.name}
-          </h2>
-          <p className="mt-2 max-w-xl text-sm leading-relaxed text-muted-foreground">
-            {description}
-          </p>
-
-          <div className="mt-6">
-            <div className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
-              Balance
-            </div>
-            <div className="mt-1 font-display text-3xl font-bold tabular-nums tracking-tight sm:text-4xl">
-              {formatMoney(focusDebt.balance)}
-            </div>
-          </div>
-
-          <div className="mt-6 grid grid-cols-3 gap-2 sm:gap-3">
-            <div className="rounded-xl border border-border/80 bg-muted/40 px-3 py-3 dark:bg-muted/25">
-              <div className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
-                Monthly
-              </div>
-              <div className="mt-1 font-display text-base font-bold tabular-nums sm:text-lg">
-                {formatMoney(focusDebt.minPayment)}
-              </div>
-            </div>
-            <div className="rounded-xl border border-border/80 bg-muted/40 px-3 py-3 dark:bg-muted/25">
-              <div className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
-                APR
-              </div>
-              <div className="mt-1 font-display text-base font-bold tabular-nums sm:text-lg">
-                {focusDebt.interestRate}%
-              </div>
-            </div>
-            <div className="rounded-xl border border-border/80 bg-muted/40 px-3 py-3 dark:bg-muted/25">
-              <div className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
-                Payoff
-              </div>
-              <div className="mt-1 font-display text-base font-bold tabular-nums sm:text-lg">
-                {payoffLabel}
-              </div>
-            </div>
-          </div>
-
-          <div className="mt-6 space-y-2">
-            <div className="flex items-center justify-between text-xs font-medium text-muted-foreground">
-              <span>{pct.toFixed(0)}% paid</span>
-              <span className="tabular-nums">
-                {monthsLeftLabel === "—" ? "—" : `${monthsLeftLabel} left`}
-              </span>
-            </div>
-            <ProgressBar value={pct} />
+          <div className="mt-0.5 font-display text-base font-bold tabular-nums">
+            {formatMoney(focusDebt.minPayment)}
           </div>
         </div>
-
-        {nextDebt ? (
-          <div className="flex flex-col rounded-3xl border border-border bg-card p-5 shadow-sm sm:p-6 lg:col-span-1">
-            <div className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
-              Up next
-            </div>
-            <h3 className="mt-3 font-display text-lg font-bold text-foreground">{nextDebt.name}</h3>
-            <p className="mt-0.5 text-sm text-muted-foreground">{nextDebt.debtType}</p>
-            <div className="mt-4 font-display text-2xl font-bold tabular-nums">
-              {formatMoney(nextDebt.balance)}
-            </div>
-            <p className="mt-2 text-sm text-muted-foreground">
-              {formatMoney(nextDebt.minPayment)}/mo · {nextDebt.interestRate}% APR
-            </p>
-            <div className="mt-auto flex items-start gap-2 border-t border-border pt-4 text-xs text-muted-foreground">
-              <ArrowRight
-                className="mt-0.5 h-3.5 w-3.5 shrink-0 text-muted-foreground"
-                aria-hidden
-              />
-              <span>Starts after {focusDebt.name} is cleared</span>
-            </div>
+        <div className="rounded-xl border border-border/80 bg-muted/25 px-2.5 py-2.5 dark:bg-muted/15">
+          <div className="text-[9px] font-semibold uppercase tracking-wider text-muted-foreground">
+            APR
           </div>
-        ) : (
-          <div className="flex flex-col justify-center rounded-3xl border border-dashed border-border bg-muted/20 p-5 text-center sm:p-6 lg:col-span-1">
-            <p className="text-sm font-medium text-foreground">Last debt on your plan</p>
-            <p className="mt-1 text-xs text-muted-foreground">Once it’s gone, you’re debt-free.</p>
+          <div className="mt-0.5 font-display text-base font-bold tabular-nums">
+            {focusDebt.interestRate}%
           </div>
-        )}
+        </div>
+        <div className="rounded-xl border border-border/80 bg-muted/25 px-2.5 py-2.5 dark:bg-muted/15">
+          <div className="text-[9px] font-semibold uppercase tracking-wider text-muted-foreground">
+            Payoff
+          </div>
+          <div className="mt-0.5 font-display text-xs font-bold tabular-nums leading-snug sm:text-sm">
+            {payoffLabel}
+          </div>
+        </div>
       </div>
-    </section>
+      <div className="mt-5 space-y-1.5">
+        <div className="flex items-center justify-between text-[11px] font-medium text-muted-foreground">
+          <span>{pct.toFixed(0)}% paid</span>
+          <span className="tabular-nums">
+            {monthsLeftLabel === "—" ? "—" : `${monthsLeftLabel} left`}
+          </span>
+        </div>
+        <ProgressBar value={pct} />
+      </div>
+    </div>
   );
 }
 
-function StreakBanner({ streak, active }: { streak: number; active: boolean }) {
+function NextDebtStreakCard({
+  focusDebt,
+  nextDebt,
+  streak,
+  active,
+  className,
+}: {
+  focusDebt: Debt | null;
+  nextDebt: Debt | null;
+  streak: number;
+  active: boolean;
+  className?: string;
+}) {
   const hot = streak > 0;
+
+  let body: ReactNode;
+  if (!focusDebt) {
+    body = (
+      <p className="text-center text-sm text-muted-foreground">
+        Next in line appears when you have an active balance.
+      </p>
+    );
+  } else if (!nextDebt) {
+    body = (
+      <div>
+        <div className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+          Next
+        </div>
+        <p className="mt-2 font-display text-lg font-bold text-foreground">Last on your plan</p>
+        <p className="mt-1.5 text-xs text-muted-foreground sm:text-sm">
+          Clear <span className="font-medium text-foreground">{focusDebt.name}</span> to finish.
+        </p>
+      </div>
+    );
+  } else {
+    body = (
+      <div>
+        <div className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+          Next debt
+        </div>
+        <h3 className="mt-2 font-display text-xl font-bold leading-snug tracking-tight text-foreground sm:text-2xl">
+          {nextDebt.name}
+        </h3>
+        <p className="mt-0.5 text-xs text-muted-foreground">{nextDebt.debtType}</p>
+        <div className="mt-3 font-display text-2xl font-bold tabular-nums sm:text-3xl">
+          {formatMoney(nextDebt.balance)}
+        </div>
+        <p className="mt-1 text-xs text-muted-foreground sm:text-sm">
+          {formatMoney(nextDebt.minPayment)}/mo · {nextDebt.interestRate}%
+        </p>
+        <p className="mt-3 flex items-center gap-1.5 text-xs text-muted-foreground">
+          <ArrowRight className="h-3.5 w-3.5 shrink-0 text-primary/80" aria-hidden />
+          After {focusDebt.name} is cleared.
+        </p>
+      </div>
+    );
+  }
+
+  const streakTone = active
+    ? "border-[#FF6A00]/35 bg-[#FFF7ED]/95 dark:bg-[#FFF7ED]/10"
+    : hot
+      ? "border-border bg-[#FFFCF9] dark:bg-muted/20"
+      : "border-border bg-muted/15";
+
   return (
     <div
-      className={`flex items-center gap-4 rounded-3xl border-2 p-5 shadow-sm transition-all ${
-        active
-          ? "border-[#FF6A00]/35 bg-[#FFF7ED]"
-          : hot
-            ? "border-[#FF6A00]/25 bg-[#FFF7ED]/80"
-            : "border-[#E5E7EB] bg-white"
-      }`}
+      className={cn(
+        "flex flex-col rounded-2xl border border-border bg-card p-5 shadow-sm sm:p-5",
+        className,
+      )}
     >
-      <div
-        className={`flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl text-2xl shadow-sm ${
-          hot
-            ? "bg-primary text-primary-foreground animate-pulse-glow"
-            : "bg-muted text-muted-foreground"
-        }`}
-      >
-        <Flame className="h-7 w-7" />
-      </div>
-      <div className="flex-1">
-        <div className="text-[11px] font-semibold uppercase tracking-wider text-primary">
-          {hot ? "Streak" : "Start a streak"}
-        </div>
-        <div className="font-display text-xl font-bold tracking-tight sm:text-2xl">
-          {streak === 0
-            ? "Log a payment to start your streak"
-            : active
-              ? `${streak} week streak — you're on track this week`
-              : `${streak} week streak — log a payment tomorrow to keep it alive`}
+      <div className="flex-1">{body}</div>
+      <div className={cn("mt-5 rounded-xl border px-4 py-3", streakTone)}>
+        <div className="flex items-center gap-3">
+          <div
+            className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-lg ${
+              hot
+                ? "bg-primary text-primary-foreground shadow-sm"
+                : "bg-muted text-muted-foreground"
+            }`}
+          >
+            <Flame className="h-5 w-5" />
+          </div>
+          <div className="min-w-0 flex-1">
+            <div className="text-[10px] font-semibold uppercase tracking-wider text-primary">
+              {hot ? "Streak" : "Momentum"}
+            </div>
+            <p className="mt-0.5 font-display text-sm font-bold leading-snug text-foreground sm:text-base">
+              {streak === 0
+                ? "Log a payment this week to start one."
+                : active
+                  ? `${streak} wk on track.`
+                  : `${streak} wk — pay this week to keep it.`}
+            </p>
+          </div>
         </div>
       </div>
     </div>
   );
 }
 
-function YourNextMoveSection({
+function NextStepCard({
   eng,
   totalRemaining,
 }: {
   eng: ReturnType<typeof useEngagement>;
   totalRemaining: number;
 }) {
-  if (totalRemaining <= 0) return null;
-
-  const lines: string[] = [];
-  if (!eng.thisWeekHasExtra) {
-    lines.push(
-      eng.weeklyStreak > 0
-        ? "Log a payment this week to keep your streak alive."
-        : "Log a payment this week to stay on track.",
+  if (totalRemaining <= 0) {
+    return (
+      <div className="rounded-2xl border border-border bg-card p-5 shadow-sm sm:p-5">
+        <div className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+          Next step
+        </div>
+        <p className="mt-2 font-display text-lg font-bold text-foreground">
+          You&apos;re debt-free here.
+        </p>
+      </div>
     );
   }
-  lines.push("Add an extra $25 to move your payoff date forward.");
 
-  const display = lines.slice(0, 3);
+  const main = !eng.thisWeekHasExtra
+    ? eng.weeklyStreak > 0
+      ? "Log a payment this week to keep your streak."
+      : "Log a payment this week to stay on your plan."
+    : "Extra toward your target pulls your payoff date closer.";
+
+  const support = eng.thisWeekHasExtra
+    ? undefined
+    : "When you can, +$25 toward the target still counts.";
 
   return (
-    <section className="rounded-3xl border border-primary/30 bg-gradient-to-br from-[#FFF7ED] via-white to-white p-5 shadow-md ring-1 ring-primary/15 sm:p-6">
+    <div className="rounded-2xl border border-border bg-card p-5 shadow-sm sm:p-5">
       <div className="flex items-start gap-3">
-        <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-primary text-primary-foreground shadow-sm">
-          <Target className="h-5 w-5 shrink-0" aria-hidden />
+        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-sm">
+          <Target className="h-4 w-4 shrink-0" aria-hidden />
         </div>
         <div className="min-w-0 flex-1">
-          <h2 className="font-display text-lg font-bold tracking-tight text-foreground sm:text-xl">
-            Your next move
-          </h2>
-          <ul className="mt-3 space-y-2.5">
-            {display.map((text) => (
-              <li
-                key={text}
-                className="flex gap-2.5 text-sm font-semibold leading-snug text-foreground sm:text-[15px]"
-              >
-                <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-primary" aria-hidden />
-                <span>{text}</span>
-              </li>
-            ))}
-          </ul>
+          <div className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+            Next step
+          </div>
+          <p className="mt-1 font-display text-base font-bold leading-snug text-foreground sm:text-[17px]">
+            {main}
+          </p>
+          {support ? (
+            <p className="mt-2 text-xs leading-snug text-muted-foreground sm:text-sm">{support}</p>
+          ) : null}
         </div>
       </div>
-    </section>
+    </div>
+  );
+}
+
+function SnapshotInsightsCard({
+  countdown,
+  eng,
+  insights,
+  className,
+}: {
+  countdown: ReturnType<typeof useCountdown>;
+  eng: ReturnType<typeof useEngagement>;
+  insights: Insight[];
+  className?: string;
+}) {
+  return (
+    <div
+      className={cn(
+        "flex flex-col rounded-2xl border border-border bg-card p-5 shadow-sm sm:p-5",
+        className,
+      )}
+    >
+      <h3 className="font-display text-sm font-semibold tracking-tight text-muted-foreground">
+        Snapshot
+      </h3>
+      <div className="mt-4 grid gap-x-6 gap-y-4 sm:grid-cols-2">
+        <div className="flex gap-4 rounded-xl border border-border/80 bg-muted/15 p-4 dark:bg-muted/10">
+          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[#FFF7ED] text-[#FF6A00] dark:bg-muted/60 dark:text-orange-400">
+            <Wallet className="h-[1.0625rem] w-[1.0625rem]" />
+          </div>
+          <div className="min-w-0">
+            <div className="text-[9px] font-medium uppercase tracking-wider text-muted-foreground/75">
+              To go
+            </div>
+            <div className="mt-1 font-display text-2xl font-bold tabular-nums tracking-tight text-foreground sm:text-[1.75rem]">
+              {formatMoney(countdown.totalRemaining)}
+            </div>
+          </div>
+        </div>
+        <div className="flex gap-4 rounded-xl border border-border/80 bg-muted/15 p-4 dark:bg-muted/10">
+          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-success-soft/55 text-success">
+            <TrendingDown className="h-[1.0625rem] w-[1.0625rem]" />
+          </div>
+          <div className="min-w-0">
+            <div className="text-[9px] font-medium uppercase tracking-wider text-muted-foreground/75">
+              Paid off
+            </div>
+            <div className="mt-1 font-display text-2xl font-bold tabular-nums tracking-tight text-foreground sm:text-[1.75rem]">
+              {formatMoney(countdown.totalPaid)}
+            </div>
+          </div>
+        </div>
+        <BestChip
+          label="Best week"
+          value={eng.bestWeek ? formatMoney(eng.bestWeek.amount) : "—"}
+          highlight={eng.newWeekBest}
+        />
+        <BestChip
+          label="This week"
+          value={formatMoney(eng.weekPaid)}
+          highlight={eng.beatLastWeek || eng.newWeekBest}
+          subtitle={
+            eng.beatLastWeek ? "Beat last week" : eng.weekPaid === 0 ? "No payments yet" : undefined
+          }
+        />
+      </div>
+
+      <div className="mt-4 border-t border-border pt-4">
+        {insights.length === 0 ? (
+          <p className="text-xs leading-relaxed text-muted-foreground sm:text-sm">
+            Insights will show up as your payment pattern grows.
+          </p>
+        ) : (
+          <div className="space-y-2">
+            <div className="text-[9px] font-medium uppercase tracking-wider text-muted-foreground/75">
+              Insights
+            </div>
+            {insights.slice(0, 2).map((ins) => (
+              <InsightCard key={ins.id} insight={ins} subtle />
+            ))}
+            {insights.length > 2 && (
+              <p className="text-[11px] text-muted-foreground">+{insights.length - 2} more</p>
+            )}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function SimulatorTeaser() {
+  return (
+    <Link
+      to="/app/simulator"
+      className="group flex items-center gap-3 rounded-xl border border-border bg-card px-3 py-2.5 shadow-sm transition-all duration-200 ease-out hover:-translate-y-0.5 hover:border-primary/35 hover:bg-[#FFF7ED]/45 hover:shadow-md active:translate-y-0 dark:hover:bg-muted/35"
+    >
+      <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-primary text-primary-foreground shadow-sm">
+        <Zap className="h-[1.0625rem] w-[1.0625rem]" />
+      </div>
+      <div className="min-w-0 flex-1 overflow-hidden py-0.5">
+        <h3 className="font-display text-sm font-bold leading-tight tracking-tight text-foreground">
+          Faster payoff explorer
+        </h3>
+        <p className="mt-0.5 line-clamp-1 text-[11px] leading-snug text-muted-foreground">
+          See how extras move your payoff date.
+        </p>
+      </div>
+      <span className="inline-flex shrink-0 items-center gap-0.5 pr-0.5 text-[11px] font-semibold text-primary transition-[gap] duration-200 ease-out group-hover:gap-1">
+        Open
+        <ArrowRight className="h-3.5 w-3.5" aria-hidden />
+      </span>
+    </Link>
   );
 }
 
@@ -569,17 +639,21 @@ function BestChip({
 }) {
   return (
     <div
-      className={`rounded-xl border px-3 py-3 shadow-none transition-all ${
+      className={`rounded-xl border px-4 py-3.5 shadow-none transition-all ${
         highlight
           ? "border-success/35 bg-success-soft/30 ring-1 ring-success/20"
           : "border-border/60 bg-muted/15"
       }`}
     >
       <div className="flex items-center gap-1.5">
-        <Trophy className={`h-3.5 w-3.5 ${highlight ? "text-success" : "text-muted-foreground"}`} />
-        <div className="text-[10px] uppercase tracking-wider text-muted-foreground">{label}</div>
+        <Trophy className={`h-3 w-3 ${highlight ? "text-success" : "text-muted-foreground/70"}`} />
+        <div className="text-[9px] font-medium uppercase tracking-wider text-muted-foreground/70">
+          {label}
+        </div>
       </div>
-      <div className="mt-0.5 font-display text-base font-bold tabular-nums text-foreground">{value}</div>
+      <div className="mt-1 font-display text-lg font-bold tabular-nums text-foreground">
+        {value}
+      </div>
       {subtitle && (
         <div className="mt-0.5 text-[11px] font-medium text-muted-foreground">{subtitle}</div>
       )}
@@ -589,21 +663,21 @@ function BestChip({
 
 function LifeAfterDebt({ pct }: { pct: number }) {
   return (
-    <section className="rounded-3xl border border-[#E5E7EB] bg-white p-6 shadow-sm dark:border-zinc-700 dark:bg-zinc-900">
-      <div className="flex items-start gap-3">
+    <section className="rounded-2xl border border-border bg-card p-5 shadow-sm sm:p-6">
+      <div className="flex items-start gap-4">
         <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-teal text-teal-foreground">
           <Heart className="h-5 w-5" />
         </div>
         <div className="flex-1">
-          <div className="text-[11px] font-semibold uppercase tracking-wider text-teal">
+          <div className="text-[10px] font-semibold uppercase tracking-wider text-teal">
             Life after debt
           </div>
-          <div className="font-display text-base font-bold">
+          <div className="mt-0.5 font-display text-lg font-bold">
             You're {pct.toFixed(0)}% there — what's next?
           </div>
-          <p className="mt-1 text-sm text-muted-foreground">
-            When you're done, redirect those payments into a starter emergency fund. Aim for $1,000
-            first, then 3 months of expenses.
+          <p className="mt-2 max-w-xl text-xs leading-relaxed text-muted-foreground sm:text-sm">
+            When you&apos;re done, roll those dollars into a starter emergency fund (~$1k), then
+            grow it.
           </p>
         </div>
       </div>
@@ -611,30 +685,19 @@ function LifeAfterDebt({ pct }: { pct: number }) {
   );
 }
 
-function Stat({
-  icon: Icon,
-  label,
-  value,
-  tone,
-}: {
-  icon: React.ComponentType<{ className?: string }>;
-  label: string;
-  value: string;
-  tone: "default" | "success" | "teal";
-}) {
-  const toneClasses = {
-    default: "bg-[#FFF7ED] text-[#FF6A00]",
-    success: "bg-success-soft text-success",
-    teal: "bg-accent text-teal-foreground",
-  }[tone];
+function DesktopLogPaymentFab() {
   return (
-    <div className="rounded-2xl border border-border bg-card p-4 shadow-sm">
-      <div className={`flex h-8 w-8 items-center justify-center rounded-lg ${toneClasses}`}>
-        <Icon className="h-4 w-4" />
-      </div>
-      <div className="mt-3 text-xs uppercase tracking-wider text-muted-foreground">{label}</div>
-      <div className="font-display text-xl font-bold tracking-tight">{value}</div>
-    </div>
+    <LogPaymentDialog>
+      <Button
+        type="button"
+        variant="outline"
+        className="fixed bottom-24 right-4 z-40 hidden h-[52px] gap-2.5 rounded-full border-primary/35 bg-card/95 px-6 text-[0.9375rem] font-semibold shadow-[0_8px_32px_-6px_rgb(15_23_42/0.12),0_4px_14px_-4px_rgb(255_106_0/0.14)] backdrop-blur-sm transition-colors hover:bg-[#FFF7ED]/95 hover:shadow-[0_12px_40px_-8px_rgb(15_23_42/0.16),0_6px_20px_-6px_rgb(255_106_0/0.18)] sm:inline-flex md:bottom-8 md:right-6"
+        aria-label="Log payment"
+      >
+        <Plus className="h-5 w-5 shrink-0" />
+        Log payment
+      </Button>
+    </LogPaymentDialog>
   );
 }
 
@@ -642,8 +705,12 @@ function MobileStickyCTA() {
   return (
     <div className="fixed inset-x-0 bottom-16 z-20 px-4 sm:hidden">
       <LogPaymentDialog>
-        <Button type="button" variant="cta" className="w-full gap-2 text-sm">
-          <Plus className="h-4 w-4" /> Log Payment
+        <Button
+          type="button"
+          variant="outline"
+          className="w-full gap-2 border-primary/40 text-sm text-foreground shadow-md backdrop-blur-sm"
+        >
+          <Plus className="h-4 w-4" /> Log payment
         </Button>
       </LogPaymentDialog>
     </div>
