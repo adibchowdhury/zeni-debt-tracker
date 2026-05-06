@@ -3,56 +3,99 @@ import { ProgressBar } from "@/components/debt/ProgressBar";
 import { formatMoney, formatDate } from "@/lib/debt-math";
 import { formatDays, type CountdownInfo } from "@/lib/insights";
 
-export function CountdownHero({ countdown }: { countdown: CountdownInfo }) {
+export function CountdownHero({
+  countdown,
+  firstName,
+  nextMilestoneDollars,
+}: {
+  countdown: CountdownInfo;
+  firstName?: string;
+  nextMilestoneDollars?: number | null;
+}) {
   const { days, payoffDate, totalRemaining, pct, totalPaid } = countdown;
   const done = totalRemaining <= 0.01;
 
+  const summaryLine = !done
+    ? `${pct.toFixed(0)}% complete${
+        nextMilestoneDollars != null && nextMilestoneDollars > 0
+          ? ` \u2014 ${formatMoney(nextMilestoneDollars)} to your next milestone`
+          : ""
+      }`
+    : null;
+
   return (
-    <section className="relative overflow-hidden rounded-2xl border border-[#FF6A00]/20 bg-gradient-to-br from-[#FFF7ED] via-white to-white p-5 shadow-sm sm:p-6 md:p-7 dark:border-[#FF6A00]/18 dark:from-zinc-900 dark:via-zinc-900 dark:to-zinc-900">
-      <div className="pointer-events-none absolute -right-8 -top-10 h-32 w-32 rounded-full bg-[#FF6A00]/8 blur-2xl" />
+    <section className="relative overflow-hidden rounded-2xl border-2 border-[#FF6A00]/25 bg-gradient-to-br from-[#FFF7ED] via-white to-white p-5 shadow-sm sm:p-6 dark:border-[#FF6A00]/20 dark:from-zinc-900 dark:via-zinc-900 dark:to-zinc-900">
+      <div className="pointer-events-none absolute -right-12 -top-12 h-48 w-48 rounded-full bg-[#FF6A00]/10 blur-3xl dark:bg-[#FF6A00]/8" />
 
-      <div className="relative grid gap-5 md:grid-cols-[minmax(0,1fr)_minmax(260px,360px)] md:items-center md:gap-6">
-        <div className="min-w-0">
-          <div className="flex items-center gap-2 text-[10px] font-semibold uppercase tracking-wider text-primary">
-            <Sparkles className="h-3 w-3 shrink-0" />
-            {done ? "You did it" : "Debt-free countdown"}
-          </div>
-
-          {done ? (
-            <h2 className="mt-1 font-display text-2xl font-bold tracking-tight sm:text-[1.65rem]">
-              🎉 You're debt-free!
-            </h2>
-          ) : (
-            <h2 className="mt-1 font-display text-2xl font-bold tracking-tight sm:text-[1.65rem]">
-              <span className="text-primary">{formatDays(days)}</span>
-              <span className="text-foreground"> until you're debt-free</span>
-            </h2>
-          )}
-
-          {!done && (
-            <div className="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-0.5 text-xs text-muted-foreground">
-              <span className="inline-flex items-center gap-1">
-                <Calendar className="h-3 w-3 shrink-0" />
-                Target{" "}
-                <span className="font-semibold text-foreground">{formatDate(payoffDate)}</span>
-              </span>
-              <span>
-                <span className="font-semibold text-foreground">{formatMoney(totalRemaining)}</span>{" "}
-                to go ·{" "}
-                <span className="font-semibold text-foreground">{formatMoney(totalPaid)}</span> paid
-              </span>
-            </div>
-          )}
+      <div className="relative">
+        <div className="inline-flex items-center gap-1.5 text-[10px] font-medium uppercase tracking-wider text-muted-foreground/85 dark:text-muted-foreground/70">
+          <Sparkles className="h-3 w-3 shrink-0 opacity-80" aria-hidden />
+          {done ? "You did it" : "Debt-free countdown"}
         </div>
 
-        <div className="min-w-0 md:justify-self-end md:text-right">
-          <div className="mb-1.5 flex items-baseline justify-between gap-3 text-xs md:flex-row-reverse md:justify-end md:gap-4">
-            <span className="font-display text-base font-bold text-primary tabular-nums">
+        {done ? (
+          <h2 className="mt-1.5 font-display text-3xl font-bold leading-[1.15] tracking-tight text-foreground sm:text-4xl lg:text-[2.75rem] lg:leading-[1.1]">
+            {firstName ? (
+              <>
+                <span className="font-semibold text-foreground">{firstName}</span>
+                <span className="font-semibold text-foreground/90">, you&apos;re debt-free! </span>
+                <span aria-hidden>🎉</span>
+              </>
+            ) : (
+              <>
+                <span aria-hidden>🎉</span> You&apos;re debt-free!
+              </>
+            )}
+          </h2>
+        ) : (
+          <h2 className="mt-1.5 font-display text-3xl font-bold leading-[1.15] tracking-tight sm:text-4xl lg:text-[2.75rem] lg:leading-[1.1]">
+            {firstName ? (
+              <>
+                <span className="font-semibold text-foreground">{firstName}</span>
+                <span className="font-semibold text-foreground/90">, you&apos;re </span>
+                <span className="font-extrabold text-primary lg:text-[1.06em]">
+                  {formatDays(days)}
+                </span>
+                <span className="font-semibold text-foreground/95"> from debt-free</span>
+              </>
+            ) : (
+              <>
+                <span className="font-semibold text-foreground/90">You&apos;re </span>
+                <span className="font-extrabold text-primary lg:text-[1.06em]">
+                  {formatDays(days)}
+                </span>
+                <span className="font-semibold text-foreground/95"> from debt-free</span>
+              </>
+            )}
+          </h2>
+        )}
+
+        {!done && (
+          <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-muted-foreground">
+            <span className="inline-flex items-center gap-1.5">
+              <Calendar className="h-3.5 w-3.5 shrink-0" />
+              Target <span className="font-semibold text-foreground">{formatDate(payoffDate)}</span>
+            </span>
+            <span>
+              <span className="font-semibold text-foreground">{formatMoney(totalRemaining)}</span>{" "}
+              to go ·{" "}
+              <span className="font-semibold text-foreground">{formatMoney(totalPaid)}</span> paid
+            </span>
+          </div>
+        )}
+
+        {summaryLine ? (
+          <p className="mt-2 max-w-3xl text-sm leading-snug text-muted-foreground">{summaryLine}</p>
+        ) : null}
+
+        <div className="mt-8 sm:mt-9">
+          <div className="mb-2 flex items-baseline justify-between gap-4 text-sm">
+            <span className="font-medium text-foreground">Overall progress</span>
+            <span className="font-display text-lg font-bold tabular-nums text-primary sm:text-xl">
               {pct.toFixed(1)}%
             </span>
-            <span className="font-medium text-muted-foreground">Overall progress</span>
           </div>
-          <ProgressBar value={pct} />
+          <ProgressBar value={pct} className="h-3 sm:h-3.5" />
           <Timeline pct={pct} />
         </div>
       </div>
@@ -63,13 +106,13 @@ export function CountdownHero({ countdown }: { countdown: CountdownInfo }) {
 function Timeline({ pct }: { pct: number }) {
   const stops = [0, 25, 50, 75, 100];
   return (
-    <div className="mt-2 flex justify-between text-[9px] font-semibold uppercase tracking-wider">
+    <div className="mt-3 flex justify-between text-[10px] font-semibold uppercase tracking-wider sm:text-[11px]">
       {stops.map((s) => {
         const reached = pct >= s;
         return (
           <div key={s} className="flex flex-col items-center gap-0.5">
             <div
-              className={`h-1.5 w-1.5 rounded-full transition-colors ${
+              className={`h-2 w-2 rounded-full transition-colors sm:h-2.5 sm:w-2.5 ${
                 reached ? "bg-primary" : "bg-border"
               }`}
             />

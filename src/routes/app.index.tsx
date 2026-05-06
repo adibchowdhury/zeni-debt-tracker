@@ -166,6 +166,7 @@ function Dashboard() {
   const displayName =
     (user?.user_metadata?.display_name as string | undefined) ?? user?.email?.split("@")[0];
   const greeting = displayName ? `Hey ${displayName.split(" ")[0]}` : "Welcome back";
+  const firstName = displayName ? displayName.split(" ")[0] : undefined;
 
   if (store.loading) {
     return <div className="text-sm text-muted-foreground">Loading…</div>;
@@ -173,17 +174,6 @@ function Dashboard() {
   if (debts.length === 0) {
     return <EmptyState greeting={greeting} />;
   }
-
-  const motivational =
-    countdown.pct < 5
-      ? "You've started — that's the hardest part 💪"
-      : countdown.pct < 33
-        ? `You're ${countdown.pct.toFixed(0)}% closer to being debt-free 🎉`
-        : countdown.pct < 66
-          ? `You're ${countdown.pct.toFixed(0)}% closer to being debt-free 🎉`
-          : countdown.pct < 95
-            ? `${countdown.pct.toFixed(0)}% done — the finish line is in sight 🎯`
-            : "You're almost there. Don't stop now!";
 
   const nearComplete = countdown.pct >= 80 && countdown.totalRemaining > 0;
 
@@ -200,19 +190,11 @@ function Dashboard() {
 
       <div className="w-full">
         <div className="space-y-8 lg:space-y-10">
-          <div className="space-y-3">
-            <CountdownHero countdown={countdown} />
-            <p className="text-sm leading-relaxed text-muted-foreground">
-              <span className="font-semibold text-foreground">{greeting}</span>
-              <span className="text-muted-foreground"> · </span>
-              <span>{motivational}</span>
-              {nextMilestoneDollars != null && nextMilestoneDollars > 0 && (
-                <span className="mt-1.5 block text-xs text-muted-foreground">
-                  {formatMoney(nextMilestoneDollars)} to your next milestone.
-                </span>
-              )}
-            </p>
-          </div>
+          <CountdownHero
+            countdown={countdown}
+            firstName={firstName}
+            nextMilestoneDollars={nextMilestoneDollars}
+          />
 
           <div className="grid gap-6 lg:grid-cols-2 lg:gap-x-10 lg:gap-y-8">
             {focusDebt ? (
