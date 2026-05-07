@@ -37,6 +37,15 @@ function PricingPage() {
   return (
     <div className="min-h-screen bg-white">
       <main className="mx-auto max-w-6xl px-5 py-16 sm:py-20">
+        <div className="mx-auto mb-10 max-w-4xl rounded-3xl border border-[#FF6A00]/25 bg-gradient-to-br from-[#FFF7ED] via-white to-white px-6 py-5 shadow-sm">
+          <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
+            <p className="text-sm font-semibold text-heading">Zeni is free during beta.</p>
+            <p className="text-sm text-muted-foreground">
+              Full access for now — paid plans will go live later.
+            </p>
+          </div>
+        </div>
+
         <section className="mx-auto max-w-3xl text-center">
           <h1 className="font-display text-4xl font-semibold tracking-tight text-heading sm:text-5xl md:text-6xl">
             Simple pricing for staying motivated with debt.
