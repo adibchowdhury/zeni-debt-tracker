@@ -8,6 +8,7 @@ import {
   LogOut,
   Trophy,
   ReceiptText,
+  Settings,
 } from "lucide-react";
 import { useAuth } from "@/lib/auth";
 import { Logo } from "@/components/Logo";
@@ -113,7 +114,26 @@ export function AppLayout() {
           })}
         </nav>
 
-        <div className="mt-auto border-t border-[#E5E7EB] p-3">
+        <div className="mt-auto border-t border-[#E5E7EB] px-3 pt-3">
+          <Link
+            to="/app/settings"
+            className={`mb-3 flex items-center gap-3 rounded-2xl px-4 py-2.5 text-sm font-semibold transition-colors ${
+              isNavActive(location.pathname, "/app/settings", false)
+                ? "border border-[#FF6A00]/25 bg-[#FFF7ED] text-[#EA580C]"
+                : "border border-transparent text-[#64748B] hover:bg-[#FAFAFA] hover:text-[#0F172A]"
+            }`}
+          >
+            <Settings
+              className={`h-5 w-5 shrink-0 ${
+                isNavActive(location.pathname, "/app/settings", false)
+                  ? "text-[#FF6A00]"
+                  : "text-[#94A3B8]"
+              }`}
+              strokeWidth={2.25}
+              aria-hidden
+            />
+            <span>Settings</span>
+          </Link>
           <button
             type="button"
             onClick={logout}
@@ -128,16 +148,27 @@ export function AppLayout() {
       {/* Main column */}
       <div className="flex min-w-0 flex-1 flex-col">
         {/* Mobile top bar */}
-        <header className="sticky top-0 z-30 flex items-center justify-between border-b border-[#E5E7EB] bg-white px-4 py-3 md:hidden">
+        <header className="sticky top-0 z-30 flex items-center justify-between gap-2 border-b border-[#E5E7EB] bg-white px-4 py-3 md:hidden">
           <Logo to="/app" size="md" />
-          <button
-            type="button"
-            onClick={logout}
-            className="flex items-center gap-2 rounded-xl border border-[#E5E7EB] bg-white px-3 py-2 text-xs font-bold text-[#475569] transition-colors hover:bg-[#FFF7ED] hover:text-[#EA580C]"
-          >
-            <LogOut className="h-4 w-4" strokeWidth={2.5} aria-hidden />
-            Sign out
-          </button>
+          <div className="flex shrink-0 items-center gap-1">
+            <Link
+              to="/app/settings"
+              aria-label="Settings"
+              className={`rounded-xl p-2 text-[#64748B] transition-colors hover:bg-[#FAFAFA] hover:text-[#0F172A] ${
+                isNavActive(location.pathname, "/app/settings", false) ? "text-[#EA580C]" : ""
+              }`}
+            >
+              <Settings className="h-5 w-5" strokeWidth={2.25} aria-hidden />
+            </Link>
+            <button
+              type="button"
+              onClick={logout}
+              className="flex items-center gap-2 rounded-xl border border-[#E5E7EB] bg-white px-3 py-2 text-xs font-bold text-[#475569] transition-colors hover:bg-[#FFF7ED] hover:text-[#EA580C]"
+            >
+              <LogOut className="h-4 w-4" strokeWidth={2.5} aria-hidden />
+              Sign out
+            </button>
+          </div>
         </header>
 
         <main className="mx-auto w-full max-w-5xl flex-1 px-4 py-6 pb-24 md:px-6 md:py-8 md:pb-8">

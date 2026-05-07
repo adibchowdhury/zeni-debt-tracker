@@ -21,6 +21,7 @@ import { Route as PublicIndexRouteImport } from './routes/_public.index'
 import { Route as AppTransactionsRouteImport } from './routes/app.transactions'
 import { Route as AppStrategyRouteImport } from './routes/app.strategy'
 import { Route as AppSimulatorRouteImport } from './routes/app.simulator'
+import { Route as AppSettingsRouteImport } from './routes/app.settings'
 import { Route as AppMilestonesRouteImport } from './routes/app.milestones'
 import { Route as AppDebtsRouteImport } from './routes/app.debts'
 import { Route as PublicTermsRouteImport } from './routes/_public.terms'
@@ -89,6 +90,11 @@ const AppStrategyRoute = AppStrategyRouteImport.update({
 const AppSimulatorRoute = AppSimulatorRouteImport.update({
   id: '/simulator',
   path: '/simulator',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppSettingsRoute = AppSettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
   getParentRoute: () => AppRoute,
 } as any)
 const AppMilestonesRoute = AppMilestonesRouteImport.update({
@@ -160,6 +166,7 @@ export interface FileRoutesByFullPath {
   '/terms': typeof PublicTermsRoute
   '/app/debts': typeof AppDebtsRoute
   '/app/milestones': typeof AppMilestonesRoute
+  '/app/settings': typeof AppSettingsRoute
   '/app/simulator': typeof AppSimulatorRoute
   '/app/strategy': typeof AppStrategyRoute
   '/app/transactions': typeof AppTransactionsRoute
@@ -181,6 +188,7 @@ export interface FileRoutesByTo {
   '/terms': typeof PublicTermsRoute
   '/app/debts': typeof AppDebtsRoute
   '/app/milestones': typeof AppMilestonesRoute
+  '/app/settings': typeof AppSettingsRoute
   '/app/simulator': typeof AppSimulatorRoute
   '/app/strategy': typeof AppStrategyRoute
   '/app/transactions': typeof AppTransactionsRoute
@@ -206,6 +214,7 @@ export interface FileRoutesById {
   '/_public/terms': typeof PublicTermsRoute
   '/app/debts': typeof AppDebtsRoute
   '/app/milestones': typeof AppMilestonesRoute
+  '/app/settings': typeof AppSettingsRoute
   '/app/simulator': typeof AppSimulatorRoute
   '/app/strategy': typeof AppStrategyRoute
   '/app/transactions': typeof AppTransactionsRoute
@@ -232,6 +241,7 @@ export interface FileRouteTypes {
     | '/terms'
     | '/app/debts'
     | '/app/milestones'
+    | '/app/settings'
     | '/app/simulator'
     | '/app/strategy'
     | '/app/transactions'
@@ -253,6 +263,7 @@ export interface FileRouteTypes {
     | '/terms'
     | '/app/debts'
     | '/app/milestones'
+    | '/app/settings'
     | '/app/simulator'
     | '/app/strategy'
     | '/app/transactions'
@@ -277,6 +288,7 @@ export interface FileRouteTypes {
     | '/_public/terms'
     | '/app/debts'
     | '/app/milestones'
+    | '/app/settings'
     | '/app/simulator'
     | '/app/strategy'
     | '/app/transactions'
@@ -378,6 +390,13 @@ declare module '@tanstack/react-router' {
       path: '/simulator'
       fullPath: '/app/simulator'
       preLoaderRoute: typeof AppSimulatorRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/settings': {
+      id: '/app/settings'
+      path: '/settings'
+      fullPath: '/app/settings'
+      preLoaderRoute: typeof AppSettingsRouteImport
       parentRoute: typeof AppRoute
     }
     '/app/milestones': {
@@ -483,6 +502,7 @@ const PublicRouteWithChildren =
 interface AppRouteChildren {
   AppDebtsRoute: typeof AppDebtsRoute
   AppMilestonesRoute: typeof AppMilestonesRoute
+  AppSettingsRoute: typeof AppSettingsRoute
   AppSimulatorRoute: typeof AppSimulatorRoute
   AppStrategyRoute: typeof AppStrategyRoute
   AppTransactionsRoute: typeof AppTransactionsRoute
@@ -492,6 +512,7 @@ interface AppRouteChildren {
 const AppRouteChildren: AppRouteChildren = {
   AppDebtsRoute: AppDebtsRoute,
   AppMilestonesRoute: AppMilestonesRoute,
+  AppSettingsRoute: AppSettingsRoute,
   AppSimulatorRoute: AppSimulatorRoute,
   AppStrategyRoute: AppStrategyRoute,
   AppTransactionsRoute: AppTransactionsRoute,
