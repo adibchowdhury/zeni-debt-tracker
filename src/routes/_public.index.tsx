@@ -1067,17 +1067,17 @@ function HowItWorks() {
     {
       n: "1",
       title: "Add your debts",
-      body: "Enter each balance, minimum payment, interest rate, and due date. Zeni organizes everything into one simple view so you know exactly where you stand.",
+      body: "Add balances, minimums, interest rates, and due dates. Zeni organizes everything into one clean view.",
     },
     {
       n: "2",
       title: "Choose your payoff plan",
-      body: "Pick snowball for quick wins or avalanche to focus on higher interest first. Zeni turns your choice into a clear order so you know what to attack next.",
+      body: "Pick snowball for quick wins or avalanche to save on interest. We turn it into a clear next step.",
     },
     {
       n: "3",
       title: "Track payments and build momentum",
-      body: "Log payments, watch your progress update, and see your streaks, milestones, and debt-free date move with you.",
+      body: "Log payments, watch progress move, and keep momentum with streaks, wins, and your projected debt‑free date.",
     },
   ];
 
@@ -1088,47 +1088,47 @@ function HowItWorks() {
           How it works
         </div>
         <h2 className="font-display text-3xl font-bold leading-[1.08] tracking-[-0.03em] sm:text-4xl sm:leading-[1.1] lg:text-5xl">
-          Three simple steps to your debt-free date.
+          Your debt-free plan in 3 simple steps.
         </h2>
         <p className="mt-3 text-muted-foreground">
-          Zeni gives you a simple payoff system, shows you what to focus on next, and keeps you
-          motivated as your balance goes down.
+          A calm workflow that keeps you focused, consistent, and motivated as the balance goes down.
         </p>
       </div>
 
-      <div className="relative mx-auto mt-14 max-w-5xl">
-        <div className="pointer-events-none absolute left-1/2 top-0 hidden h-full w-px -translate-x-1/2 bg-border md:block" />
-
-        <div className="space-y-8 md:space-y-12">
+      <div className="mx-auto mt-12 max-w-5xl">
+        <div className="grid gap-5 md:grid-cols-3 md:gap-6">
           {steps.map((s, i) => {
-            const isRight = i % 2 === 1;
             const isLast = i === steps.length - 1;
-
             return (
-              <div
-                key={s.n}
-                className={`relative flex ${isRight ? "md:justify-end" : "md:justify-start"}`}
-              >
-                <div className="pointer-events-none absolute left-1/2 top-8 hidden h-4 w-4 -translate-x-1/2 rounded-full border-4 border-background bg-primary shadow-sm md:block" />
+              <div key={s.n} className="relative">
+                {/* Subtle connector (desktop only) */}
+                {!isLast && (
+                  <div
+                    className="pointer-events-none absolute left-[calc(100%+0.75rem)] top-1/2 hidden -translate-y-1/2 items-center gap-2 md:flex"
+                    aria-hidden="true"
+                  >
+                    <div className="h-px w-10 bg-border" />
+                    <ArrowRight className="h-4 w-4 text-muted-foreground" />
+                  </div>
+                )}
 
-                <div className="relative w-full overflow-hidden rounded-3xl border border-border bg-card p-6 shadow-sm transition-transform hover:-translate-y-1 md:w-[46%]">
+                <div className="h-full rounded-3xl border border-border bg-card p-6 shadow-sm transition-transform hover:-translate-y-1">
                   <div className="flex items-center justify-between">
-                    <div className="flex h-11 w-11 items-center justify-center rounded-full bg-primary font-display text-base font-bold text-primary-foreground shadow-sm">
-                      {s.n}
+                    <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-primary text-primary-foreground shadow-sm">
+                      <span className="font-display text-base font-bold">{s.n}</span>
                     </div>
-
                     {isLast && (
                       <div
-                        className="flex h-10 w-10 items-center justify-center rounded-full bg-success-soft text-success ring-4 ring-success-soft/40"
+                        className="flex h-10 w-10 items-center justify-center rounded-2xl bg-success-soft text-success ring-4 ring-success-soft/40"
                         role="img"
-                        aria-label="Level completed checkmark"
+                        aria-label="Completed"
                       >
                         <CheckCircle2 className="h-5 w-5" />
                       </div>
                     )}
                   </div>
 
-                  <h3 className="mt-5 font-display text-2xl font-bold leading-[1.1] tracking-[-0.02em]">
+                  <h3 className="mt-5 font-display text-xl font-bold leading-[1.1] tracking-[-0.02em] text-heading">
                     {s.title}
                   </h3>
                   <p className="mt-2 text-sm leading-6 text-muted-foreground">{s.body}</p>
