@@ -3,7 +3,11 @@ import { motion, useReducedMotion } from "framer-motion";
 import { useEffect, useState } from "react";
 import {
   ArrowRight,
+  BarChart3,
+  CalendarDays,
   Check,
+  History,
+  PiggyBank,
   Sparkles,
   TrendingDown,
   Target,
@@ -49,6 +53,7 @@ function Landing() {
       <Hero />
       <SellingBar />
       <ProblemSection />
+      <FeatureTabsSection />
       <SolutionSection />
       <HowItWorks />
       <PreviewSection />
@@ -507,6 +512,387 @@ function ProblemSection() {
         </div>
       </div>
     </section>
+  );
+}
+
+/* -------------------------------------------------------------------------- */
+/* Feature Tabs (below Problem)                                               */
+/* -------------------------------------------------------------------------- */
+
+type FeatureTabKey = "dashboard" | "streaks" | "whatif" | "history" | "celebrations" | "management";
+
+const FEATURE_TABS: Array<{
+  key: FeatureTabKey;
+  title: string;
+  icon: React.ComponentType<{ className?: string }>;
+  desc: string;
+  bullets: string[];
+}> = [
+  {
+    key: "dashboard",
+    title: "Dashboard",
+    icon: BarChart3,
+    desc: "See your total debt, payoff progress, and projected debt-free date in one calm view.",
+    bullets: [
+      "Know when you’re projected to become debt-free",
+      "One simple place for totals, remaining, and timeline",
+      "Progress bar that moves with every payment",
+    ],
+  },
+  {
+    key: "streaks",
+    title: "Streaks",
+    icon: Flame,
+    desc: "Build momentum by keeping a weekly streak when you make debt payments.",
+    bullets: [
+      "Stay consistent week over week",
+      "A streak that’s easy to understand",
+      "Small wins that add up",
+    ],
+  },
+  {
+    key: "whatif",
+    title: "What‑if",
+    icon: PiggyBank,
+    desc: "Test extra payments and instantly see how much faster you could reach zero.",
+    bullets: [
+      "Try +$25, +$50, +$100 and compare",
+      "See months saved right away",
+      "No spreadsheets",
+    ],
+  },
+  {
+    key: "history",
+    title: "History",
+    icon: History,
+    desc: "Keep track of payments you’ve logged and watch your progress build over time.",
+    bullets: [
+      "A clean list of payments",
+      "Monthly totals at a glance",
+      "Proof you’re moving forward",
+    ],
+  },
+  {
+    key: "celebrations",
+    title: "Wins",
+    icon: Sparkles,
+    desc: "Encouraging moments when you log a payment, hit a milestone, or keep moving.",
+    bullets: [
+      "Milestones and badges that feel rewarding",
+      "Streak moments and small celebrations",
+      "Motivation without guilt",
+    ],
+  },
+  {
+    key: "management",
+    title: "Debts",
+    icon: ListChecks,
+    desc: "Add, update, and manage debts without feeling like you’re stuck in a spreadsheet.",
+    bullets: ["Fast add/edit flows", "Clear balances and minimums", "Organized and easy to scan"],
+  },
+];
+
+function FeatureTabsSection() {
+  const reduce = useReducedMotion();
+  const [active, setActive] = useState<FeatureTabKey>("dashboard");
+  const t = FEATURE_TABS.find((x) => x.key === active) ?? FEATURE_TABS[0];
+  const activeIndex = Math.max(
+    0,
+    FEATURE_TABS.findIndex((x) => x.key === active),
+  );
+  const reverse = activeIndex % 2 === 1;
+
+  return (
+    <section className="bg-gradient-to-b from-white to-[#FAFAFA] py-20 sm:py-24">
+      <div className="mx-auto max-w-6xl px-5">
+        <div className="mx-auto max-w-2xl text-center">
+          <h2 className="font-display text-3xl font-bold tracking-tight sm:text-4xl">
+            Everything you need.
+          </h2>
+          <p className="mt-3 text-muted-foreground">
+            Explore the core features that make debt payoff feel clear, consistent, and motivating.
+          </p>
+        </div>
+
+        <div className="mx-auto mt-8 flex max-w-5xl justify-center">
+          <div className="flex max-w-full gap-3.5 overflow-x-auto py-1.5 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+            {FEATURE_TABS.map((tab) => {
+              const selected = tab.key === active;
+              const Icon = tab.icon;
+              return (
+                <button
+                  key={tab.key}
+                  type="button"
+                  onClick={() => setActive(tab.key)}
+                  className={`inline-flex shrink-0 items-center gap-3 rounded-full border px-6 py-3.5 text-base font-semibold transition ${
+                    selected
+                      ? "border-[#FF6A00]/25 bg-[#FFF7ED] text-[#EA580C] shadow-sm"
+                      : "border-border bg-white text-[#475569] shadow-sm hover:bg-[#FAFAFA] hover:text-[#0F172A]"
+                  }`}
+                  aria-pressed={selected}
+                >
+                  <Icon className={`h-5 w-5 ${selected ? "text-[#FF6A00]" : "text-[#94A3B8]"}`} />
+                  <span className="whitespace-nowrap">{tab.title}</span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        <div className="mx-auto mt-10 grid max-w-5xl items-start gap-10 lg:grid-cols-[1fr_1.15fr] lg:gap-14">
+          <motion.div
+            key={t.key}
+            className={reverse ? "lg:order-2" : "lg:order-1"}
+            initial={reduce ? { opacity: 1, y: 0 } : { opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={reduce ? { duration: 0.15 } : { duration: 0.5, ease: "easeOut" }}
+          >
+            <div className="inline-flex items-center gap-2 rounded-full bg-primary-soft px-3 py-1 text-xs font-semibold text-primary">
+              <t.icon className="h-4 w-4" />
+              {t.title}
+            </div>
+            <h3 className="mt-4 font-display text-2xl font-bold tracking-tight text-heading sm:text-3xl">
+              {t.title}
+            </h3>
+            <p className="mt-3 text-sm leading-6 text-muted-foreground sm:text-base">{t.desc}</p>
+
+            <ul className="mt-6 space-y-3">
+              {t.bullets.map((b) => (
+                <li key={b} className="flex items-start gap-3 text-sm text-[#475569]">
+                  <Check className="mt-0.5 h-4 w-4 shrink-0 text-[#FF6A00]" />
+                  <span>{b}</span>
+                </li>
+              ))}
+            </ul>
+
+            <div className="mt-7">
+              <Link
+                to="/features"
+                className="inline-flex items-center gap-2 rounded-full border border-border bg-white px-4 py-2.5 text-sm font-semibold text-[#0F172A] shadow-sm transition hover:bg-[#FAFAFA]"
+              >
+                See all features
+                <ArrowRight className="h-4 w-4" />
+              </Link>
+            </div>
+          </motion.div>
+
+          <motion.div
+            key={`${t.key}-preview`}
+            className={reverse ? "lg:order-1" : "lg:order-2"}
+            initial={reduce ? { opacity: 1, y: 0, scale: 1 } : { opacity: 0, y: 12, scale: 0.98 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            transition={reduce ? { duration: 0.15 } : { duration: 0.6, ease: "easeOut" }}
+          >
+            <FeaturePreview tab={t.key} />
+          </motion.div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function FeaturePreview({ tab }: { tab: FeatureTabKey }) {
+  const shell =
+    "relative overflow-hidden rounded-3xl border border-border bg-card p-6 shadow-sm sm:p-7";
+
+  if (tab === "dashboard") {
+    return (
+      <div className={`${shell} bg-gradient-to-br from-white via-white to-[#FFF7ED]`}>
+        <div className="flex items-center justify-between">
+          <div className="text-[11px] font-semibold uppercase tracking-wider text-primary">
+            Overall progress
+          </div>
+          <div className="text-xs font-semibold text-[#475569]">Debt-free by Jun 2029</div>
+        </div>
+        <div className="mt-4 grid grid-cols-3 gap-3">
+          {[
+            { k: "Total debt", v: "$18,300" },
+            { k: "Remaining", v: "$11,120" },
+            { k: "Paid", v: "$7,180" },
+          ].map((x) => (
+            <div key={x.k} className="rounded-2xl border border-border bg-white/80 p-4">
+              <div className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+                {x.k}
+              </div>
+              <div className="mt-1 font-display text-lg font-bold text-foreground tabular-nums">
+                {x.v}
+              </div>
+            </div>
+          ))}
+        </div>
+        <div className="mt-5">
+          <div className="mb-2 flex items-baseline justify-between text-sm">
+            <span className="font-medium text-foreground">Payoff progress</span>
+            <span className="font-display font-bold text-primary tabular-nums">39.0%</span>
+          </div>
+          <div className="h-3 w-full overflow-hidden rounded-full bg-secondary">
+            <div className="h-full w-[39%] rounded-full bg-gradient-progress" />
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (tab === "streaks") {
+    return (
+      <div className={shell}>
+        <div className="flex items-center justify-between">
+          <div className="text-[11px] font-semibold uppercase tracking-wider text-primary">
+            Weekly streak
+          </div>
+          <div className="rounded-full bg-primary-soft px-3 py-1 text-xs font-semibold text-primary">
+            3 weeks 🔥
+          </div>
+        </div>
+        <div className="mt-5 grid grid-cols-7 gap-2">
+          {Array.from({ length: 7 }).map((_, i) => {
+            const on = i <= 4;
+            return (
+              <div
+                key={i}
+                className={`h-9 rounded-xl border ${
+                  on ? "border-[#FF6A00]/25 bg-[#FFF7ED]" : "border-border bg-white"
+                }`}
+              />
+            );
+          })}
+        </div>
+        <div className="mt-4 rounded-2xl border border-border bg-muted/20 p-4 text-sm text-muted-foreground">
+          Log one payment each week to keep your streak going.
+        </div>
+      </div>
+    );
+  }
+
+  if (tab === "whatif") {
+    return (
+      <div className={`${shell} bg-gradient-to-br from-white via-white to-[#FFF7ED]`}>
+        <div className="flex items-center justify-between">
+          <div className="text-[11px] font-semibold uppercase tracking-wider text-primary">
+            What-if
+          </div>
+          <div className="text-xs font-semibold text-[#475569]">+ $50 / month</div>
+        </div>
+        <div className="mt-5 rounded-2xl border border-border bg-white/85 p-5">
+          <div className="flex items-baseline justify-between">
+            <div>
+              <div className="text-xs font-semibold text-muted-foreground">You save</div>
+              <div className="mt-1 font-display text-3xl font-bold text-primary tabular-nums">
+                8 months
+              </div>
+            </div>
+            <div className="text-right">
+              <div className="text-xs font-semibold text-muted-foreground">New debt-free date</div>
+              <div className="mt-1 text-sm font-semibold text-foreground">Oct 2028</div>
+            </div>
+          </div>
+          <div className="mt-4 h-2.5 w-full overflow-hidden rounded-full bg-secondary">
+            <div className="h-full w-[62%] rounded-full bg-gradient-progress" />
+          </div>
+        </div>
+        <div className="mt-4 rounded-2xl border border-border bg-muted/20 p-4 text-sm text-muted-foreground">
+          Test extra payments and compare results instantly.
+        </div>
+      </div>
+    );
+  }
+
+  if (tab === "history") {
+    return (
+      <div className={shell}>
+        <div className="flex items-center justify-between">
+          <div className="text-[11px] font-semibold uppercase tracking-wider text-primary">
+            Payment history
+          </div>
+          <div className="text-xs font-semibold text-[#475569]">$420 this month</div>
+        </div>
+        <div className="mt-5 space-y-3">
+          {[
+            { a: "Credit card", d: "May 02", v: "$120" },
+            { a: "Student loan", d: "Apr 28", v: "$200" },
+            { a: "Personal loan", d: "Apr 20", v: "$100" },
+          ].map((x) => (
+            <div
+              key={x.d}
+              className="flex items-center justify-between rounded-2xl border border-border bg-white p-4"
+            >
+              <div className="min-w-0">
+                <div className="text-sm font-semibold text-foreground">{x.a}</div>
+                <div className="text-xs text-muted-foreground">{x.d}</div>
+              </div>
+              <div className="font-display text-sm font-bold tabular-nums text-primary">{x.v}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  if (tab === "celebrations") {
+    return (
+      <div className={`${shell} bg-gradient-to-br from-white via-white to-[#FFFBEB]`}>
+        <div className="flex items-center justify-between">
+          <div className="text-[11px] font-semibold uppercase tracking-wider text-primary">
+            Celebration
+          </div>
+          <div className="rounded-full bg-success-soft px-3 py-1 text-xs font-semibold text-[#422006]">
+            10% milestone
+          </div>
+        </div>
+        <div className="mt-5 rounded-3xl border border-primary/20 bg-primary-soft/60 p-5">
+          <div className="flex items-center gap-3">
+            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary text-white">
+              <Trophy className="h-6 w-6" />
+            </div>
+            <div>
+              <div className="font-display text-lg font-bold text-foreground">10% paid off</div>
+              <div className="text-sm text-muted-foreground">
+                Real progress is showing. Keep stacking.
+              </div>
+            </div>
+          </div>
+        </div>
+        <div className="mt-4 flex gap-3">
+          {["First payment", "$500 paid", "Halfway"].map((x) => (
+            <div
+              key={x}
+              className="flex-1 rounded-2xl border border-border bg-white p-4 text-center"
+            >
+              <div className="text-xs font-semibold text-muted-foreground">Badge</div>
+              <div className="mt-1 text-sm font-semibold text-foreground">{x}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  // management
+  return (
+    <div className={shell}>
+      <div className="flex items-center justify-between">
+        <div className="text-[11px] font-semibold uppercase tracking-wider text-primary">Debts</div>
+        <div className="text-xs font-semibold text-[#475569]">6 accounts</div>
+      </div>
+      <div className="mt-5 grid gap-3">
+        {[
+          { n: "Visa card", b: "$3,420", m: "$90 min" },
+          { n: "Student loan", b: "$8,900", m: "$140 min" },
+          { n: "Car loan", b: "$4,100", m: "$160 min" },
+        ].map((x) => (
+          <div
+            key={x.n}
+            className="flex items-center justify-between rounded-2xl border border-border bg-white p-4"
+          >
+            <div className="min-w-0">
+              <div className="text-sm font-semibold text-foreground">{x.n}</div>
+              <div className="text-xs text-muted-foreground">{x.m}</div>
+            </div>
+            <div className="font-display text-sm font-bold tabular-nums text-foreground">{x.b}</div>
+          </div>
+        ))}
+      </div>
+    </div>
   );
 }
 
