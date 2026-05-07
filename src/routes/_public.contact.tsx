@@ -33,7 +33,7 @@ function ContactPage() {
     <div className="px-6 py-24">
       <div className="mx-auto max-w-5xl">
         <AnimatedSection className="text-center">
-          <h1 className="font-display text-4xl font-bold text-foreground md:text-6xl">
+          <h1 className="font-display text-4xl font-bold text-heading md:text-6xl">
             Get in <span className="text-gradient-primary">Touch</span>
           </h1>
           <p className="mx-auto mt-4 max-w-2xl text-lg text-muted-foreground">
@@ -55,7 +55,7 @@ function ContactPage() {
                     <item.icon className="h-5 w-5 text-primary" />
                   </div>
                   <div>
-                    <h3 className="font-display text-sm font-semibold text-foreground">
+                    <h3 className="font-display text-sm font-semibold text-heading">
                       {item.title}
                     </h3>
                     <p className="mt-1 text-sm text-muted-foreground">{item.detail}</p>
@@ -78,9 +78,7 @@ function ContactPage() {
                   <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-success/10">
                     <Mail className="h-8 w-8 text-success" />
                   </div>
-                  <h3 className="font-display text-xl font-semibold text-foreground">
-                    Message Sent!
-                  </h3>
+                  <h3 className="font-display text-xl font-semibold text-heading">Message Sent!</h3>
                   <p className="mt-2 text-sm text-muted-foreground">
                     We'll get back to you within 24 hours.
                   </p>

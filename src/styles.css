@@ -45,6 +45,7 @@
   --color-input: var(--input);
   --color-ring: var(--ring);
   --color-ring-offset-background: var(--background);
+  --color-heading: var(--heading-foreground);
   --color-chart-1: var(--chart-1);
   --color-chart-2: var(--chart-2);
   --color-chart-3: var(--chart-3);
@@ -90,6 +91,8 @@
 
   --background: #ffffff;
   --foreground: #0f172a;
+  /* Richer than body copy — subtle lift vs. muted-foreground body text */
+  --heading-foreground: #020617;
 
   --card: #ffffff;
   --card-foreground: #0f172a;
@@ -148,11 +151,15 @@
   );
   --shadow-soft: 0 1px 2px rgb(15 23 42 / 0.05), 0 4px 16px -4px rgb(15 23 42 / 0.08);
   --shadow-glow: 0 10px 40px -12px rgb(255 106 0 / 0.35);
+  /* Minimal depth — not a drop shadow; keeps type crisp on white */
+  --heading-shadow: 0 1px 2px rgb(0 0 0 / 0.1);
 }
 
 .dark {
   --background: #0f172a;
   --foreground: #f8fafc;
+  --heading-foreground: #f8fafc;
+  --heading-shadow: 0 1px 2px rgb(0 0 0 / 0.45);
   --card: #1e293b;
   --card-foreground: #f8fafc;
   --popover: #1e293b;
@@ -190,9 +197,25 @@
     color: var(--color-foreground);
     -webkit-font-smoothing: antialiased;
   }
-  h1, h2, h3, h4, h5 {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5 {
     font-family: var(--font-display);
     letter-spacing: -0.02em;
+    color: var(--heading-foreground);
+    text-shadow: var(--heading-shadow);
+    text-rendering: optimizeLegibility;
+  }
+  h1 {
+    font-weight: 700;
+  }
+  h2,
+  h3,
+  h4,
+  h5 {
+    font-weight: 600;
   }
 }
 
@@ -209,6 +232,35 @@
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
+  }
+  /**
+   * Optional: soft light pool behind a hero headline (white / primary-soft wash).
+   * Keeps type readable without looking like a card or heavy panel.
+   */
+  .heading-hero-pop {
+    position: relative;
+    isolation: isolate;
+  }
+  .heading-hero-pop::before {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    pointer-events: none;
+    inset: -0.15em -4% -0.2em -4%;
+    border-radius: 1rem;
+    background: radial-gradient(
+      ellipse 95% 75% at 50% 45%,
+      rgb(255 255 255 / 0.97) 0%,
+      rgb(255 247 237 / 0.55) 42%,
+      transparent 68%
+    );
+  }
+  .dark .heading-hero-pop::before {
+    background: radial-gradient(
+      ellipse 95% 75% at 50% 45%,
+      rgb(15 23 42 / 0.65) 0%,
+      transparent 70%
+    );
   }
 }
 

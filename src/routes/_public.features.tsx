@@ -84,7 +84,7 @@ function FeaturesPage() {
     <div className="min-h-screen bg-white">
       <main className="mx-auto max-w-6xl px-5 py-16 sm:py-20">
         <section className="mx-auto max-w-3xl text-center">
-          <h1 className="text-4xl font-semibold tracking-tight text-[#0F172A] sm:text-5xl md:text-6xl">
+          <h1 className="font-display text-4xl font-semibold tracking-tight text-heading sm:text-5xl md:text-6xl">
             Features that help debt payoff feel less overwhelming.
           </h1>
 
@@ -104,7 +104,7 @@ function FeaturesPage() {
                 <feature.icon className="h-6 w-6" />
               </div>
 
-              <h3 className="text-lg font-semibold text-[#0F172A]">{feature.title}</h3>
+              <h3 className="font-display text-lg font-semibold text-heading">{feature.title}</h3>
 
               <p className="mt-3 text-sm leading-6 text-[#475569]">{feature.desc}</p>
             </div>
@@ -112,7 +112,7 @@ function FeaturesPage() {
         </section>
 
         <section className="mx-auto mt-16 max-w-4xl rounded-[2rem] border border-[#E5E7EB] bg-white p-8 text-center shadow-sm sm:p-10">
-          <h2 className="text-2xl font-semibold tracking-tight text-[#0F172A]">
+          <h2 className="font-display text-2xl font-semibold tracking-tight text-heading">
             Not just another debt tracker.
           </h2>
 

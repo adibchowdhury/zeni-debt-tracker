@@ -30,7 +30,7 @@ function CookiesPage() {
       {/* Content */}
       <main className="mx-auto max-w-3xl px-6 py-16">
         <p className="text-sm font-medium uppercase tracking-wider text-primary">Legal</p>
-        <h1 className="mt-3 font-display text-4xl font-bold tracking-tight text-foreground sm:text-5xl">
+        <h1 className="mt-3 font-display text-4xl font-bold tracking-tight text-heading sm:text-5xl">
           Cookies Policy
         </h1>
         <p className="mt-4 text-sm text-muted-foreground">Last updated: April 26, 2026</p>

@@ -79,7 +79,7 @@ export function CountdownHero({
         </div>
 
         {done ? (
-          <h2 className="mt-1.5 font-display text-3xl font-bold leading-[1.15] tracking-tight text-foreground sm:text-4xl lg:text-[2.75rem] lg:leading-[1.1]">
+          <h2 className="mt-1.5 font-display text-3xl font-bold leading-[1.15] tracking-tight text-heading sm:text-4xl lg:text-[2.75rem] lg:leading-[1.1]">
             {firstName ? (
               <>
                 <span className="font-semibold text-foreground">{firstName}</span>
@@ -93,7 +93,7 @@ export function CountdownHero({
             )}
           </h2>
         ) : (
-          <h2 className="mt-1.5 font-display text-3xl font-bold leading-[1.15] tracking-tight sm:text-4xl lg:text-[2.75rem] lg:leading-[1.1]">
+          <h2 className="mt-1.5 font-display text-3xl font-bold leading-[1.15] tracking-tight text-heading sm:text-4xl lg:text-[2.75rem] lg:leading-[1.1]">
             {firstName ? (
               <>
                 <span className="font-semibold text-foreground">{firstName}</span>

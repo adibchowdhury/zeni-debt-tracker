@@ -185,7 +185,7 @@ function DebtsPage() {
                         className={cn("h-3 w-3 shrink-0 rounded-full", TYPE_DOT[type])}
                         aria-hidden
                       />
-                      <h2 className="font-display text-lg font-bold tracking-tight text-foreground">
+                      <h2 className="font-display text-lg font-bold tracking-tight text-heading">
                         {type}
                       </h2>
                     </div>
@@ -204,7 +204,7 @@ function DebtsPage() {
                         >
                           <div className="flex items-start justify-between gap-2">
                             <div className="min-w-0">
-                              <h3 className="font-display text-base font-semibold leading-tight text-foreground">
+                              <h3 className="font-display text-base font-semibold leading-tight text-heading">
                                 {d.name}
                               </h3>
                               <p className="mt-0.5 text-xs text-muted-foreground">{d.debtType}</p>

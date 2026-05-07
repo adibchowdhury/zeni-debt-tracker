@@ -83,7 +83,7 @@ function Hero() {
           <div className="mb-6 h-[26px]" aria-hidden="true" />
 
           <motion.h1
-            className="font-display text-[2.75rem] font-semibold leading-[1.04] tracking-tight text-foreground sm:text-6xl lg:text-[4.25rem]"
+            className="heading-hero-pop relative z-[1] font-display text-[2.75rem] font-bold leading-[1.04] tracking-tight text-heading sm:text-6xl lg:text-[4.25rem]"
             initial={reduce ? false : { opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: dur, ease: EASE_HERO, delay: d(0) }}
@@ -169,7 +169,7 @@ function SellingBar() {
             </div>
 
             <div>
-              <h3 className="text-sm font-semibold text-foreground">{item.title}</h3>
+              <h3 className="text-sm font-semibold text-heading">{item.title}</h3>
               <p className="mt-0.5 text-xs leading-5 text-muted-foreground">{item.body}</p>
             </div>
           </div>

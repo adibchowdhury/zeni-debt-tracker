@@ -298,7 +298,7 @@ function CurrentTargetCard({
           Plan settings
         </Link>
       </div>
-      <h3 className="mt-3 font-display text-xl font-bold leading-snug tracking-tight text-foreground sm:text-2xl">
+      <h3 className="mt-3 font-display text-xl font-bold leading-snug tracking-tight text-heading sm:text-2xl">
         {focusDebt.name}
       </h3>
       <p className="mt-1.5 text-xs leading-snug text-muted-foreground sm:text-sm">{blurb}</p>
@@ -384,7 +384,7 @@ function NextDebtStreakCard({
         <div className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
           Next debt
         </div>
-        <h3 className="mt-2 font-display text-xl font-bold leading-snug tracking-tight text-foreground sm:text-2xl">
+        <h3 className="mt-2 font-display text-xl font-bold leading-snug tracking-tight text-heading sm:text-2xl">
           {nextDebt.name}
         </h3>
         <p className="mt-0.5 text-xs text-muted-foreground">{nextDebt.debtType}</p>
@@ -593,7 +593,7 @@ function SimulatorTeaser() {
         <Zap className="h-[1.0625rem] w-[1.0625rem]" />
       </div>
       <div className="min-w-0 flex-1 overflow-hidden py-0.5">
-        <h3 className="font-display text-sm font-bold leading-tight tracking-tight text-foreground">
+        <h3 className="font-display text-sm font-bold leading-tight tracking-tight text-heading">
           Faster payoff explorer
         </h3>
         <p className="mt-0.5 line-clamp-1 text-[11px] leading-snug text-muted-foreground">

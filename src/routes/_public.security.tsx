@@ -30,7 +30,7 @@ function SecurityPage() {
       <main className="mx-auto max-w-3xl px-6 py-16">
         <p className="text-sm font-medium uppercase tracking-wider text-primary">Security</p>
 
-        <h1 className="mt-3 font-display text-4xl font-bold tracking-tight text-foreground sm:text-5xl">
+        <h1 className="mt-3 font-display text-4xl font-bold tracking-tight text-heading sm:text-5xl">
           How We Protect Your Data
         </h1>
 

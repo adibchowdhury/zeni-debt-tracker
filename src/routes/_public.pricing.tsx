@@ -38,7 +38,7 @@ function PricingPage() {
     <div className="min-h-screen bg-white">
       <main className="mx-auto max-w-6xl px-5 py-16 sm:py-20">
         <section className="mx-auto max-w-3xl text-center">
-          <h1 className="text-4xl font-semibold tracking-tight text-[#0F172A] sm:text-5xl md:text-6xl">
+          <h1 className="font-display text-4xl font-semibold tracking-tight text-heading sm:text-5xl md:text-6xl">
             Simple pricing for staying motivated with debt.
           </h1>
 
@@ -52,7 +52,7 @@ function PricingPage() {
           {/* Monthly Card */}
           <div className="relative rounded-[2rem] border border-[#E5E7EB] bg-white p-8 shadow-sm sm:p-10">
             <div className="mb-6">
-              <h2 className="text-xl font-semibold text-[#0F172A]">Monthly</h2>
+              <h2 className="font-display text-xl font-semibold text-heading">Monthly</h2>
               <p className="mt-1 text-sm text-[#475569]">Flexible access after your free month.</p>
             </div>
 
@@ -91,7 +91,7 @@ function PricingPage() {
             <div className="relative">
               <div className="mb-6 flex items-center justify-between gap-4">
                 <div>
-                  <h2 className="text-xl font-semibold text-[#0F172A]">Yearly</h2>
+                  <h2 className="font-display text-xl font-semibold text-heading">Yearly</h2>
                   <p className="mt-1 text-sm text-[#475569]">Best for staying committed longer.</p>
                 </div>
 
@@ -107,8 +107,8 @@ function PricingPage() {
                 </div>
 
                 <p className="mt-2 text-sm text-[#475569]">
-                  Billed as <span className="font-semibold text-[#0F172A]">$36/year</span> instead of{" "}
-                  <span className="line-through">$60/year</span>.
+                  Billed as <span className="font-semibold text-[#0F172A]">$36/year</span> instead
+                  of <span className="line-through">$60/year</span>.
                 </p>
               </div>
 
@@ -152,8 +152,11 @@ function PricingPage() {
               a: "Yes. You are never locked in, and there are no confusing contracts.",
             },
           ].map((item) => (
-            <div key={item.q} className="rounded-3xl border border-[#E5E7EB] bg-white p-6 shadow-sm">
-              <h3 className="text-sm font-semibold text-[#0F172A]">{item.q}</h3>
+            <div
+              key={item.q}
+              className="rounded-3xl border border-[#E5E7EB] bg-white p-6 shadow-sm"
+            >
+              <h3 className="font-display text-sm font-semibold text-heading">{item.q}</h3>
               <p className="mt-2 text-sm leading-6 text-[#475569]">{item.a}</p>
             </div>
           ))}

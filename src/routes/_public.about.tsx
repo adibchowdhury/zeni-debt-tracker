@@ -33,7 +33,7 @@ function AboutPage() {
       {/* Hero */}
       <section>
         <p className="text-sm font-medium uppercase tracking-wider text-primary">About zeni</p>
-        <h1 className="mt-3 text-4xl sm:text-5xl font-bold tracking-tight text-foreground font-display">
+        <h1 className="font-display mt-3 text-4xl font-bold tracking-tight text-heading sm:text-5xl">
           Debt payoff, without the stress.
         </h1>
         <p className="mt-5 text-lg text-muted-foreground leading-relaxed">
@@ -44,7 +44,7 @@ function AboutPage() {
 
       {/* Why we built it */}
       <section className="mt-16">
-        <h2 className="text-2xl font-semibold text-foreground font-display">Why we built it</h2>
+        <h2 className="font-display text-2xl font-semibold text-heading">Why we built it</h2>
         <p className="mt-4 text-muted-foreground leading-relaxed">
           Most debt apps either feel like spreadsheets or like guilt machines. They show you what
           you owe — but not how close you are to being free. We wanted something that makes paying
@@ -58,7 +58,7 @@ function AboutPage() {
 
       {/* Who it's for */}
       <section className="mt-16">
-        <h2 className="text-2xl font-semibold text-foreground font-display">Who it's for</h2>
+        <h2 className="font-display text-2xl font-semibold text-heading">Who it's for</h2>
         <ul className="mt-4 space-y-3 text-muted-foreground leading-relaxed list-disc pl-6">
           <li>
             <strong className="text-foreground">
@@ -81,31 +81,31 @@ function AboutPage() {
 
       {/* How we're different */}
       <section className="mt-16">
-        <h2 className="text-2xl font-semibold text-foreground font-display">How we're different</h2>
+        <h2 className="font-display text-2xl font-semibold text-heading">How we're different</h2>
         <div className="mt-4 grid gap-4 sm:grid-cols-2">
           <div className="rounded-2xl border border-border p-5">
-            <h3 className="font-semibold text-foreground">No bank linking</h3>
+            <h3 className="font-semibold text-heading">No bank linking</h3>
             <p className="mt-2 text-sm text-muted-foreground leading-relaxed">
               You enter your debts manually. We never see your account numbers, transactions, or
               credit score.
             </p>
           </div>
           <div className="rounded-2xl border border-border p-5">
-            <h3 className="font-semibold text-foreground">No ads, no upsells</h3>
+            <h3 className="font-semibold text-heading">No ads, no upsells</h3>
             <p className="mt-2 text-sm text-muted-foreground leading-relaxed">
               We don't sell loan referrals or push credit products. Our only job is helping you get
               to zero.
             </p>
           </div>
           <div className="rounded-2xl border border-border p-5">
-            <h3 className="font-semibold text-foreground">Built for momentum</h3>
+            <h3 className="font-semibold text-heading">Built for momentum</h3>
             <p className="mt-2 text-sm text-muted-foreground leading-relaxed">
               Weekly challenges, milestones, and a real countdown — so every payment feels like
               progress.
             </p>
           </div>
           <div className="rounded-2xl border border-border p-5">
-            <h3 className="font-semibold text-foreground">Your data, your control</h3>
+            <h3 className="font-semibold text-heading">Your data, your control</h3>
             <p className="mt-2 text-sm text-muted-foreground leading-relaxed">
               Export or delete everything any time. We'll never share your debt info with
               advertisers.
@@ -116,7 +116,7 @@ function AboutPage() {
 
       {/* CTA */}
       <section className="mt-16 rounded-3xl bg-primary/10 p-8 text-center">
-        <h2 className="text-2xl font-semibold text-foreground font-display">
+        <h2 className="font-display text-2xl font-semibold text-heading">
           Ready to see your debt-free date?
         </h2>
         <p className="mt-3 text-muted-foreground leading-relaxed">

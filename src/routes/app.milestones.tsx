@@ -41,7 +41,7 @@ const SECTION_MOTIVATION: Record<WinsSection, string> = {
   "money-milestones": "Every dollar logged is leverage.",
   "debt-knockout": "Zero balances are the real trophies.",
   "smart-behavior": "Small smarter moves compound fast.",
-  "comeback": "Breaks happen. Returning is the win.",
+  comeback: "Breaks happen. Returning is the win.",
   "major-milestones": "The inflection points that change everything.",
   "debt-free": "The crown jewel of your collection.",
 };
@@ -71,12 +71,7 @@ function unlockSupportingFor(
   if ((id === "debt-free-30" || id === "debt-free-90") && ctx.daysDebtFree != null) {
     return `${ctx.daysDebtFree} days clear`;
   }
-  if (
-    id.startsWith("pct-") ||
-    id === "10pct" ||
-    id === "halfway" ||
-    id === "almost-free"
-  ) {
+  if (id.startsWith("pct-") || id === "10pct" || id === "halfway" || id === "almost-free") {
     const decimals = id === "halfway" ? 0 : 1;
     return `${ctx.pctPaid.toFixed(decimals)}% cleared`;
   }
@@ -233,7 +228,7 @@ function MilestonesPage() {
         className="border-b border-[#E5E7EB] pb-7 dark:border-zinc-800 sm:pb-7"
       >
         <div className="space-y-2">
-          <h1 className="font-display text-3xl font-bold tracking-tight text-[#0F172A] sm:text-4xl dark:text-zinc-100">
+          <h1 className="font-display text-3xl font-bold tracking-tight text-heading sm:text-4xl">
             Achievements
           </h1>
           <p className="max-w-xl text-base text-[#475569] dark:text-zinc-400">
@@ -310,7 +305,7 @@ function MilestonesPage() {
                   <Sparkles className="h-4 w-4 shrink-0 text-[#FF6A00]" aria-hidden />
                   <h2
                     id={`achievement-section-${section}`}
-                    className="text-xl font-black tracking-tight text-[#0F172A] dark:text-zinc-100"
+                    className="font-display text-xl font-bold tracking-tight text-heading"
                   >
                     {WINS_SECTION_TITLE[section]}
                   </h2>
