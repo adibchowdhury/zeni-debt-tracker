@@ -134,7 +134,7 @@ function SellingBar() {
   ];
 
   return (
-    <section className="relative z-10 px-5">
+    <section className="relative z-10 px-5 pb-20 sm:pb-24">
       <div className="mx-auto -mt-8 grid max-w-6xl gap-4 rounded-[2rem] border border-border bg-white p-4 shadow-sm sm:grid-cols-2 lg:grid-cols-4 lg:p-5">
         {items.map((item) => (
           <div
