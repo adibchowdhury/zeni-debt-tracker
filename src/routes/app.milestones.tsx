@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect, useMemo, useState } from "react";
-import { Sparkles } from "lucide-react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { ChevronLeft, ChevronRight, Sparkles } from "lucide-react";
 import { motion, useReducedMotion } from "framer-motion";
 import { useDebtStore } from "@/lib/storage";
 import { useEngagement } from "@/lib/engagement";
@@ -18,7 +18,6 @@ import { readAchievementSignals } from "@/lib/achievements/signals";
 import type { AchievementCatalogEntry } from "@/lib/achievements/types";
 import type { AchievementCtx } from "@/lib/achievements/context";
 import { BadgeAchievement } from "@/components/debt/BadgeAchievement";
-import { WinsPersonalBestHero } from "@/components/debt/WinsPersonalBestHero";
 import { WinsPageConfetti } from "@/components/debt/WinsPageConfetti";
 
 const ANIM_STORE_KEY = "zeni:wins-milestone-first-seen-v1";
@@ -34,17 +33,145 @@ const BADGE_DISPLAY_NAME: Record<string, string> = {
   "all-clear": "Debt-free",
 };
 
-const SECTION_MOTIVATION: Record<WinsSection, string> = {
-  "getting-started": "Every legend starts at zero.",
-  "building-momentum": "Stack proof. Numbers don’t lie.",
-  "progress-milestones": "Watch the percentage climb — it adds up.",
-  "money-milestones": "Every dollar logged is leverage.",
-  "debt-knockout": "Zero balances are the real trophies.",
-  "smart-behavior": "Small smarter moves compound fast.",
-  comeback: "Breaks happen. Returning is the win.",
-  "major-milestones": "The inflection points that change everything.",
-  "debt-free": "The crown jewel of your collection.",
-};
+function clamp(n: number, min: number, max: number) {
+  return Math.max(min, Math.min(max, n));
+}
+
+function useCarouselControls() {
+  const ref = useRef<HTMLUListElement | null>(null);
+  const [canLeft, setCanLeft] = useState(false);
+  const [canRight, setCanRight] = useState(false);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const update = () => {
+      const max = el.scrollWidth - el.clientWidth;
+      setCanLeft(el.scrollLeft > 4);
+      setCanRight(el.scrollLeft < max - 4);
+    };
+    update();
+    el.addEventListener("scroll", update, { passive: true });
+    window.addEventListener("resize", update);
+    return () => {
+      el.removeEventListener("scroll", update);
+      window.removeEventListener("resize", update);
+    };
+  }, []);
+
+  const scrollByCards = (dir: -1 | 1) => {
+    const el = ref.current;
+    if (!el) return;
+    // Page by one viewport so we never land on partial badges.
+    const delta = dir * el.clientWidth;
+    const next = clamp(el.scrollLeft + delta, 0, el.scrollWidth - el.clientWidth);
+    el.scrollTo({ left: next, behavior: "smooth" });
+  };
+
+  return { ref, canLeft, canRight, scrollByCards };
+}
+
+function AchievementRow({
+  reduce,
+  section,
+  sectionIndex,
+  inSection,
+  sectionUnlocks,
+  staggerIndexById,
+  popIds,
+}: {
+  reduce: boolean;
+  section: WinsSection;
+  sectionIndex: number;
+  inSection: MilestoneRow[];
+  sectionUnlocks: number;
+  staggerIndexById: Map<string, number>;
+  popIds: Set<string>;
+}) {
+  const carousel = useCarouselControls();
+
+  return (
+    <motion.section
+      key={section}
+      initial={reduce ? { opacity: 1 } : { opacity: 0, y: 16 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={
+        reduce
+          ? { duration: 0.15 }
+          : {
+              duration: 0.45,
+              ease: "easeOut",
+              delay: 0.05 + sectionIndex * 0.05,
+            }
+      }
+      aria-labelledby={`achievement-section-${section}`}
+      className="py-7 sm:py-9"
+    >
+      <div className="mb-4 flex items-start justify-between gap-6">
+        <div className="flex flex-col gap-1">
+          <div className="flex flex-wrap items-center gap-2">
+            <Sparkles className="h-4 w-4 shrink-0 text-[#FF6A00]" aria-hidden />
+            <h2
+              id={`achievement-section-${section}`}
+              className="font-display text-xl font-bold tracking-tight text-heading"
+            >
+              {WINS_SECTION_TITLE[section]}
+            </h2>
+          </div>
+          <p className="text-sm font-semibold text-[#64748B] dark:text-zinc-500">
+            {sectionUnlocks} of {inSection.length} unlocked
+          </p>
+        </div>
+      </div>
+
+      <div className="relative">
+        <button
+          type="button"
+          onClick={() => carousel.scrollByCards(-1)}
+          className={`absolute -left-3 top-1/2 z-20 hidden -translate-y-1/2 items-center justify-center rounded-full border border-border bg-white/90 p-2 shadow-sm backdrop-blur transition-opacity sm:flex ${
+            carousel.canLeft ? "opacity-100" : "pointer-events-none opacity-0"
+          }`}
+          aria-label={`Scroll ${WINS_SECTION_TITLE[section]} left`}
+        >
+          <ChevronLeft className="h-4 w-4 text-heading" />
+        </button>
+
+        <button
+          type="button"
+          onClick={() => carousel.scrollByCards(1)}
+          className={`absolute -right-3 top-1/2 z-20 hidden -translate-y-1/2 items-center justify-center rounded-full border border-border bg-white/90 p-2 shadow-sm backdrop-blur transition-opacity sm:flex ${
+            carousel.canRight ? "opacity-100" : "pointer-events-none opacity-0"
+          }`}
+          aria-label={`Scroll ${WINS_SECTION_TITLE[section]} right`}
+        >
+          <ChevronRight className="h-4 w-4 text-heading" />
+        </button>
+
+        <ul
+          ref={carousel.ref}
+          className="grid grid-flow-col gap-6 overflow-x-auto overflow-y-visible px-2 pt-6 pb-10 pr-14 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden [scroll-snap-stop:always] [scroll-snap-type:x_mandatory] auto-cols-[calc((100%-24px)/2)] sm:auto-cols-[calc((100%-48px)/3)] lg:auto-cols-[calc((100%-96px)/5)]"
+        >
+          {inSection.map((m) => (
+            <li key={m.id} className="flex snap-start items-start justify-center">
+              <BadgeAchievement
+                milestoneId={m.id}
+                section={m.section}
+                tier={m.tier}
+                achieved={m.achieved}
+                Icon={m.Icon}
+                displayName={BADGE_DISPLAY_NAME[m.id] ?? m.title}
+                supportingUnlocked={m.unlockSupporting}
+                supportingLocked={m.gridLockedLabel}
+                index={staggerIndexById.get(m.id) ?? 0}
+                justUnlocked={popIds.has(m.id)}
+              />
+            </li>
+          ))}
+        </ul>
+      </div>
+    </motion.section>
+  );
+}
 
 export const Route = createFileRoute("/app/milestones")({
   component: MilestonesPage,
@@ -146,8 +273,6 @@ function MilestonesPage() {
   const unlocked = rows.filter((m) => m.achieved).length;
   const total = rows.length;
   const remaining = total - unlocked;
-  const journeyPct = total ? Math.round((unlocked / total) * 100) : 0;
-
   const collectionMotivation =
     unlocked === total
       ? "Collection complete. You crushed it."
@@ -218,7 +343,7 @@ function MilestonesPage() {
   }
 
   return (
-    <div className="relative mx-auto max-w-6xl bg-white pb-8">
+    <div className="relative mx-auto max-w-6xl bg-white px-5 pb-8">
       <WinsPageConfetti active={!reduce && burst} />
 
       <motion.header
@@ -250,93 +375,22 @@ function MilestonesPage() {
         <p className="mt-4 max-w-2xl text-sm font-medium leading-relaxed text-[#475569] dark:text-zinc-400">
           {collectionMotivation}
         </p>
-
-        <div className="mt-6 max-w-2xl">
-          <div className="mb-2 flex justify-between text-xs font-semibold uppercase tracking-wider text-[#94A3B8] dark:text-zinc-500">
-            <span>Collection progress</span>
-            <span className="tabular-nums">{journeyPct}%</span>
-          </div>
-          <div className="h-2.5 overflow-hidden rounded-full bg-[#E5E7EB] dark:bg-zinc-800">
-            <motion.div
-              className="h-full rounded-full bg-gradient-to-r from-[#FF6A00] via-[#FB923C] to-[#FACC15] shadow-[0_0_16px_rgba(255,106,0,0.35)]"
-              initial={reduce ? { width: `${journeyPct}%` } : { width: 0 }}
-              animate={{ width: `${journeyPct}%` }}
-              transition={
-                reduce ? { duration: 0.15 } : { duration: 0.8, delay: 0.2, ease: "easeOut" }
-              }
-            />
-          </div>
-        </div>
       </motion.header>
-
-      <motion.div
-        className="mt-7"
-        initial={reduce ? { opacity: 1 } : { opacity: 0, y: 16 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={reduce ? { duration: 0.15 } : { duration: 0.45, ease: "easeOut", delay: 0.06 }}
-      >
-        <WinsPersonalBestHero eng={eng} compact />
-      </motion.div>
 
       <div className="mt-8 space-y-0">
         {WINS_SECTION_ORDER.map((section, sectionIndex) => {
           const inSection = rows.filter((r) => r.section === section);
           const sectionUnlocks = inSection.filter((r) => r.achieved).length;
-
           return (
-            <motion.section
-              key={section}
-              initial={reduce ? { opacity: 1 } : { opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={
-                reduce
-                  ? { duration: 0.15 }
-                  : {
-                      duration: 0.45,
-                      ease: "easeOut",
-                      delay: 0.05 + sectionIndex * 0.05,
-                    }
-              }
-              aria-labelledby={`achievement-section-${section}`}
-              className="border-b border-[#E5E7EB] py-6 last:border-b-0 dark:border-zinc-800 sm:py-8"
-            >
-              <div className="mb-5 flex flex-col gap-1 sm:mb-5">
-                <div className="flex flex-wrap items-center gap-2">
-                  <Sparkles className="h-4 w-4 shrink-0 text-[#FF6A00]" aria-hidden />
-                  <h2
-                    id={`achievement-section-${section}`}
-                    className="font-display text-xl font-bold tracking-tight text-heading"
-                  >
-                    {WINS_SECTION_TITLE[section]}
-                  </h2>
-                </div>
-                <p className="text-sm font-semibold text-[#64748B] dark:text-zinc-500">
-                  {sectionUnlocks} of {inSection.length} unlocked
-                </p>
-                <p className="max-w-2xl text-xs leading-relaxed text-[#94A3B8] dark:text-zinc-500">
-                  {SECTION_MOTIVATION[section]}
-                </p>
-              </div>
-
-              <ul className="grid grid-cols-2 justify-items-center gap-x-3 gap-y-7 md:grid-cols-3 md:gap-y-8 lg:grid-cols-4 xl:grid-cols-5">
-                {inSection.map((m) => (
-                  <li key={m.id} className="w-full max-w-[180px]">
-                    <BadgeAchievement
-                      milestoneId={m.id}
-                      section={m.section}
-                      tier={m.tier}
-                      achieved={m.achieved}
-                      Icon={m.Icon}
-                      displayName={BADGE_DISPLAY_NAME[m.id] ?? m.title}
-                      supportingUnlocked={m.unlockSupporting}
-                      supportingLocked={m.gridLockedLabel}
-                      index={staggerIndexById.get(m.id) ?? 0}
-                      justUnlocked={popIds.has(m.id)}
-                    />
-                  </li>
-                ))}
-              </ul>
-            </motion.section>
+            <AchievementRow
+              reduce={reduce}
+              section={section}
+              sectionIndex={sectionIndex}
+              inSection={inSection}
+              sectionUnlocks={sectionUnlocks}
+              staggerIndexById={staggerIndexById}
+              popIds={popIds}
+            />
           );
         })}
       </div>

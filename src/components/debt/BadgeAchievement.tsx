@@ -8,84 +8,13 @@ export type BadgeVisualSize = "normal" | "major" | "final";
 
 const SPRING_HOVER = { type: "spring" as const, stiffness: 340, damping: 20 };
 
-const CATEGORY_UNLOCKED: Record<WinsSection, { ring: string; face: string }> = {
-  "getting-started": {
-    ring: "bg-gradient-to-br from-[#FACC15] via-[#FF9F2E] to-[#FF6A00]",
-    face: "bg-gradient-to-br from-[#FFB347] via-[#FF8A1F] to-[#FF6A00]",
-  },
-  "building-momentum": {
-    ring: "bg-gradient-to-br from-[#FACC15] via-[#FF6A00] to-[#EA580C]",
-    face: "bg-gradient-to-br from-[#FF7A00] via-[#FF6A00] to-[#EA580C]",
-  },
-  "major-milestones": {
-    ring: "bg-gradient-to-br from-[#FACC15] via-[#FF6A00] to-[#DC2626]",
-    face: "bg-gradient-to-br from-[#FF6A00] via-[#F4511E] to-[#DC2626]",
-  },
-  "debt-free": {
-    ring: "bg-gradient-to-br from-[#FDE68A] via-[#FACC15] to-[#FF6A00]",
-    face: "bg-gradient-to-br from-[#FACC15] via-[#FF9F2E] to-[#EA580C]",
-  },
-  "progress-milestones": {
-    ring: "bg-gradient-to-br from-[#FACC15] via-[#FF8A1F] to-[#EA580C]",
-    face: "bg-gradient-to-br from-[#FF9F2E] via-[#FF6A00] to-[#EA580C]",
-  },
-  "money-milestones": {
-    ring: "bg-gradient-to-br from-[#FDE68A] via-[#FF6A00] to-[#C2410C]",
-    face: "bg-gradient-to-br from-[#FF7A00] via-[#FF6A00] to-[#EA580C]",
-  },
-  "debt-knockout": {
-    ring: "bg-gradient-to-br from-[#FACC15] via-[#FF6A00] to-[#DC2626]",
-    face: "bg-gradient-to-br from-[#FF6A00] via-[#F4511E] to-[#DC2626]",
-  },
-  "smart-behavior": {
-    ring: "bg-gradient-to-br from-[#FACC15] via-[#FF9F2E] to-[#FF6A00]",
-    face: "bg-gradient-to-br from-[#FFB347] via-[#FF8A1F] to-[#FF6A00]",
-  },
-  "comeback": {
-    ring: "bg-gradient-to-br from-[#E2E8F0] via-[#FDBA74] to-[#FF6A00]",
-    face: "bg-gradient-to-br from-[#FFEDD5] via-[#FF6A00] to-[#EA580C]",
-  },
-};
-
-/** Aspirational muted rings — not flat gray */
-const CATEGORY_LOCKED: Record<WinsSection, { ring: string; face: string }> = {
-  "getting-started": {
-    ring: "bg-gradient-to-br from-[#FEF9C3] via-[#FDE68A] to-[#A8A29E]",
-    face: "bg-gradient-to-br from-[#FFFBEB] via-[#FEF3C7] to-[#E7E5E4]",
-  },
-  "building-momentum": {
-    ring: "bg-gradient-to-br from-[#FDE68A] via-[#FDBA74] to-[#94A3B8]",
-    face: "bg-gradient-to-br from-[#FFF7ED] via-[#FFEDD5] to-[#E7E5E4]",
-  },
-  "major-milestones": {
-    ring: "bg-gradient-to-br from-[#FECACA] via-[#FB923C]/85 to-[#B91C1C]/45",
-    face: "bg-gradient-to-br from-[#FFF1F2] via-[#FFE4E6] to-[#F1F5F9]",
-  },
-  "debt-free": {
-    ring: "bg-gradient-to-br from-[#FDE68A] via-[#FBBF24] to-[#FB923C]",
-    face: "bg-gradient-to-br from-[#FFF7ED] via-[#FFF1E6] to-[#F8FAFC]",
-  },
-  "progress-milestones": {
-    ring: "bg-gradient-to-br from-[#FDE68A] via-[#FDBA74] to-[#94A3B8]",
-    face: "bg-gradient-to-br from-[#FFF7ED] via-[#FFEDD5] to-[#E7E5E4]",
-  },
-  "money-milestones": {
-    ring: "bg-gradient-to-br from-[#FDE68A] via-[#FB923C] to-[#94A3B8]",
-    face: "bg-gradient-to-br from-[#FFF7ED] via-[#FFEDD5] to-[#E7E5E4]",
-  },
-  "debt-knockout": {
-    ring: "bg-gradient-to-br from-[#FECACA] via-[#FB923C]/85 to-[#B91C1C]/45",
-    face: "bg-gradient-to-br from-[#FFF1F2] via-[#FFE4E6] to-[#F1F5F9]",
-  },
-  "smart-behavior": {
-    ring: "bg-gradient-to-br from-[#FEF9C3] via-[#FDE68A] to-[#A8A29E]",
-    face: "bg-gradient-to-br from-[#FFFBEB] via-[#FEF3C7] to-[#E7E5E4]",
-  },
-  "comeback": {
-    ring: "bg-gradient-to-br from-[#E2E8F0] via-[#CBD5E1] to-[#94A3B8]",
-    face: "bg-gradient-to-br from-[#F8FAFC] via-[#F1F5F9] to-[#E2E8F0]",
-  },
-};
+// Only two visual states across the page:
+// - Achieved: solid orange
+// - Locked: faded out
+const BADGE_ACHIEVED_RING = "bg-[#FF6A00]";
+const BADGE_ACHIEVED_FACE = "bg-[#EA580C]";
+const BADGE_LOCKED_RING = "bg-[#FF6A00]/18 grayscale";
+const BADGE_LOCKED_FACE = "bg-[#FF6A00]/10 grayscale";
 
 const FINAL_IDS = new Set(["all-clear"]);
 
@@ -180,40 +109,21 @@ export function BadgeAchievement({
   const isHalfway = milestoneId === "halfway";
   const epic = isEpicBadge(milestoneId);
   const majorMotion = tier === "major" || epic;
-  const showMajorPill = isHalfway && achieved;
-  const idleMedalPulse =
-    achieved && (milestoneId === "halfway" || milestoneId === "all-clear");
+  const showMajorPill = false;
+  const idleMedalPulse = achieved && (milestoneId === "halfway" || milestoneId === "all-clear");
 
-  const cat = CATEGORY_UNLOCKED[section];
-  const lockedPalette = CATEGORY_LOCKED[section];
-
-  const unlockedRingClass = cat.ring;
-  const unlockedFaceBase =
-    isFinal && achieved
-      ? "bg-gradient-to-br from-[#FACC15] via-[#FF9F2E] to-[#EA580C]"
-      : cat.face;
+  const unlockedRingClass = BADGE_ACHIEVED_RING;
+  const unlockedFaceBase = BADGE_ACHIEVED_FACE;
 
   const isHalfwayUnlocked = isHalfway && achieved;
-  const ringShadowUnlocked = (() => {
-    if (isFinal && achieved) {
-      return "shadow-[0_14px_38px_rgba(255,106,0,0.32)] hover:shadow-[0_20px_52px_rgba(253,224,71,0.38),0_0_48px_rgba(255,106,0,0.28)]";
-    }
-    if (isHalfwayUnlocked) {
-      return "shadow-[0_12px_30px_rgba(255,106,0,0.25),0_0_40px_rgba(255,106,0,0.24)] hover:shadow-[0_18px_44px_rgba(255,106,0,0.4),0_0_52px_rgba(255,106,0,0.3)]";
-    }
-    if (majorMotion && achieved) {
-      return "shadow-[0_12px_30px_rgba(255,106,0,0.26)] hover:shadow-[0_18px_46px_rgba(255,106,0,0.42),0_0_36px_rgba(220,38,38,0.12)]";
-    }
-    return "shadow-[0_12px_30px_rgba(255,106,0,0.25)] hover:shadow-[0_18px_44px_rgba(255,106,0,0.4),0_0_32px_rgba(255,106,0,0.18)]";
-  })();
+  const ringShadowUnlocked =
+    "shadow-[0_12px_30px_rgba(255,106,0,0.22)] hover:shadow-[0_18px_44px_rgba(255,106,0,0.32)]";
 
   const ringShadowLocked =
-    isFinal && !achieved
-      ? "shadow-[0_10px_28px_rgba(251,191,36,0.18),0_0_36px_rgba(251,191,36,0.26)] hover:shadow-[0_12px_32px_rgba(251,191,36,0.22),0_0_42px_rgba(251,191,36,0.28)]"
-      : "shadow-[0_8px_22px_rgba(15,23,42,0.07)] hover:shadow-[0_12px_28px_rgba(15,23,42,0.09)]";
+    "shadow-[0_8px_22px_rgba(15,23,42,0.06)] hover:shadow-[0_12px_28px_rgba(15,23,42,0.08)]";
 
-  const lockedRing = lockedPalette.ring;
-  const lockedFace = lockedPalette.face;
+  const lockedRing = BADGE_LOCKED_RING;
+  const lockedFace = BADGE_LOCKED_FACE;
 
   const label = achieved
     ? `${displayName}. ${supportingUnlocked}`
@@ -407,7 +317,10 @@ export function BadgeAchievement({
             )}
 
             {achieved && !reduce && hoverShine > 0 && (
-              <div className="pointer-events-none absolute inset-0 overflow-hidden rounded-full" key={hoverShine}>
+              <div
+                className="pointer-events-none absolute inset-0 overflow-hidden rounded-full"
+                key={hoverShine}
+              >
                 <motion.div
                   className="absolute -inset-y-8 -left-[60%] w-[55%] bg-gradient-to-r from-transparent via-white/28 to-transparent"
                   initial={{ x: "-30%", opacity: 0 }}
