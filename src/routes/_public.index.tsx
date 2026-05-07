@@ -88,7 +88,7 @@ function Hero() {
           <div className="mb-6 h-[26px]" aria-hidden="true" />
 
           <motion.h1
-            className="heading-hero-pop relative z-[1] font-display text-[2.75rem] font-bold leading-[1.04] tracking-tight text-heading sm:text-6xl lg:text-[4.25rem]"
+            className="heading-hero-pop relative z-[1] font-display text-[2.75rem] font-extrabold leading-[0.98] tracking-[-0.04em] text-heading sm:text-6xl sm:leading-[1] lg:text-[4.5rem] lg:leading-[0.95]"
             initial={reduce ? false : { opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: dur, ease: EASE_HERO, delay: d(0) }}
@@ -98,7 +98,7 @@ function Hero() {
           </motion.h1>
 
           <motion.p
-            className="mt-7 max-w-xl text-base text-muted-foreground sm:text-lg lg:text-xl"
+            className="mt-7 max-w-xl text-base leading-relaxed text-muted-foreground sm:text-lg lg:text-xl"
             initial={reduce ? false : { opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: dur, ease: EASE_HERO, delay: d(0.18) }}
@@ -486,7 +486,7 @@ function ProblemSection() {
         </div>
 
         <div className="order-1 lg:order-2">
-          <h2 className="font-display text-3xl font-bold tracking-tight sm:text-4xl">
+          <h2 className="font-display text-3xl font-bold leading-[1.08] tracking-[-0.03em] sm:text-4xl sm:leading-[1.1] lg:text-5xl">
             Paying off debt shouldn't feel impossible.
           </h2>
           <p className="mt-3 text-muted-foreground">
@@ -503,7 +503,9 @@ function ProblemSection() {
                   <span className="font-display text-base font-bold">!</span>
                 </div>
                 <div>
-                  <h3 className="font-display text-base font-semibold">{p.title}</h3>
+                  <h3 className="font-display text-lg font-bold leading-[1.1] tracking-[-0.02em]">
+                    {p.title}
+                  </h3>
                   <p className="mt-0.5 text-sm text-muted-foreground">{p.body}</p>
                 </div>
               </div>
@@ -606,7 +608,7 @@ function FeatureTabsSection() {
     <section className="bg-gradient-to-b from-white to-[#FAFAFA] py-20 sm:py-24">
       <div className="mx-auto max-w-6xl px-5">
         <div className="mx-auto max-w-2xl text-center">
-          <h2 className="font-display text-3xl font-bold tracking-tight sm:text-4xl">
+          <h2 className="font-display text-3xl font-bold leading-[1.08] tracking-[-0.03em] sm:text-4xl sm:leading-[1.1] lg:text-5xl">
             Everything you need.
           </h2>
           <p className="mt-3 text-muted-foreground">
@@ -651,7 +653,7 @@ function FeatureTabsSection() {
               <t.icon className="h-4 w-4" />
               {t.title}
             </div>
-            <h3 className="mt-4 font-display text-2xl font-bold tracking-tight text-heading sm:text-3xl">
+            <h3 className="mt-4 font-display text-2xl font-bold leading-[1.08] tracking-[-0.03em] text-heading sm:text-3xl">
               {t.title}
             </h3>
             <p className="mt-3 text-sm leading-6 text-muted-foreground sm:text-base">{t.desc}</p>
@@ -923,7 +925,7 @@ function SolutionSection() {
     <section className="bg-gradient-to-b from-white to-[#FAFAFA] py-20 sm:py-24">
       <div className="mx-auto max-w-6xl px-5">
         <div className="mx-auto max-w-2xl text-center">
-          <h2 className="font-display text-3xl font-bold tracking-tight sm:text-4xl">
+          <h2 className="font-display text-3xl font-bold leading-[1.08] tracking-[-0.03em] sm:text-4xl sm:leading-[1.1] lg:text-5xl">
             Clarity, momentum and a date you'll actually{" "}
             <span className="text-primary">circle on the calendar.</span>
           </h2>
@@ -970,7 +972,9 @@ function SolutionSection() {
               <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary text-primary-foreground shadow-sm">
                 <w.icon className="h-5 w-5" />
               </div>
-              <h3 className="mt-5 font-display text-lg font-bold">{w.title}</h3>
+              <h3 className="mt-5 font-display text-xl font-bold leading-[1.1] tracking-[-0.02em]">
+                {w.title}
+              </h3>
               <p className="mt-1 text-sm text-muted-foreground">{w.body}</p>
             </div>
           ))}
@@ -1009,7 +1013,7 @@ function HowItWorks() {
         <div className="mb-3 inline-flex rounded-full bg-secondary px-3 py-1 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
           How it works
         </div>
-        <h2 className="font-display text-3xl font-bold tracking-tight sm:text-4xl">
+        <h2 className="font-display text-3xl font-bold leading-[1.08] tracking-[-0.03em] sm:text-4xl sm:leading-[1.1] lg:text-5xl">
           Three simple steps to your debt-free date.
         </h2>
         <p className="mt-3 text-muted-foreground">
@@ -1050,7 +1054,9 @@ function HowItWorks() {
                     )}
                   </div>
 
-                  <h3 className="mt-5 font-display text-xl font-bold">{s.title}</h3>
+                  <h3 className="mt-5 font-display text-2xl font-bold leading-[1.1] tracking-[-0.02em]">
+                    {s.title}
+                  </h3>
                   <p className="mt-2 text-sm leading-6 text-muted-foreground">{s.body}</p>
                 </div>
               </div>
@@ -1071,7 +1077,7 @@ function PreviewSection() {
     <section className="bg-gradient-to-b from-[#FAFAFA] to-white py-20 sm:py-24">
       <div className="mx-auto max-w-6xl px-5">
         <div className="mx-auto max-w-2xl text-center">
-          <h2 className="font-display text-3xl font-bold tracking-tight sm:text-4xl">
+          <h2 className="font-display text-3xl font-bold leading-[1.08] tracking-[-0.03em] sm:text-4xl sm:leading-[1.1] lg:text-5xl">
             Designed to feel like a win, not a chore.
           </h2>
         </div>
@@ -1202,7 +1208,7 @@ function SocialProof() {
               Loved by people paying it down
             </div>
 
-            <h2 className="font-display text-3xl font-bold tracking-tight sm:text-4xl">
+            <h2 className="font-display text-3xl font-bold leading-[1.08] tracking-[-0.03em] sm:text-4xl sm:leading-[1.1] lg:text-5xl">
               Real progress from real debt payoff journeys.
             </h2>
 
@@ -1309,7 +1315,7 @@ function FAQSection() {
             FAQ
           </div>
 
-          <h2 className="font-display text-3xl font-bold tracking-tight sm:text-4xl">
+          <h2 className="font-display text-3xl font-bold leading-[1.08] tracking-[-0.03em] sm:text-4xl sm:leading-[1.1] lg:text-5xl">
             Questions before you start?
           </h2>
 
