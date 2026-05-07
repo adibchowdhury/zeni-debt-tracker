@@ -327,9 +327,10 @@ function HeroVisual() {
         {/* Progress bar with milestone ticks */}
         <div className="mt-4">
           <div className="relative h-3 w-full overflow-hidden rounded-full bg-secondary">
+            {/* No CSS width transition: pct is driven every frame by rAF — a transition fights updates and reads as static/jumpy */}
             <div
               className="h-full rounded-full bg-gradient-progress"
-              style={{ width: `${pct}%`, transition: "width 80ms linear" }}
+              style={{ width: `${pct}%` }}
             />
             {/* Shimmer sweep on the filled portion */}
             <div

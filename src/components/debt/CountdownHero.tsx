@@ -1,7 +1,50 @@
+import { useEffect, useRef, useState } from "react";
 import { Calendar, Sparkles } from "lucide-react";
 import { ProgressBar } from "@/components/debt/ProgressBar";
 import { formatMoney, formatDate } from "@/lib/debt-math";
 import { formatDays, type CountdownInfo } from "@/lib/insights";
+
+function easeOutCubic(t: number) {
+  return 1 - (1 - t) ** 3;
+}
+
+/** Smoothly approaches `target` so bar + label can stay in sync without fighting CSS width transitions. */
+function useAnimatedProgress(target: number, durationMs = 850) {
+  const [display, setDisplay] = useState(0);
+  const displayRef = useRef(0);
+
+  useEffect(() => {
+    const clamped = Math.max(0, Math.min(100, target));
+    const reduced =
+      typeof window !== "undefined" &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reduced) {
+      displayRef.current = clamped;
+      setDisplay(clamped);
+      return;
+    }
+
+    const from = displayRef.current;
+    const start = performance.now();
+    let raf = 0;
+
+    const tick = (now: number) => {
+      const t = Math.min(1, (now - start) / durationMs);
+      const v = from + (clamped - from) * easeOutCubic(t);
+      displayRef.current = v;
+      setDisplay(v);
+      if (t < 1) raf = requestAnimationFrame(tick);
+      else {
+        displayRef.current = clamped;
+        setDisplay(clamped);
+      }
+    };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, [target, durationMs]);
+
+  return display;
+}
 
 export function CountdownHero({
   countdown,
@@ -15,8 +58,10 @@ export function CountdownHero({
   const { days, payoffDate, totalRemaining, pct, totalPaid } = countdown;
   const done = totalRemaining <= 0.01;
 
+  const displayPct = useAnimatedProgress(done ? Math.min(100, pct) : pct);
+
   const summaryLine = !done
-    ? `${pct.toFixed(0)}% complete${
+    ? `${Math.round(displayPct)}% complete${
         nextMilestoneDollars != null && nextMilestoneDollars > 0
           ? ` \u2014 ${formatMoney(nextMilestoneDollars)} to your next milestone`
           : ""
@@ -92,11 +137,15 @@ export function CountdownHero({
           <div className="mb-2 flex items-baseline justify-between gap-4 text-sm">
             <span className="font-medium text-foreground">Overall progress</span>
             <span className="font-display text-lg font-bold tabular-nums text-primary sm:text-xl">
-              {pct.toFixed(1)}%
+              {displayPct.toFixed(1)}%
             </span>
           </div>
-          <ProgressBar value={pct} className="h-3 sm:h-3.5" />
-          <Timeline pct={pct} />
+          <ProgressBar
+            value={displayPct}
+            className="h-3 sm:h-3.5"
+            fillClassName="transition-none duration-0"
+          />
+          <Timeline pct={displayPct} />
         </div>
       </div>
     </section>
