@@ -526,7 +526,7 @@ type FeatureTabKey = "dashboard" | "streaks" | "whatif" | "history" | "celebrati
 const FEATURE_TABS: Array<{
   key: FeatureTabKey;
   title: string;
-  icon: React.ComponentType<{ className?: string }>;
+  icon: React.ComponentType<React.SVGProps<SVGSVGElement>>;
   desc: string;
   bullets: string[];
 }> = [
@@ -594,10 +594,30 @@ const FEATURE_TABS: Array<{
   },
 ];
 
+const FEATURE_TAB_THEME: Record<
+  FeatureTabKey,
+  {
+    /** Strong accent used for icons, checkmarks, and filled CTA. */
+    accent: string;
+    /** Soft tint for selected tab background / subtle panels. */
+    tint: string;
+    /** Border tint for selected tab/panels. */
+    border: string;
+  }
+> = {
+  dashboard: { accent: "#EA580C", tint: "#FFF7ED", border: "rgba(234, 88, 12, 0.25)" }, // orange
+  streaks: { accent: "#DC2626", tint: "#FEF2F2", border: "rgba(220, 38, 38, 0.22)" }, // red
+  whatif: { accent: "#2563EB", tint: "#EFF6FF", border: "rgba(37, 99, 235, 0.22)" }, // blue
+  history: { accent: "#7C3AED", tint: "#F5F3FF", border: "rgba(124, 58, 237, 0.22)" }, // purple
+  celebrations: { accent: "#CA8A04", tint: "#FFFBEB", border: "rgba(202, 138, 4, 0.22)" }, // amber
+  management: { accent: "#059669", tint: "#ECFDF5", border: "rgba(5, 150, 105, 0.22)" }, // green
+};
+
 function FeatureTabsSection() {
   const reduce = useReducedMotion();
   const [active, setActive] = useState<FeatureTabKey>("dashboard");
   const t = FEATURE_TABS.find((x) => x.key === active) ?? FEATURE_TABS[0];
+  const theme = FEATURE_TAB_THEME[t.key];
   const activeIndex = Math.max(
     0,
     FEATURE_TABS.findIndex((x) => x.key === active),
@@ -620,20 +640,31 @@ function FeatureTabsSection() {
           <div className="flex max-w-full gap-3.5 overflow-x-auto py-1.5 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
             {FEATURE_TABS.map((tab) => {
               const selected = tab.key === active;
+              const tabTheme = FEATURE_TAB_THEME[tab.key];
               const Icon = tab.icon;
               return (
                 <button
                   key={tab.key}
                   type="button"
                   onClick={() => setActive(tab.key)}
-                  className={`inline-flex shrink-0 items-center gap-3 rounded-full border px-6 py-3.5 text-base font-semibold transition ${
-                    selected
-                      ? "border-[#FF6A00]/25 bg-[#FFF7ED] text-[#EA580C] shadow-sm"
-                      : "border-border bg-white text-[#475569] shadow-sm hover:bg-[#FAFAFA] hover:text-[#0F172A]"
+                  className={`inline-flex shrink-0 items-center gap-3 rounded-xl border px-6 py-3.5 text-base font-semibold shadow-sm transition ${
+                    selected ? "text-foreground" : "border-border bg-white text-[#475569] hover:bg-[#FAFAFA] hover:text-[#0F172A]"
                   }`}
+                  style={
+                    selected
+                      ? {
+                          backgroundColor: tabTheme.tint,
+                          borderColor: tabTheme.border,
+                          color: tabTheme.accent,
+                        }
+                      : undefined
+                  }
                   aria-pressed={selected}
                 >
-                  <Icon className={`h-5 w-5 ${selected ? "text-[#FF6A00]" : "text-[#94A3B8]"}`} />
+                  <Icon
+                    className="h-5 w-5"
+                    style={selected ? { color: tabTheme.accent } : { color: "#94A3B8" }}
+                  />
                   <span className="whitespace-nowrap">{tab.title}</span>
                 </button>
               );
@@ -649,8 +680,11 @@ function FeatureTabsSection() {
             animate={{ opacity: 1, y: 0 }}
             transition={reduce ? { duration: 0.15 } : { duration: 0.5, ease: "easeOut" }}
           >
-            <div className="inline-flex items-center gap-2 rounded-full bg-primary-soft px-3 py-1 text-xs font-semibold text-primary">
-              <t.icon className="h-4 w-4" />
+            <div
+              className="inline-flex items-center gap-2 rounded-full border bg-white px-3 py-1 text-xs font-semibold"
+              style={{ borderColor: theme.border, color: theme.accent }}
+            >
+              <t.icon className="h-4 w-4" style={{ color: theme.accent }} />
               {t.title}
             </div>
             <h3 className="mt-4 font-display text-2xl font-bold leading-[1.08] tracking-[-0.03em] text-heading sm:text-3xl">
@@ -661,7 +695,7 @@ function FeatureTabsSection() {
             <ul className="mt-6 space-y-3">
               {t.bullets.map((b) => (
                 <li key={b} className="flex items-start gap-3 text-sm text-[#475569]">
-                  <Check className="mt-0.5 h-4 w-4 shrink-0 text-[#FF6A00]" />
+                  <Check className="mt-0.5 h-4 w-4 shrink-0" style={{ color: theme.accent }} />
                   <span>{b}</span>
                 </li>
               ))}
@@ -670,7 +704,8 @@ function FeatureTabsSection() {
             <div className="mt-7">
               <Link
                 to="/features"
-                className="inline-flex items-center gap-2 rounded-full border border-border bg-white px-4 py-2.5 text-sm font-semibold text-[#0F172A] shadow-sm transition hover:bg-[#FAFAFA]"
+                className="inline-flex items-center gap-2 rounded-full px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition"
+                style={{ backgroundColor: theme.accent }}
               >
                 See all features
                 <ArrowRight className="h-4 w-4" />
@@ -694,14 +729,18 @@ function FeatureTabsSection() {
 }
 
 function FeaturePreview({ tab }: { tab: FeatureTabKey }) {
+  const theme = FEATURE_TAB_THEME[tab];
   const shell =
     "relative overflow-hidden rounded-3xl border border-border bg-card p-6 shadow-sm sm:p-7";
 
   if (tab === "dashboard") {
     return (
-      <div className={`${shell} bg-gradient-to-br from-white via-white to-[#FFF7ED]`}>
+      <div className={shell} style={{ background: `linear-gradient(135deg, #ffffff 0%, #ffffff 55%, ${theme.tint} 100%)` }}>
         <div className="flex items-center justify-between">
-          <div className="text-[11px] font-semibold uppercase tracking-wider text-primary">
+          <div
+            className="text-[11px] font-semibold uppercase tracking-wider"
+            style={{ color: theme.accent }}
+          >
             Overall progress
           </div>
           <div className="text-xs font-semibold text-[#475569]">Debt-free by Jun 2029</div>
@@ -725,7 +764,9 @@ function FeaturePreview({ tab }: { tab: FeatureTabKey }) {
         <div className="mt-5">
           <div className="mb-2 flex items-baseline justify-between text-sm">
             <span className="font-medium text-foreground">Payoff progress</span>
-            <span className="font-display font-bold text-primary tabular-nums">39.0%</span>
+            <span className="font-display font-bold tabular-nums" style={{ color: theme.accent }}>
+              39.0%
+            </span>
           </div>
           <div className="h-3 w-full overflow-hidden rounded-full bg-secondary">
             <div className="h-full w-[39%] rounded-full bg-gradient-progress" />
@@ -739,11 +780,17 @@ function FeaturePreview({ tab }: { tab: FeatureTabKey }) {
     return (
       <div className={shell}>
         <div className="flex items-center justify-between">
-          <div className="text-[11px] font-semibold uppercase tracking-wider text-primary">
+          <div
+            className="text-[11px] font-semibold uppercase tracking-wider"
+            style={{ color: theme.accent }}
+          >
             Weekly streak
           </div>
-          <div className="rounded-full bg-primary-soft px-3 py-1 text-xs font-semibold text-primary">
-            3 weeks 🔥
+          <div
+            className="rounded-full px-3 py-1 text-xs font-semibold"
+            style={{ backgroundColor: theme.tint, color: theme.accent, border: `1px solid ${theme.border}` }}
+          >
+            5 weeks 🔥
           </div>
         </div>
         <div className="mt-5 grid grid-cols-7 gap-2">
@@ -752,10 +799,15 @@ function FeaturePreview({ tab }: { tab: FeatureTabKey }) {
             return (
               <div
                 key={i}
-                className={`h-9 rounded-xl border ${
-                  on ? "border-[#FF6A00]/25 bg-[#FFF7ED]" : "border-border bg-white"
+                className={`flex h-9 items-center justify-center rounded-xl border ${
+                  on ? "" : "border-border bg-white"
                 }`}
-              />
+                style={
+                  on ? { borderColor: theme.border, backgroundColor: theme.tint } : undefined
+                }
+              >
+                {on && <Check className="h-4 w-4" style={{ color: theme.accent }} />}
+              </div>
             );
           })}
         </div>
@@ -768,9 +820,12 @@ function FeaturePreview({ tab }: { tab: FeatureTabKey }) {
 
   if (tab === "whatif") {
     return (
-      <div className={`${shell} bg-gradient-to-br from-white via-white to-[#FFF7ED]`}>
+      <div className={shell} style={{ background: `linear-gradient(135deg, #ffffff 0%, #ffffff 55%, ${theme.tint} 100%)` }}>
         <div className="flex items-center justify-between">
-          <div className="text-[11px] font-semibold uppercase tracking-wider text-primary">
+          <div
+            className="text-[11px] font-semibold uppercase tracking-wider"
+            style={{ color: theme.accent }}
+          >
             What-if
           </div>
           <div className="text-xs font-semibold text-[#475569]">+ $50 / month</div>
@@ -779,7 +834,10 @@ function FeaturePreview({ tab }: { tab: FeatureTabKey }) {
           <div className="flex items-baseline justify-between">
             <div>
               <div className="text-xs font-semibold text-muted-foreground">You save</div>
-              <div className="mt-1 font-display text-3xl font-bold text-primary tabular-nums">
+              <div
+                className="mt-1 font-display text-3xl font-bold tabular-nums"
+                style={{ color: theme.accent }}
+              >
                 8 months
               </div>
             </div>
@@ -789,7 +847,7 @@ function FeaturePreview({ tab }: { tab: FeatureTabKey }) {
             </div>
           </div>
           <div className="mt-4 h-2.5 w-full overflow-hidden rounded-full bg-secondary">
-            <div className="h-full w-[62%] rounded-full bg-gradient-progress" />
+            <div className="h-full w-[62%] rounded-full" style={{ backgroundColor: theme.accent }} />
           </div>
         </div>
         <div className="mt-4 rounded-2xl border border-border bg-muted/20 p-4 text-sm text-muted-foreground">
@@ -803,7 +861,10 @@ function FeaturePreview({ tab }: { tab: FeatureTabKey }) {
     return (
       <div className={shell}>
         <div className="flex items-center justify-between">
-          <div className="text-[11px] font-semibold uppercase tracking-wider text-primary">
+          <div
+            className="text-[11px] font-semibold uppercase tracking-wider"
+            style={{ color: theme.accent }}
+          >
             Payment history
           </div>
           <div className="text-xs font-semibold text-[#475569]">$420 this month</div>
@@ -822,7 +883,9 @@ function FeaturePreview({ tab }: { tab: FeatureTabKey }) {
                 <div className="text-sm font-semibold text-foreground">{x.a}</div>
                 <div className="text-xs text-muted-foreground">{x.d}</div>
               </div>
-              <div className="font-display text-sm font-bold tabular-nums text-primary">{x.v}</div>
+              <div className="font-display text-sm font-bold tabular-nums" style={{ color: theme.accent }}>
+                {x.v}
+              </div>
             </div>
           ))}
         </div>
@@ -832,18 +895,24 @@ function FeaturePreview({ tab }: { tab: FeatureTabKey }) {
 
   if (tab === "celebrations") {
     return (
-      <div className={`${shell} bg-gradient-to-br from-white via-white to-[#FFFBEB]`}>
+      <div className={shell} style={{ background: `linear-gradient(135deg, #ffffff 0%, #ffffff 55%, ${theme.tint} 100%)` }}>
         <div className="flex items-center justify-between">
-          <div className="text-[11px] font-semibold uppercase tracking-wider text-primary">
+          <div
+            className="text-[11px] font-semibold uppercase tracking-wider"
+            style={{ color: theme.accent }}
+          >
             Celebration
           </div>
           <div className="rounded-full bg-success-soft px-3 py-1 text-xs font-semibold text-[#422006]">
             10% milestone
           </div>
         </div>
-        <div className="mt-5 rounded-3xl border border-primary/20 bg-primary-soft/60 p-5">
+        <div className="mt-5 rounded-3xl p-5" style={{ border: `1px solid ${theme.border}`, backgroundColor: theme.tint }}>
           <div className="flex items-center gap-3">
-            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary text-white">
+            <div
+              className="flex h-12 w-12 items-center justify-center rounded-2xl text-white"
+              style={{ backgroundColor: theme.accent }}
+            >
               <Trophy className="h-6 w-6" />
             </div>
             <div>
@@ -873,7 +942,12 @@ function FeaturePreview({ tab }: { tab: FeatureTabKey }) {
   return (
     <div className={shell}>
       <div className="flex items-center justify-between">
-        <div className="text-[11px] font-semibold uppercase tracking-wider text-primary">Debts</div>
+        <div
+          className="text-[11px] font-semibold uppercase tracking-wider"
+          style={{ color: theme.accent }}
+        >
+          Debts
+        </div>
         <div className="text-xs font-semibold text-[#475569]">6 accounts</div>
       </div>
       <div className="mt-5 grid gap-3">
