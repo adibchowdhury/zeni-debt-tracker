@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { motion, useReducedMotion } from "framer-motion";
 import { useEffect, useState } from "react";
 import {
   ArrowRight,
@@ -18,8 +19,8 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { DotLottieReact, setWasmUrl } from "@lottiefiles/dotlottie-react";
-setWasmUrl("/dotlottie-player.wasm");
 import stressedWomanLottie from "@/assets/lottie/stressed-woman.lottie?url";
+
 setWasmUrl("/dotlottie-player.wasm");
 
 export const Route = createFileRoute("/_public/")({
@@ -62,7 +63,14 @@ function Landing() {
 /* Hero                                                                       */
 /* -------------------------------------------------------------------------- */
 
+/** Soft ease-out for hero motion (premium, not snappy-linear). */
+const EASE_HERO = [0.22, 1, 0.36, 1] as const;
+
 function Hero() {
+  const reduce = useReducedMotion();
+  const dur = reduce ? 0 : 0.78;
+  const d = (ms: number) => (reduce ? 0 : ms);
+
   return (
     <section className="relative overflow-hidden bg-white lg:min-h-[calc(100vh-73px)]">
       {/* Soft brand accents — energetic, not beige */}
@@ -74,17 +82,32 @@ function Hero() {
         <div className="relative">
           <div className="mb-6 h-[26px]" aria-hidden="true" />
 
-          <h1 className="font-display text-[2.75rem] font-semibold leading-[1.04] tracking-tight text-foreground sm:text-6xl lg:text-[4.25rem]">
+          <motion.h1
+            className="font-display text-[2.75rem] font-semibold leading-[1.04] tracking-tight text-foreground sm:text-6xl lg:text-[4.25rem]"
+            initial={reduce ? false : { opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: dur, ease: EASE_HERO, delay: d(0) }}
+          >
             A clear path to becoming <span className="font-extrabold text-primary">debt-free</span>{" "}
             — without the stress
-          </h1>
+          </motion.h1>
 
-          <p className="mt-7 max-w-xl text-base text-muted-foreground sm:text-lg lg:text-xl">
+          <motion.p
+            className="mt-7 max-w-xl text-base text-muted-foreground sm:text-lg lg:text-xl"
+            initial={reduce ? false : { opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: dur, ease: EASE_HERO, delay: d(0.18) }}
+          >
             Pay off debt faster without the stress. Track progress, stay motivated, and turn every
             payment into a win.
-          </p>
+          </motion.p>
 
-          <div className="mt-10 flex flex-col gap-3 sm:flex-row">
+          <motion.div
+            className="mt-10 flex flex-col gap-3 sm:flex-row"
+            initial={reduce ? false : { opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: dur, ease: EASE_HERO, delay: d(0.36) }}
+          >
             <Button asChild variant="cta" className="group w-full sm:w-auto lg:text-lg">
               <Link to="/signup">
                 Start My Debt-Free Plan
@@ -99,10 +122,10 @@ function Hero() {
             >
               <a href="#how-it-works">See how it works</a>
             </Button>
-          </div>
+          </motion.div>
         </div>
 
-        {/* Right — visual */}
+        {/* Right — visual (card staggered after copy; timing tuned inside HeroVisual) */}
         <HeroVisual />
       </div>
     </section>
@@ -158,34 +181,62 @@ function SellingBar() {
 
 /**
  * Animated demo of the app's progress card.
- * Loops from 32% → 88% paid over ~6s, ticking down the remaining balance,
- * pulling in the debt-free date, and incrementing the streak as it goes.
+ * Sequence: card entrance → intro fill 0% → 32% (count-up + bar) → loop 32% → 88%.
  */
 function HeroVisual() {
   const START_PCT = 32;
   const END_PCT = 88;
   const INITIAL_BALANCE = 18300;
-  const DURATION_MS = 6000;
-  const HOLD_MS = 1400;
+  const DURATION_MS = 7500;
+  const HOLD_MS = 1750;
+  const INTRO_FILL_MS = 1000;
 
-  const [pct, setPct] = useState(START_PCT);
+  const reduce = useReducedMotion();
+  const [phase, setPhase] = useState<"mount" | "intro" | "loop">(() => (reduce ? "loop" : "mount"));
+  const [pct, setPct] = useState(() => (reduce ? END_PCT : 0));
   const [pulse, setPulse] = useState(false);
+  const [badgesVisible, setBadgesVisible] = useState(() => !!reduce);
 
   useEffect(() => {
-    if (typeof window === "undefined") return;
-    const reduce = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
-    if (reduce) {
-      setPct(END_PCT);
-      return;
-    }
+    if (!reduce) return;
+    setPhase("loop");
+    setPct(END_PCT);
+    setBadgesVisible(true);
+  }, [reduce]);
+
+  /** After card motion: count up & fill bar from 0 → START_PCT. */
+  useEffect(() => {
+    if (phase !== "intro") return;
+
+    let raf = 0;
+    const ease = (t: number) => 1 - (1 - t) ** 3;
+    const start = performance.now();
+
+    const tick = (now: number) => {
+      const t = Math.min(1, (now - start) / INTRO_FILL_MS);
+      const v = START_PCT * ease(t);
+      setPct(v);
+      if (t < 1) raf = requestAnimationFrame(tick);
+      else {
+        setPct(START_PCT);
+        setBadgesVisible(true);
+        setPhase("loop");
+      }
+    };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, [phase]);
+
+  /** Loop: 32% → 88% with hold (only when not reduced motion). */
+  useEffect(() => {
+    if (phase !== "loop" || reduce) return;
 
     let raf = 0;
     let cycleStart = performance.now();
     let holding = false;
     let holdUntil = 0;
 
-    // ease-out-cubic for that satisfying decelerating fill
-    const ease = (t: number) => 1 - Math.pow(1 - t, 3);
+    const ease = (t: number) => 1 - (1 - t) ** 3;
 
     const tick = (now: number) => {
       if (holding) {
@@ -209,25 +260,38 @@ function HeroVisual() {
     };
     raf = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(raf);
-  }, []);
+  }, [phase, reduce]);
 
-  // Derived, animated values
   const remaining = Math.max(0, Math.round(INITIAL_BALANCE * (1 - pct / 100)));
-  const paidThisCycle = Math.round(INITIAL_BALANCE * ((pct - START_PCT) / 100));
-  // Debt-free date pulls in as progress grows: ~30 months out at start → ~6 months at end
-  const monthsAway = Math.round(30 - ((pct - START_PCT) / (END_PCT - START_PCT)) * 24);
+  const paidThisCycle =
+    pct < START_PCT ? 0 : Math.round(INITIAL_BALANCE * ((pct - START_PCT) / 100));
+  const monthsAway =
+    pct < START_PCT ? 30 : Math.round(30 - ((pct - START_PCT) / (END_PCT - START_PCT)) * 24);
   const payoffDate = new Date();
   payoffDate.setMonth(payoffDate.getMonth() + Math.max(1, monthsAway));
   const payoffLabel = payoffDate.toLocaleDateString("en-US", { month: "short", year: "numeric" });
-  // Streak grows from 12 → 28 across the cycle
-  const streakWeeks = Math.round(12 + ((pct - START_PCT) / (END_PCT - START_PCT)) * 16);
+  const streakWeeks =
+    pct < START_PCT ? 12 : Math.round(12 + ((pct - START_PCT) / (END_PCT - START_PCT)) * 16);
 
   const fmtMoney = (n: number) => `$${n.toLocaleString("en-US")}`;
+  const barWidthPct = Math.min(100, Math.max(0, pct));
+
+  const badgeTransition = {
+    type: "spring" as const,
+    stiffness: 340,
+    damping: 34,
+    mass: 0.9,
+  };
 
   return (
     <div className="relative">
-      {/* Floating "debt-free date" badge */}
-      <div className="absolute -top-4 -left-2 z-20 hidden rounded-2xl border border-border bg-card p-3 shadow-sm sm:flex sm:items-center sm:gap-2">
+      {/* Floating badges — last in sequence; subtle pop-in */}
+      <motion.div
+        className="absolute -top-4 -left-2 z-20 hidden rounded-2xl border border-border bg-card p-3 shadow-sm sm:flex sm:items-center sm:gap-2"
+        initial={false}
+        animate={badgesVisible ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.94 }}
+        transition={{ ...badgeTransition, delay: badgesVisible ? 0.12 : 0 }}
+      >
         <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-success-soft text-success">
           <Calendar className="h-4 w-4" />
         </div>
@@ -235,17 +299,18 @@ function HeroVisual() {
           <div className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
             Debt-free by
           </div>
-          <div
-            key={payoffLabel}
-            className="font-display text-sm font-bold text-foreground animate-fade-in"
-          >
+          <div key={payoffLabel} className="font-display text-sm font-bold text-foreground">
             {payoffLabel}
           </div>
         </div>
-      </div>
+      </motion.div>
 
-      {/* Floating streak chip */}
-      <div className="absolute -bottom-3 -right-2 z-20 hidden rounded-2xl border border-border bg-card p-3 shadow-sm sm:flex sm:items-center sm:gap-2">
+      <motion.div
+        className="absolute -bottom-3 -right-2 z-20 hidden rounded-2xl border border-border bg-card p-3 shadow-sm sm:flex sm:items-center sm:gap-2"
+        initial={false}
+        animate={badgesVisible ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.94 }}
+        transition={{ ...badgeTransition, delay: badgesVisible ? 0.22 : 0 }}
+      >
         <div
           className={`flex h-8 w-8 items-center justify-center rounded-xl bg-primary text-primary-foreground transition-transform duration-300 ${
             pulse ? "scale-110" : "scale-100"
@@ -261,13 +326,23 @@ function HeroVisual() {
             {streakWeeks} weeks 🔥
           </div>
         </div>
-      </div>
+      </motion.div>
 
-      {/* Main card */}
-      <div
+      {/* Main card — fades/slides/scales after hero copy (delay aligns with CTA stagger) */}
+      <motion.div
         className={`relative rounded-3xl border border-border bg-card p-6 shadow-sm sm:p-8 lg:scale-[1.04] lg:p-9 transition-shadow duration-500 ${
           pulse ? "shadow-[0_0_0_4px_color-mix(in_oklab,var(--primary)_20%,transparent)]" : ""
         }`}
+        initial={reduce ? false : { opacity: 0, scale: 0.97, y: 16 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        transition={{
+          duration: reduce ? 0 : 0.85,
+          delay: reduce ? 0 : 0.46,
+          ease: EASE_HERO,
+        }}
+        onAnimationComplete={() => {
+          if (!reduce) setPhase("intro");
+        }}
       >
         <div className="flex items-center justify-between">
           <div className="text-[11px] font-semibold uppercase tracking-wider text-primary">
@@ -279,7 +354,6 @@ function HeroVisual() {
           </div>
         </div>
 
-        {/* Transformation: $X → $0 */}
         <div className="mt-3 flex items-end gap-3">
           <div>
             <div className="text-[11px] uppercase tracking-wider text-muted-foreground">
@@ -304,7 +378,6 @@ function HeroVisual() {
           </div>
         </div>
 
-        {/* Big % */}
         <div className="mt-6 flex items-baseline justify-between">
           <div>
             <div className="font-display text-4xl font-extrabold text-foreground tabular-nums sm:text-5xl">
@@ -324,18 +397,15 @@ function HeroVisual() {
           </div>
         </div>
 
-        {/* Progress bar with milestone ticks */}
         <div className="mt-4">
           <div className="relative h-3 w-full overflow-hidden rounded-full bg-secondary">
-            {/* No CSS width transition: pct is driven every frame by rAF — a transition fights updates and reads as static/jumpy */}
             <div
               className="h-full rounded-full bg-gradient-progress"
-              style={{ width: `${pct}%` }}
+              style={{ width: `${barWidthPct}%` }}
             />
-            {/* Shimmer sweep on the filled portion */}
             <div
               className="pointer-events-none absolute inset-y-0 left-0 overflow-hidden rounded-full"
-              style={{ width: `${pct}%` }}
+              style={{ width: `${barWidthPct}%` }}
             >
               <div className="absolute inset-y-0 -left-1/3 w-1/3 bg-gradient-to-r from-transparent via-white/40 to-transparent animate-[shimmer_2s_linear_infinite]" />
             </div>
@@ -359,14 +429,18 @@ function HeroVisual() {
           </div>
         </div>
 
-        {/* Encouraging line */}
-        <div className="mt-5 flex items-center gap-2 rounded-2xl border border-primary/20 bg-primary-soft/50 px-3 py-2.5 text-sm">
+        <motion.div
+          className="mt-5 flex items-center gap-2 rounded-2xl border border-primary/20 bg-primary-soft/50 px-3 py-2.5 text-sm"
+          initial={false}
+          animate={badgesVisible ? { opacity: 1, y: 0 } : { opacity: 0, y: 6 }}
+          transition={{ duration: 0.58, ease: EASE_HERO, delay: badgesVisible ? 0.2 : 0 }}
+        >
           <Sparkles className="h-4 w-4 shrink-0 text-primary" />
           <span className="font-medium text-foreground">
             You're making progress — keep the streak alive.
           </span>
-        </div>
-      </div>
+        </motion.div>
+      </motion.div>
     </div>
   );
 }
