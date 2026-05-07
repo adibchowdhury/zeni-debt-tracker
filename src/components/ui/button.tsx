@@ -5,10 +5,10 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 
 const tactilePrimary =
-  "bg-[#FF6A00] text-white shadow-[0_6px_0_#C2410C,0_10px_20px_rgba(0,0,0,0.15)] hover:-translate-y-[2px] hover:bg-[#FF7A1A] hover:shadow-[0_8px_0_#C2410C,0_14px_25px_rgba(0,0,0,0.18)] active:translate-y-[3px] active:shadow-[0_2px_0_#C2410C,0_4px_8px_rgba(0,0,0,0.12)]";
+  "bg-[#FF6A00] text-white shadow-[0_6px_0_#C2410C,0_4px_14px_rgba(0,0,0,0.1)] hover:-translate-y-[2px] hover:bg-[#FF7A1A] hover:shadow-[0_7px_0_#C2410C,0_6px_16px_rgba(0,0,0,0.12)] active:translate-y-[3px] active:shadow-[0_2px_0_#C2410C,0_2px_8px_rgba(0,0,0,0.08)]";
 
 const tactileCta =
-  "bg-[#FF6A00] text-white shadow-[0_8px_0_#C2410C,0_16px_30px_rgba(255,106,0,0.25)] hover:-translate-y-[2px] hover:bg-[#FF7A1A] hover:shadow-[0_10px_0_#C2410C,0_18px_34px_rgba(255,106,0,0.28)] active:translate-y-[3px] active:shadow-[0_2px_0_#C2410C,0_6px_14px_rgba(255,106,0,0.2)]";
+  "bg-[#FF6A00] text-white shadow-[0_6px_0_#C2410C,0_4px_14px_rgba(0,0,0,0.1)] hover:-translate-y-[2px] hover:bg-[#FF7A1A] hover:shadow-[0_7px_0_#C2410C,0_6px_16px_rgba(0,0,0,0.12)] active:translate-y-[3px] active:shadow-[0_2px_0_#C2410C,0_2px_8px_rgba(0,0,0,0.08)]";
 
 const tactileOutline =
   "border border-[#FF6A00] bg-white text-[#FF6A00] shadow-[0_4px_0_#E5E7EB,0_8px_15px_rgba(0,0,0,0.08)] hover:bg-[#FFF7ED] hover:-translate-y-[2px] hover:shadow-[0_5px_0_#E5E7EB,0_10px_18px_rgba(0,0,0,0.1)] active:translate-y-[2px] active:shadow-[0_1px_0_#E5E7EB,0_4px_10px_rgba(0,0,0,0.08)]";
@@ -40,12 +40,12 @@ const buttonVariants = cva(
       {
         variant: "default",
         size: "default",
-        class: `rounded-2xl ${tactilePrimary} disabled:hover:bg-[#FF6A00] disabled:active:shadow-[0_6px_0_#C2410C,0_10px_20px_rgba(0,0,0,0.15)]`,
+        class: `rounded-2xl ${tactilePrimary} disabled:hover:bg-[#FF6A00] disabled:active:shadow-[0_6px_0_#C2410C,0_4px_14px_rgba(0,0,0,0.1)]`,
       },
       {
         variant: "default",
         size: "lg",
-        class: `rounded-2xl ${tactilePrimary} disabled:hover:bg-[#FF6A00] disabled:active:shadow-[0_6px_0_#C2410C,0_10px_20px_rgba(0,0,0,0.15)]`,
+        class: `rounded-2xl ${tactilePrimary} disabled:hover:bg-[#FF6A00] disabled:active:shadow-[0_6px_0_#C2410C,0_4px_14px_rgba(0,0,0,0.1)]`,
       },
       {
         variant: "default",
@@ -62,22 +62,22 @@ const buttonVariants = cva(
       {
         variant: "cta",
         size: "default",
-        class: `rounded-2xl px-8 py-4 text-base min-h-[52px] ${tactileCta} [&_svg]:size-5 disabled:hover:bg-[#FF6A00] disabled:active:shadow-[0_8px_0_#C2410C,0_16px_30px_rgba(255,106,0,0.25)]`,
+        class: `rounded-2xl px-8 py-4 text-base min-h-[52px] ${tactileCta} [&_svg]:size-5 disabled:hover:bg-[#FF6A00] disabled:active:shadow-[0_6px_0_#C2410C,0_4px_14px_rgba(0,0,0,0.1)]`,
       },
       {
         variant: "cta",
         size: "lg",
-        class: `rounded-2xl px-8 py-4 text-base min-h-[52px] ${tactileCta} [&_svg]:size-5 disabled:hover:bg-[#FF6A00] disabled:active:shadow-[0_8px_0_#C2410C,0_16px_30px_rgba(255,106,0,0.25)]`,
+        class: `rounded-2xl px-8 py-4 text-base min-h-[52px] ${tactileCta} [&_svg]:size-5 disabled:hover:bg-[#FF6A00] disabled:active:shadow-[0_6px_0_#C2410C,0_4px_14px_rgba(0,0,0,0.1)]`,
       },
       {
         variant: "cta",
         size: "sm",
-        class: `rounded-2xl px-8 py-4 text-base min-h-[52px] ${tactileCta} [&_svg]:size-5 disabled:hover:bg-[#FF6A00] disabled:active:shadow-[0_8px_0_#C2410C,0_16px_30px_rgba(255,106,0,0.25)]`,
+        class: `rounded-2xl px-8 py-4 text-base min-h-[52px] ${tactileCta} [&_svg]:size-5 disabled:hover:bg-[#FF6A00] disabled:active:shadow-[0_6px_0_#C2410C,0_4px_14px_rgba(0,0,0,0.1)]`,
       },
       {
         variant: "cta",
         size: "icon",
-        class: `rounded-2xl px-8 py-4 text-base min-h-[52px] ${tactileCta} [&_svg]:size-5 disabled:hover:bg-[#FF6A00] disabled:active:shadow-[0_8px_0_#C2410C,0_16px_30px_rgba(255,106,0,0.25)]`,
+        class: `rounded-2xl px-8 py-4 text-base min-h-[52px] ${tactileCta} [&_svg]:size-5 disabled:hover:bg-[#FF6A00] disabled:active:shadow-[0_6px_0_#C2410C,0_4px_14px_rgba(0,0,0,0.1)]`,
       },
       { variant: "outline", size: "default", class: `rounded-2xl ${tactileOutline}` },
       { variant: "outline", size: "lg", class: `rounded-2xl ${tactileOutline}` },

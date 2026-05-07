@@ -287,7 +287,7 @@ function HeroVisual() {
     <div className="relative">
       {/* Floating badges — last in sequence; subtle pop-in */}
       <motion.div
-        className="absolute -top-4 -left-2 z-20 hidden rounded-2xl border border-border bg-card p-3 shadow-sm sm:flex sm:items-center sm:gap-2"
+        className="absolute -top-10 -left-2 z-20 hidden rounded-2xl border border-border bg-card p-3 shadow-sm sm:flex sm:items-center sm:gap-2"
         initial={false}
         animate={badgesVisible ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.94 }}
         transition={{ ...badgeTransition, delay: badgesVisible ? 0.12 : 0 }}
@@ -306,7 +306,7 @@ function HeroVisual() {
       </motion.div>
 
       <motion.div
-        className="absolute -bottom-3 -right-2 z-20 hidden rounded-2xl border border-border bg-card p-3 shadow-sm sm:flex sm:items-center sm:gap-2"
+        className="absolute -bottom-9 -right-2 z-20 hidden rounded-2xl border border-border bg-card p-3 shadow-sm sm:flex sm:items-center sm:gap-2"
         initial={false}
         animate={badgesVisible ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.94 }}
         transition={{ ...badgeTransition, delay: badgesVisible ? 0.22 : 0 }}
