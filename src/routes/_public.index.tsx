@@ -606,11 +606,11 @@ const FEATURE_TAB_THEME: Record<
   }
 > = {
   dashboard: { accent: "#EA580C", tint: "#FFF7ED", border: "rgba(234, 88, 12, 0.25)" }, // orange
-  streaks: { accent: "#DC2626", tint: "#FEF2F2", border: "rgba(220, 38, 38, 0.22)" }, // red
-  whatif: { accent: "#2563EB", tint: "#EFF6FF", border: "rgba(37, 99, 235, 0.22)" }, // blue
-  history: { accent: "#7C3AED", tint: "#F5F3FF", border: "rgba(124, 58, 237, 0.22)" }, // purple
-  celebrations: { accent: "#CA8A04", tint: "#FFFBEB", border: "rgba(202, 138, 4, 0.22)" }, // amber
-  management: { accent: "#059669", tint: "#ECFDF5", border: "rgba(5, 150, 105, 0.22)" }, // green
+  streaks: { accent: "#2563EB", tint: "#EFF6FF", border: "rgba(37, 99, 235, 0.22)" }, // blue
+  whatif: { accent: "#7C3AED", tint: "#F5F3FF", border: "rgba(124, 58, 237, 0.22)" }, // purple
+  history: { accent: "#CA8A04", tint: "#FFFBEB", border: "rgba(202, 138, 4, 0.22)" }, // yellow
+  celebrations: { accent: "#059669", tint: "#ECFDF5", border: "rgba(5, 150, 105, 0.22)" }, // green
+  management: { accent: "#DC2626", tint: "#FEF2F2", border: "rgba(220, 38, 38, 0.22)" }, // red
 };
 
 function FeatureTabsSection() {
