@@ -82,113 +82,28 @@ export function AppLayout() {
   }
 
   return (
-    <div className="flex min-h-screen bg-white">
-      {/* Desktop sidebar */}
-      <aside className="sticky top-0 hidden h-screen w-[248px] shrink-0 flex-col border-r border-[#E5E7EB] bg-white md:flex">
-        <div className="border-b border-[#E5E7EB] px-4 pb-4 pt-5">
-          <Logo to="/app" size="md" />
-          <p className="mt-2 text-xs font-medium leading-snug text-[#94A3B8]">Debt payoff coach</p>
-        </div>
-
-        <nav className="flex flex-1 flex-col gap-1 overflow-y-auto px-3 py-4" aria-label="Main">
-          {DESKTOP_NAV.map((n) => {
-            const active = isNavActive(location.pathname, n.to, n.exact);
-            return (
-              <Link
-                key={n.to}
-                to={n.to}
-                className={`flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-bold transition-all ${
-                  active
-                    ? "border border-[#FF6A00]/30 bg-[#FFF7ED] text-[#EA580C] shadow-[0_8px_20px_rgba(255,106,0,0.10)]"
-                    : "border border-transparent text-[#0F172A] hover:bg-[#FFF7ED] hover:text-[#EA580C]"
-                }`}
-              >
-                <n.icon
-                  className={`h-6 w-6 shrink-0 ${active ? "text-[#FF6A00]" : "text-[#475569]"}`}
-                  strokeWidth={2.5}
-                  aria-hidden
-                />
-                <span className={active ? "text-[#EA580C]" : "text-[#0F172A]"}>{n.label}</span>
-              </Link>
-            );
-          })}
-        </nav>
-
-        <div className="mt-auto border-t border-[#E5E7EB] px-3 pt-3">
-          <Link
-            to="/app/settings"
-            className={`mb-3 flex items-center gap-3 rounded-2xl px-4 py-2.5 text-sm font-semibold transition-colors ${
-              isNavActive(location.pathname, "/app/settings", false)
-                ? "border border-[#FF6A00]/25 bg-[#FFF7ED] text-[#EA580C]"
-                : "border border-transparent text-[#64748B] hover:bg-[#FAFAFA] hover:text-[#0F172A]"
-            }`}
-          >
-            <Settings
-              className={`h-5 w-5 shrink-0 ${
-                isNavActive(location.pathname, "/app/settings", false)
-                  ? "text-[#FF6A00]"
-                  : "text-[#94A3B8]"
-              }`}
-              strokeWidth={2.25}
-              aria-hidden
-            />
-            <span>Settings</span>
-          </Link>
-          <button
-            type="button"
-            onClick={logout}
-            className="flex w-full items-center justify-center gap-2 rounded-2xl border border-[#E5E7EB] bg-white px-4 py-3 text-sm font-bold text-[#475569] transition-all hover:bg-[#FFF7ED] hover:text-[#EA580C]"
-          >
-            <LogOut className="h-5 w-5 shrink-0" strokeWidth={2.5} aria-hidden />
-            Sign out
-          </button>
-        </div>
-      </aside>
-
-      {/* Main column */}
-      <div className="flex min-w-0 flex-1 flex-col">
-        {/* Mobile top bar */}
-        <header className="sticky top-0 z-30 flex items-center justify-between gap-2 border-b border-[#E5E7EB] bg-white px-4 py-3 md:hidden">
-          <Logo to="/app" size="md" />
-          <div className="flex shrink-0 items-center gap-1">
-            <Link
-              to="/app/settings"
-              aria-label="Settings"
-              className={`rounded-xl p-2 text-[#64748B] transition-colors hover:bg-[#FAFAFA] hover:text-[#0F172A] ${
-                isNavActive(location.pathname, "/app/settings", false) ? "text-[#EA580C]" : ""
-              }`}
-            >
-              <Settings className="h-5 w-5" strokeWidth={2.25} aria-hidden />
-            </Link>
-            <button
-              type="button"
-              onClick={logout}
-              className="flex items-center gap-2 rounded-xl border border-[#E5E7EB] bg-white px-3 py-2 text-xs font-bold text-[#475569] transition-colors hover:bg-[#FFF7ED] hover:text-[#EA580C]"
-            >
-              <LogOut className="h-4 w-4" strokeWidth={2.5} aria-hidden />
-              Sign out
-            </button>
+    <div className="min-h-screen bg-[#FAFAFA] px-4 sm:px-6 lg:px-12">
+      <div className="mx-auto flex min-h-screen w-full max-w-[1320px] bg-white lg:border lg:border-[#E5E7EB] lg:shadow-sm">
+        {/* Desktop sidebar */}
+        <aside className="sticky top-0 hidden h-screen w-[248px] shrink-0 flex-col border-r border-[#E5E7EB] bg-white md:flex">
+          <div className="border-b border-[#E5E7EB] px-4 pb-4 pt-5">
+            <Logo to="/app" size="md" />
+            <p className="mt-2 text-xs font-medium leading-snug text-[#94A3B8]">
+              Debt payoff coach
+            </p>
           </div>
-        </header>
 
-        <main className="mx-auto w-full max-w-5xl flex-1 px-4 py-6 pb-24 md:px-6 md:py-8 md:pb-8">
-          <Outlet />
-        </main>
-
-        {/* Mobile bottom nav */}
-        <nav
-          className="fixed bottom-0 left-0 right-0 z-30 border-t border-[#E5E7EB] bg-white md:hidden"
-          aria-label="Mobile main"
-        >
-          <div className="mx-auto flex max-w-lg items-stretch justify-around px-1 py-2 pb-[max(0.5rem,env(safe-area-inset-bottom))]">
-            {MOBILE_NAV.map((n) => {
+          <nav className="flex flex-1 flex-col gap-1 overflow-y-auto px-3 py-4" aria-label="Main">
+            {DESKTOP_NAV.map((n) => {
               const active = isNavActive(location.pathname, n.to, n.exact);
               return (
                 <Link
                   key={n.to}
                   to={n.to}
-                  className={`flex min-w-0 flex-1 flex-col items-center gap-0.5 rounded-xl px-1 py-1.5 text-[10px] font-bold transition-colors ${
-                    active ? "bg-[#FFF7ED] text-[#EA580C]" : "text-[#475569]"
+                  className={`flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-bold transition-all ${
+                    active
+                      ? "border border-[#FF6A00]/30 bg-[#FFF7ED] text-[#EA580C] shadow-[0_8px_20px_rgba(255,106,0,0.10)]"
+                      : "border border-transparent text-[#0F172A] hover:bg-[#FFF7ED] hover:text-[#EA580C]"
                   }`}
                 >
                   <n.icon
@@ -196,12 +111,103 @@ export function AppLayout() {
                     strokeWidth={2.5}
                     aria-hidden
                   />
-                  <span className="truncate">{n.label}</span>
+                  <span className={active ? "text-[#EA580C]" : "text-[#0F172A]"}>{n.label}</span>
                 </Link>
               );
             })}
+          </nav>
+
+          <div className="mt-auto border-t border-[#E5E7EB] px-3 pt-3">
+            <Link
+              to="/app/settings"
+              className={`mb-3 flex items-center gap-3 rounded-2xl px-4 py-2.5 text-sm font-semibold transition-colors ${
+                isNavActive(location.pathname, "/app/settings", false)
+                  ? "border border-[#FF6A00]/25 bg-[#FFF7ED] text-[#EA580C]"
+                  : "border border-transparent text-[#64748B] hover:bg-[#FAFAFA] hover:text-[#0F172A]"
+              }`}
+            >
+              <Settings
+                className={`h-5 w-5 shrink-0 ${
+                  isNavActive(location.pathname, "/app/settings", false)
+                    ? "text-[#FF6A00]"
+                    : "text-[#94A3B8]"
+                }`}
+                strokeWidth={2.25}
+                aria-hidden
+              />
+              <span>Settings</span>
+            </Link>
+            <button
+              type="button"
+              onClick={logout}
+              className="flex w-full items-center justify-center gap-2 rounded-2xl border border-[#E5E7EB] bg-white px-4 py-3 text-sm font-bold text-[#475569] transition-all hover:bg-[#FFF7ED] hover:text-[#EA580C]"
+            >
+              <LogOut className="h-5 w-5 shrink-0" strokeWidth={2.5} aria-hidden />
+              Sign out
+            </button>
           </div>
-        </nav>
+        </aside>
+
+        {/* Main column */}
+        <div className="flex min-w-0 flex-1 flex-col">
+          {/* Mobile top bar */}
+          <header className="sticky top-0 z-30 flex items-center justify-between gap-2 border-b border-[#E5E7EB] bg-white px-4 py-3 md:hidden">
+            <Logo to="/app" size="md" />
+            <div className="flex shrink-0 items-center gap-1">
+              <Link
+                to="/app/settings"
+                aria-label="Settings"
+                className={`rounded-xl p-2 text-[#64748B] transition-colors hover:bg-[#FAFAFA] hover:text-[#0F172A] ${
+                  isNavActive(location.pathname, "/app/settings", false) ? "text-[#EA580C]" : ""
+                }`}
+              >
+                <Settings className="h-5 w-5" strokeWidth={2.25} aria-hidden />
+              </Link>
+              <button
+                type="button"
+                onClick={logout}
+                className="flex items-center gap-2 rounded-xl border border-[#E5E7EB] bg-white px-3 py-2 text-xs font-bold text-[#475569] transition-colors hover:bg-[#FFF7ED] hover:text-[#EA580C]"
+              >
+                <LogOut className="h-4 w-4" strokeWidth={2.5} aria-hidden />
+                Sign out
+              </button>
+            </div>
+          </header>
+
+          <main className="w-full flex-1 px-4 py-6 pb-24 md:px-6 md:py-8 md:pb-8 lg:px-10">
+            <div className="mx-auto w-full max-w-6xl">
+              <Outlet />
+            </div>
+          </main>
+
+          {/* Mobile bottom nav */}
+          <nav
+            className="fixed bottom-0 left-0 right-0 z-30 border-t border-[#E5E7EB] bg-white md:hidden"
+            aria-label="Mobile main"
+          >
+            <div className="mx-auto flex max-w-lg items-stretch justify-around px-1 py-2 pb-[max(0.5rem,env(safe-area-inset-bottom))]">
+              {MOBILE_NAV.map((n) => {
+                const active = isNavActive(location.pathname, n.to, n.exact);
+                return (
+                  <Link
+                    key={n.to}
+                    to={n.to}
+                    className={`flex min-w-0 flex-1 flex-col items-center gap-0.5 rounded-xl px-1 py-1.5 text-[10px] font-bold transition-colors ${
+                      active ? "bg-[#FFF7ED] text-[#EA580C]" : "text-[#475569]"
+                    }`}
+                  >
+                    <n.icon
+                      className={`h-6 w-6 shrink-0 ${active ? "text-[#FF6A00]" : "text-[#475569]"}`}
+                      strokeWidth={2.5}
+                      aria-hidden
+                    />
+                    <span className="truncate">{n.label}</span>
+                  </Link>
+                );
+              })}
+            </div>
+          </nav>
+        </div>
       </div>
     </div>
   );
