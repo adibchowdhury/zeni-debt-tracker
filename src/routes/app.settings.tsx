@@ -358,7 +358,7 @@ function SettingsPage() {
             <div className="min-w-0">
               <p className="text-sm font-semibold text-foreground">Payment reminders</p>
               <p className="mt-0.5 text-xs text-muted-foreground">
-                Gentle nudges to log payments and stay on track.
+                Gentle nudges to log payments — optional, never guilt-tripping.
               </p>
             </div>
             <Switch

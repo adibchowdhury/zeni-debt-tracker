@@ -75,7 +75,7 @@ export function CountdownHero({
       <div className="relative">
         <div className="inline-flex items-center gap-1.5 text-[10px] font-medium uppercase tracking-wider text-muted-foreground/85">
           <Sparkles className="h-3 w-3 shrink-0 opacity-80" aria-hidden />
-          {done ? "You did it" : "Debt-free countdown"}
+          {done ? "You did it" : "Your debt-free horizon"}
         </div>
 
         {done ? (

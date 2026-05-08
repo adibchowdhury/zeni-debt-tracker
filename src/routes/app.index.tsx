@@ -6,8 +6,7 @@ import {
   TrendingDown,
   Wallet,
   Sparkles,
-  Flame,
-  Trophy,
+  Calendar,
   Zap,
   Heart,
   Target,
@@ -41,6 +40,20 @@ import { ACHIEVEMENT_CATALOG } from "@/lib/achievements/catalog";
 import { readAchievementSignals, recordDashboardVisit } from "@/lib/achievements/signals";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import {
+  shouldShowReentryState,
+  getNextMeaningfulStep,
+  getConsistencySummary,
+  loadWeeklyFeeling,
+  saveWeeklyFeeling,
+  getSupportiveCheckInResponse,
+  currentWeekStartIso,
+  type WeeklyFeeling,
+} from "@/lib/reengagement";
+
+// TODO(analytics): `app_reopen_30d_after_7d_absence` when user returns after long gap
+// TODO(analytics): `reentry_flow_interaction` (log_payment / plan / what_if / reset_week)
+// TODO(analytics): `user_returned_after_missed_payment_window` (needs product definition + backend)
 
 export const Route = createFileRoute("/app/")({
   component: Dashboard,
@@ -71,20 +84,20 @@ function nextPaymentMilestoneGap(ctx: AchievementCtx): number | null {
 const CELEBRATABLE: Record<string, { title: string; subtitle: string }> = {
   "first-payment": {
     title: "First payment logged 🎉",
-    subtitle: "Momentum begins. You're on your way.",
+    subtitle: "That single step matters — it keeps the door open.",
   },
-  "10pct": { title: "10% paid off", subtitle: "Real progress is showing. Keep stacking." },
-  "500-paid": { title: "$500 paid off", subtitle: "First big chunk down — huge win." },
+  "10pct": { title: "10% paid off", subtitle: "That's real movement, not a small thing." },
+  "500-paid": { title: "$500 paid off", subtitle: "Meaningful distance from where you started." },
   "1k-paid": {
     title: "$1,000 paid off 💪",
-    subtitle: "Four-figure milestone. You're building real momentum.",
+    subtitle: "Proof you can keep going, at your pace.",
   },
-  halfway: { title: "Halfway there!", subtitle: "More behind you than ahead. Stay focused." },
+  halfway: { title: "Halfway there", subtitle: "More path behind you than ahead — breathe." },
   "first-clear": {
     title: "First debt cleared 🎊",
-    subtitle: "One down — that feeling is freedom.",
+    subtitle: "One full finish line — let that land.",
   },
-  "all-clear": { title: "You're debt-free! 🏆", subtitle: "You actually did it. Truly." },
+  "all-clear": { title: "You're debt-free! 🏆", subtitle: "You did the hard thing. That's real." },
 };
 
 function Dashboard() {
@@ -146,6 +159,36 @@ function Dashboard() {
   const focusDebt = ordered[0] ?? null;
   const nextDebt = ordered[1] ?? null;
 
+  const showReentry = useMemo(
+    () => shouldShowReentryState(payments, undefined),
+    [payments],
+  );
+
+  const nextStepCopy = useMemo(
+    () =>
+      getNextMeaningfulStep({
+        debts,
+        payments,
+        strategy,
+        extraMonthly,
+        focusDebt,
+        nextMilestoneGap: nextMilestoneDollars,
+        eng: { weekPaid: eng.weekPaid, monthPaid: eng.monthPaid },
+        totalRemaining: countdown.totalRemaining,
+      }),
+    [
+      debts,
+      payments,
+      strategy,
+      extraMonthly,
+      focusDebt,
+      nextMilestoneDollars,
+      eng.weekPaid,
+      eng.monthPaid,
+      countdown.totalRemaining,
+    ],
+  );
+
   // Detect newly unlocked milestones (compare against localStorage celebrated set)
   const [celebration, setCelebration] = useState<string | null>(null);
   useEffect(() => {
@@ -196,6 +239,13 @@ function Dashboard() {
             nextMilestoneDollars={nextMilestoneDollars}
           />
 
+          <WhatIfHopeCard />
+          {showReentry ? (
+            <WelcomeBackBanner totalPaid={countdown.totalPaid} />
+          ) : null}
+
+          <WeeklyDebtCheckIn />
+
           <div className="grid gap-6 lg:grid-cols-2 lg:gap-x-10 lg:gap-y-8">
             {focusDebt ? (
               <CurrentTargetCard
@@ -215,30 +265,29 @@ function Dashboard() {
                 </Link>
               </div>
             )}
-            <NextDebtStreakCard
+            <RhythmAndNextCard
               focusDebt={focusDebt}
               nextDebt={nextDebt}
-              streak={eng.weeklyStreak}
-              active={eng.thisWeekHasExtra}
-              className="ring-1 ring-[#FF6A00]/10 bg-[#FFFCFA]"
+              payments={payments}
+              className="ring-1 ring-border/80 bg-card"
             />
           </div>
 
           <div className="grid gap-6 lg:grid-cols-2 lg:gap-x-10 lg:gap-y-8">
-            <NextStepCard eng={eng} totalRemaining={countdown.totalRemaining} />
+            <NextStepCard copy={nextStepCopy} totalRemaining={countdown.totalRemaining} />
             <PaymentActivityStrip
               payments={payments}
-              className="ring-1 ring-primary/25 shadow-sm"
+              className="ring-1 ring-primary/20 shadow-sm"
             />
           </div>
 
           <div className="grid gap-6 lg:grid-cols-2 lg:gap-x-10 lg:gap-y-8">
-            <SimulatorTeaser />
+            <CollectiveCalmCard />
             <SnapshotInsightsCard
               countdown={countdown}
               eng={eng}
               insights={insights}
-              className="bg-muted/20"
+              className="bg-muted/15"
             />
           </div>
 
@@ -287,9 +336,9 @@ function CurrentTargetCard({
   return (
     <div className="flex h-full flex-col rounded-2xl border border-border bg-card p-5 shadow-sm sm:p-5">
       <div className="flex items-start justify-between gap-3">
-        <span className="inline-flex items-center gap-1.5 rounded-full bg-[#FF6A00] px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-white">
-          <Flame className="h-3.5 w-3.5 shrink-0" aria-hidden />
-          Target
+        <span className="inline-flex items-center gap-1.5 rounded-full bg-primary/90 px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-primary-foreground">
+          <Target className="h-3.5 w-3.5 shrink-0" aria-hidden />
+          Current focus
         </span>
         <Link
           to="/app/strategy"
@@ -344,37 +393,36 @@ function CurrentTargetCard({
   );
 }
 
-function NextDebtStreakCard({
+function RhythmAndNextCard({
   focusDebt,
   nextDebt,
-  streak,
-  active,
+  payments,
   className,
 }: {
   focusDebt: Debt | null;
   nextDebt: Debt | null;
-  streak: number;
-  active: boolean;
+  payments: Payment[];
   className?: string;
 }) {
-  const hot = streak > 0;
+  const rhythm = useMemo(() => getConsistencySummary(payments), [payments]);
 
   let body: ReactNode;
   if (!focusDebt) {
     body = (
       <p className="text-center text-sm text-muted-foreground">
-        Next in line appears when you have an active balance.
+        Your roadmap appears here when you have an active balance.
       </p>
     );
   } else if (!nextDebt) {
     body = (
       <div>
         <div className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
-          Next
+          After this one
         </div>
         <p className="mt-2 font-display text-lg font-bold text-foreground">Last on your plan</p>
         <p className="mt-1.5 text-xs text-muted-foreground sm:text-sm">
-          Clear <span className="font-medium text-foreground">{focusDebt.name}</span> to finish.
+          When <span className="font-medium text-foreground">{focusDebt.name}</span> is fully paid,
+          you&apos;ll be at the finish line.
         </p>
       </div>
     );
@@ -382,7 +430,7 @@ function NextDebtStreakCard({
     body = (
       <div>
         <div className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
-          Next debt
+          Next in your plan
         </div>
         <h3 className="mt-2 font-display text-xl font-bold leading-snug tracking-tight text-heading sm:text-2xl">
           {nextDebt.name}
@@ -396,17 +444,11 @@ function NextDebtStreakCard({
         </p>
         <p className="mt-3 flex items-center gap-1.5 text-xs text-muted-foreground">
           <ArrowRight className="h-3.5 w-3.5 shrink-0 text-primary/80" aria-hidden />
-          After {focusDebt.name} is cleared.
+          Comes after {focusDebt.name}.
         </p>
       </div>
     );
   }
-
-  const streakTone = active
-    ? "border-[#FF6A00]/35 bg-[#FFF7ED]/95"
-    : hot
-      ? "border-border bg-[#FFFCF9]"
-      : "border-border bg-muted/15";
 
   return (
     <div
@@ -416,28 +458,21 @@ function NextDebtStreakCard({
       )}
     >
       <div className="flex-1">{body}</div>
-      <div className={cn("mt-5 rounded-xl border px-4 py-3", streakTone)}>
-        <div className="flex items-center gap-3">
-          <div
-            className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-lg ${
-              hot
-                ? "bg-primary text-primary-foreground shadow-sm"
-                : "bg-muted text-muted-foreground"
-            }`}
-          >
-            <Flame className="h-5 w-5" />
+      <div className="mt-5 rounded-xl border border-border/80 bg-muted/20 px-4 py-3">
+        <div className="flex items-start gap-3">
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
+            <Calendar className="h-5 w-5" />
           </div>
           <div className="min-w-0 flex-1">
-            <div className="text-[10px] font-semibold uppercase tracking-wider text-primary">
-              {hot ? "Streak" : "Momentum"}
+            <div className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+              Your rhythm
             </div>
             <p className="mt-0.5 font-display text-sm font-bold leading-snug text-foreground sm:text-base">
-              {streak === 0
-                ? "Log a payment this week to start one."
-                : active
-                  ? `${streak} wk on track.`
-                  : `${streak} wk — pay this week to keep it.`}
+              {rhythm.headline}
             </p>
+            {rhythm.subline ? (
+              <p className="mt-1 text-xs leading-snug text-muted-foreground">{rhythm.subline}</p>
+            ) : null}
           </div>
         </div>
       </div>
@@ -446,10 +481,10 @@ function NextDebtStreakCard({
 }
 
 function NextStepCard({
-  eng,
+  copy,
   totalRemaining,
 }: {
-  eng: ReturnType<typeof useEngagement>;
+  copy: ReturnType<typeof getNextMeaningfulStep>;
   totalRemaining: number;
 }) {
   if (totalRemaining <= 0) {
@@ -459,37 +494,29 @@ function NextStepCard({
           Next step
         </div>
         <p className="mt-2 font-display text-lg font-bold text-foreground">
-          You&apos;re debt-free here.
+          You&apos;re debt-free here in Zeni.
         </p>
       </div>
     );
   }
 
-  const main = !eng.thisWeekHasExtra
-    ? eng.weeklyStreak > 0
-      ? "Log a payment this week to keep your streak."
-      : "Log a payment this week to stay on your plan."
-    : "Extra toward your target pulls your payoff date closer.";
-
-  const support = eng.thisWeekHasExtra
-    ? undefined
-    : "When you can, +$25 toward the target still counts.";
-
   return (
     <div className="rounded-2xl border border-border bg-card p-5 shadow-sm sm:p-5">
       <div className="flex items-start gap-3">
-        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-sm">
+        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-primary/90 text-primary-foreground shadow-sm">
           <Target className="h-4 w-4 shrink-0" aria-hidden />
         </div>
         <div className="min-w-0 flex-1">
           <div className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
-            Next step
+            {copy.title}
           </div>
           <p className="mt-1 font-display text-base font-bold leading-snug text-foreground sm:text-[17px]">
-            {main}
+            {copy.body}
           </p>
-          {support ? (
-            <p className="mt-2 text-xs leading-snug text-muted-foreground sm:text-sm">{support}</p>
+          {copy.support ? (
+            <p className="mt-2 text-xs leading-snug text-muted-foreground sm:text-sm">
+              {copy.support}
+            </p>
           ) : null}
         </div>
       </div>
@@ -516,7 +543,7 @@ function SnapshotInsightsCard({
       )}
     >
       <h3 className="font-display text-sm font-semibold tracking-tight text-muted-foreground">
-        Snapshot
+        Money snapshot
       </h3>
       <div className="mt-4 grid gap-x-6 gap-y-4 sm:grid-cols-2">
         <div className="flex gap-4 rounded-xl border border-border/80 bg-muted/15 p-4">
@@ -546,7 +573,7 @@ function SnapshotInsightsCard({
           </div>
         </div>
         <BestChip
-          label="Best week"
+          label="Strongest week so far"
           value={eng.bestWeek ? formatMoney(eng.bestWeek.amount) : "—"}
           highlight={eng.newWeekBest}
         />
@@ -555,7 +582,11 @@ function SnapshotInsightsCard({
           value={formatMoney(eng.weekPaid)}
           highlight={eng.beatLastWeek || eng.newWeekBest}
           subtitle={
-            eng.beatLastWeek ? "Beat last week" : eng.weekPaid === 0 ? "No payments yet" : undefined
+            eng.beatLastWeek
+              ? "A bit more than last week"
+              : eng.weekPaid === 0
+                ? "Quiet so far — that's okay"
+                : undefined
           }
         />
       </div>
@@ -583,28 +614,169 @@ function SnapshotInsightsCard({
   );
 }
 
-function SimulatorTeaser() {
+function WhatIfHopeCard() {
   return (
     <Link
       to="/app/simulator"
-      className="group flex items-center gap-3 rounded-xl border border-border bg-card px-3 py-2.5 shadow-sm transition-all duration-200 ease-out hover:-translate-y-0.5 hover:border-primary/35 hover:bg-[#FFF7ED]/45 hover:shadow-md active:translate-y-0"
+      onClick={() => {
+        // TODO(analytics): `what_if_opened_from_dashboard`
+      }}
+      className="group flex flex-col gap-3 rounded-2xl border border-primary/20 bg-gradient-to-br from-[#FFF9F4] via-card to-card p-5 shadow-sm transition-all duration-200 ease-out hover:-translate-y-0.5 hover:border-primary/35 hover:shadow-md active:translate-y-0 sm:flex-row sm:items-center"
     >
-      <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-primary text-primary-foreground shadow-sm">
-        <Zap className="h-[1.0625rem] w-[1.0625rem]" />
+      <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-sm">
+        <Zap className="h-5 w-5" />
       </div>
-      <div className="min-w-0 flex-1 overflow-hidden py-0.5">
-        <h3 className="font-display text-sm font-bold leading-tight tracking-tight text-heading">
-          Faster payoff explorer
+      <div className="min-w-0 flex-1">
+        <h3 className="font-display text-lg font-bold leading-tight tracking-tight text-heading">
+          Explore a more hopeful path
         </h3>
-        <p className="mt-0.5 line-clamp-1 text-[11px] leading-snug text-muted-foreground">
-          See how extras move your payoff date.
+        <p className="mt-1 text-sm leading-snug text-muted-foreground">
+          See how one small extra payment changes your timeline — try adding about $25/month and
+          notice what shifts.
         </p>
       </div>
-      <span className="inline-flex shrink-0 items-center gap-0.5 pr-0.5 text-[11px] font-semibold text-primary transition-[gap] duration-200 ease-out group-hover:gap-1">
-        Open
-        <ArrowRight className="h-3.5 w-3.5" aria-hidden />
+      <span className="inline-flex shrink-0 items-center gap-1 self-start text-sm font-semibold text-primary transition-[gap] duration-200 ease-out group-hover:gap-2 sm:self-center">
+        Open What If
+        <ArrowRight className="h-4 w-4" aria-hidden />
       </span>
     </Link>
+  );
+}
+
+function WelcomeBackBanner({ totalPaid }: { totalPaid: number }) {
+  const [resetStarted, setResetStarted] = useState(false);
+
+  return (
+    <section className="rounded-2xl border border-primary/20 bg-gradient-to-br from-[#FFF9F4] to-muted/30 p-6 shadow-sm">
+      <p className="font-display text-xl font-bold text-heading sm:text-2xl">Welcome back.</p>
+      <p className="mt-2 max-w-2xl text-sm leading-relaxed text-muted-foreground">
+        Life happens. You&apos;ve already paid {formatMoney(totalPaid)} down — that progress still
+        counts. You don&apos;t have to fix everything right now.
+      </p>
+      <p className="mt-3 text-sm font-medium text-foreground">
+        Let&apos;s take one small step today — no shame, no scoreboard.
+      </p>
+      <div className="mt-5 flex flex-wrap gap-2">
+        <LogPaymentDialog>
+          <Button type="button" className="gap-2" variant="default">
+            <Plus className="h-4 w-4" />
+            Log a payment
+          </Button>
+        </LogPaymentDialog>
+        <Button type="button" variant="outline" asChild className="gap-2">
+          <Link
+            to="/app/strategy"
+            onClick={() => {
+              // TODO(analytics): reentry_flow_interaction — adjust_plan
+            }}
+          >
+            Adjust this month&apos;s plan
+          </Link>
+        </Button>
+        <Button type="button" variant="outline" asChild className="gap-2 border-primary/30">
+          <Link
+            to="/app/simulator"
+            onClick={() => {
+              // TODO(analytics): reentry_flow_interaction — what_if
+            }}
+          >
+            Open What If
+          </Link>
+        </Button>
+        <Button
+          type="button"
+          variant="ghost"
+          className="text-muted-foreground"
+          onClick={() => {
+            setResetStarted(true);
+            // TODO(analytics): `reset_week_started`
+          }}
+        >
+          {resetStarted ? "This week is a soft start — no pressure" : "Start a reset week"}
+        </Button>
+      </div>
+    </section>
+  );
+}
+
+const FEELINGS: { id: WeeklyFeeling; label: string }[] = [
+  { id: "hopeful", label: "Hopeful" },
+  { id: "stressed", label: "Stressed" },
+  { id: "overwhelmed", label: "Overwhelmed" },
+  { id: "motivated", label: "Motivated" },
+  { id: "discouraged", label: "Discouraged" },
+];
+
+function WeeklyDebtCheckIn() {
+  const week = currentWeekStartIso();
+  const [picked, setPicked] = useState<WeeklyFeeling | null>(() => {
+    const saved = loadWeeklyFeeling();
+    if (!saved || saved.week !== week) return null;
+    return saved.feeling;
+  });
+
+  const onPick = (f: WeeklyFeeling) => {
+    saveWeeklyFeeling(f);
+    setPicked(f);
+    // TODO(analytics): `weekly_checkin_selected` with feeling
+  };
+
+  return (
+    <section className="rounded-2xl border border-border bg-card p-5 shadow-sm">
+      <p className="font-display text-base font-semibold text-foreground">
+        How has your debt journey felt this week?
+      </p>
+      <p className="mt-1 text-xs text-muted-foreground">
+        Optional — helps us keep the tone human.{" "}
+        <span className="opacity-80">(Saved on this device for now.)</span>
+      </p>
+      <div className="mt-4 flex flex-wrap gap-2">
+        {FEELINGS.map(({ id, label }) => (
+          <button
+            key={id}
+            type="button"
+            onClick={() => onPick(id)}
+            className={`rounded-full border px-3 py-1.5 text-xs font-semibold transition-colors ${
+              picked === id
+                ? "border-primary bg-primary-soft text-primary"
+                : "border-border bg-muted/30 text-foreground hover:border-primary/40"
+            }`}
+          >
+            {label}
+          </button>
+        ))}
+      </div>
+      {picked ? (
+        <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
+          {getSupportiveCheckInResponse(picked)}
+        </p>
+      ) : null}
+    </section>
+  );
+}
+
+function CollectiveCalmCard() {
+  return (
+    <div className="flex h-full flex-col justify-between rounded-2xl border border-border bg-card p-5 shadow-sm sm:p-5">
+      <div>
+        <div className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+          You&apos;re not doing this alone
+        </div>
+        <p className="mt-2 font-display text-base font-bold leading-snug text-foreground">
+          Progress is personal.
+        </p>
+        <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+          People move at different paces — there&apos;s no leaderboard for healing your finances.
+        </p>
+      </div>
+      <Link
+        to="/app/milestones"
+        className="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-primary hover:underline"
+      >
+        See progress you&apos;ve already earned
+        <ArrowRight className="h-3.5 w-3.5" aria-hidden />
+      </Link>
+    </div>
   );
 }
 
@@ -628,7 +800,7 @@ function BestChip({
       }`}
     >
       <div className="flex items-center gap-1.5">
-        <Trophy className={`h-3 w-3 ${highlight ? "text-success" : "text-muted-foreground/70"}`} />
+        <Sparkles className={`h-3 w-3 ${highlight ? "text-success" : "text-muted-foreground/70"}`} />
         <div className="text-[9px] font-medium uppercase tracking-wider text-muted-foreground/70">
           {label}
         </div>

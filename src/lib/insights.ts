@@ -98,7 +98,7 @@ export function buildInsights(ctx: InsightsCtx): Insight[] {
   const out: Insight[] = [];
   const { debts, payments, strategy, extraMonthly, weekPaid, prevWeekPaid, countdown } = ctx;
 
-  // 1. "What if +$50/mo" — projected savings
+  // 1. Hopeful framing: small extras still matter
   if (debts.some((d) => d.balance > 0)) {
     const baseline = countdown.months;
     const boosted = simulatePayoff(debts, strategy, extraMonthly + 50).months;
@@ -108,13 +108,13 @@ export function buildInsights(ctx: InsightsCtx): Insight[] {
         id: "boost-50",
         icon: "zap",
         tone: "primary",
-        title: `Be debt-free ${saved} month${saved === 1 ? "" : "s"} sooner`,
-        body: `Adding just $50/mo extra cuts your timeline by ${saved} month${saved === 1 ? "" : "s"}.`,
+        title: "A gentler timeline is possible",
+        body: `If you ever add about $50/mo extra, you could be debt-free roughly ${saved} month${saved === 1 ? "" : "s"} sooner — explore it in What If when you're ready.`,
       });
     }
   }
 
-  // 2. Consistency week-over-week
+  // 2. Week-over-week — no "performance" framing
   if (prevWeekPaid > 0 && weekPaid > 0) {
     const delta = weekPaid - prevWeekPaid;
     const pctChange = (delta / prevWeekPaid) * 100;
@@ -123,13 +123,13 @@ export function buildInsights(ctx: InsightsCtx): Insight[] {
         id: "consistency-up",
         icon: "trend",
         tone: "success",
-        title: "Your consistency is improving",
-        body: `You've paid ${pctChange.toFixed(0)}% more this week than last. That compounds.`,
+        title: "You're building momentum",
+        body: `This week's payments were about ${pctChange.toFixed(0)}% more than last week — that's steady energy, not pressure to repeat it every week.`,
       });
     }
   }
 
-  // 3. Day-of-week pattern
+  // 3. Day-of-week pattern — kindness over "optimization"
   if (payments.length >= 4) {
     const buckets = [0, 0, 0, 0, 0, 0, 0];
     for (const p of payments) buckets[new Date(p.date).getDay()] += 1;
@@ -150,8 +150,8 @@ export function buildInsights(ctx: InsightsCtx): Insight[] {
         id: "day-pattern",
         icon: "clock",
         tone: "info",
-        title: `You usually log payments on ${days[dayIdx]}`,
-        body: "Building a routine is the #1 predictor of paying off debt fast.",
+        title: `You tend to check in on ${days[dayIdx]}`,
+        body: "That consistency matters more than perfection — one missed week doesn't erase it.",
       });
     }
   }
@@ -162,30 +162,30 @@ export function buildInsights(ctx: InsightsCtx): Insight[] {
       id: "under-year",
       icon: "calendar",
       tone: "primary",
-      title: `Less than a year to go`,
-      body: `At your current pace, you'll be debt-free in ${countdown.days} days.`,
+      title: "The horizon is getting closer",
+      body: `On paper, minimum-only pacing is about ${countdown.days} days out — small payments still keep you tethered to that path.`,
     });
   } else if (countdown.pct >= 75 && countdown.totalRemaining > 0) {
     out.push({
       id: "almost-there",
       icon: "target",
       tone: "success",
-      title: "You're in the home stretch",
-      body: `${countdown.pct.toFixed(0)}% paid off — start thinking about an emergency fund next.`,
+      title: "Most of the weight is behind you",
+      body: `${countdown.pct.toFixed(0)}% paid down — consider parking a next step like a starter emergency fund when it feels right.`,
     });
   }
 
   return out.slice(0, 2);
 }
 
-/** Personal-best distance — how close are we to beating best week? */
+/** Personal-best distance — how close are we to your best week? */
 export function bestWeekGap(weekPaid: number, bestWeek: number | null): number | null {
   if (!bestWeek || bestWeek <= 0) return null;
   if (weekPaid >= bestWeek) return 0;
   return bestWeek - weekPaid;
 }
 
-/** Stable key for current week, used for streak-risk gating. */
+/** Stable key for current week (e.g. engagement / UI that keys off the calendar week). */
 export function currentWeekKey(): string {
   return isoDate(startOfWeek(new Date()));
 }

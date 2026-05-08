@@ -56,10 +56,14 @@ function Simulator() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="font-display text-2xl font-bold tracking-tight sm:text-3xl">What if…</h1>
-        <p className="text-sm text-muted-foreground">
-          See how much faster you'd be free with a little extra each month.
+        <h1 className="font-display text-2xl font-bold tracking-tight sm:text-3xl">
+          What if — hope for your timeline
+        </h1>
+        <p className="text-sm leading-relaxed text-muted-foreground">
+          This isn&apos;t about pressure — it&apos;s about seeing how one small extra payment could
+          soften your debt-free date. Try sliders; nothing changes until you say so.
         </p>
+        {/* TODO(analytics): `what_if_session` with source (nav vs dashboard) when instrumentation lands */}
       </div>
 
       <div className="rounded-3xl border border-border bg-card p-6 shadow-sm sm:p-8">

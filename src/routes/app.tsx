@@ -22,18 +22,18 @@ export const Route = createFileRoute("/app")({
 
 const DESKTOP_NAV = [
   { to: "/app", label: "Dashboard", icon: LayoutDashboard, exact: true },
+  { to: "/app/simulator", label: "What If", icon: SlidersHorizontal, exact: false },
   { to: "/app/debts", label: "Debts", icon: CreditCard, exact: false },
   { to: "/app/transactions", label: "Transactions", icon: ReceiptText, exact: false },
   { to: "/app/strategy", label: "Plan", icon: CalendarCheck, exact: false },
-  { to: "/app/simulator", label: "What If", icon: SlidersHorizontal, exact: false },
   { to: "/app/milestones", label: "Achievements", icon: Trophy, exact: false },
 ] as const;
 
-/** Mobile bottom bar: max 5; What If is linked from Plan page */
+/** Mobile bottom bar: max 5 — What If promoted; Transactions reachable from Debts / direct URL */
 const MOBILE_NAV = [
   { to: "/app", label: "Dashboard", icon: LayoutDashboard, exact: true },
+  { to: "/app/simulator", label: "What If", icon: SlidersHorizontal, exact: false },
   { to: "/app/debts", label: "Debts", icon: CreditCard, exact: false },
-  { to: "/app/transactions", label: "Transactions", icon: ReceiptText, exact: false },
   { to: "/app/strategy", label: "Plan", icon: CalendarCheck, exact: false },
   { to: "/app/milestones", label: "Wins", icon: Trophy, exact: false },
 ] as const;
@@ -92,7 +92,7 @@ export function AppLayout() {
           <div className="border-b border-border px-4 pb-4 pt-5">
             <Logo to="/app" size="md" />
             <p className="mt-2 text-xs font-medium leading-snug text-muted-foreground">
-              Debt payoff coach
+              Calm support for long-term debt stress
             </p>
           </div>
 

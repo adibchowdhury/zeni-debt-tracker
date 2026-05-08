@@ -6,7 +6,6 @@ import { formatMoney } from "@/lib/debt-math";
 export function ChallengeCard({ eng }: { eng: Engagement }) {
   const [picking, setPicking] = useState(false);
 
-  // Show nothing if user already skipped this week (until next week)
   if (eng.challenge?.status === "skipped" && !picking) return null;
 
   if (!eng.challenge) {
@@ -18,10 +17,10 @@ export function ChallengeCard({ eng }: { eng: Engagement }) {
           </div>
           <div className="flex-1">
             <div className="font-display text-base font-bold text-foreground">
-              Pick a challenge for this week
+              One thing this week
             </div>
             <p className="mt-0.5 text-sm text-muted-foreground">
-              Optional — but small wins build big habits.
+              Optional — pick a small focus that fits real life, not a performance test.
             </p>
           </div>
         </div>
@@ -31,12 +30,12 @@ export function ChallengeCard({ eng }: { eng: Engagement }) {
             className="rounded-2xl border-2 border-primary bg-primary-soft p-4 text-left shadow-sm ring-1 ring-primary/15 transition-all hover:-translate-y-0.5"
           >
             <div className="text-[10px] font-bold uppercase tracking-wide text-primary">
-              Recommended
+              Gentle default
             </div>
             <div className="mt-1 font-display text-sm font-bold text-foreground">
               Log at least 1 payment
             </div>
-            <div className="mt-0.5 text-xs text-muted-foreground">Build the habit</div>
+            <div className="mt-0.5 text-xs text-muted-foreground">Stay connected to your plan</div>
           </button>
           <button
             onClick={() => eng.acceptChallenge("extra_payment", 50)}
@@ -45,14 +44,14 @@ export function ChallengeCard({ eng }: { eng: Engagement }) {
             <div className="font-display text-sm font-bold text-foreground/90">
               Pay an extra $50
             </div>
-            <div className="mt-0.5 text-xs text-muted-foreground">Beyond your minimums</div>
+            <div className="mt-0.5 text-xs text-muted-foreground">If the month allows</div>
           </button>
         </div>
         <button
           onClick={() => eng.skipChallenge()}
           className="mt-3 text-xs text-muted-foreground hover:text-foreground"
         >
-          Skip this week
+          Not this week
         </button>
       </section>
     );
@@ -62,18 +61,14 @@ export function ChallengeCard({ eng }: { eng: Engagement }) {
   const completed = c.status === "completed";
   const goalText =
     c.kind === "extra_payment"
-      ? `Pay an extra ${formatMoney(c.goalAmount)} this week`
+      ? `Put an extra ${formatMoney(c.goalAmount)} toward debt when you can`
       : "Log at least 1 payment this week";
   const progressPct =
     c.kind === "log_one"
       ? Math.min(100, c.progress * 100)
       : Math.min(100, (c.progress / Math.max(1, c.goalAmount)) * 100);
   const progressLabel =
-    c.kind === "log_one"
-      ? completed
-        ? "Done!"
-        : "0 / 1"
-      : `${formatMoney(c.progress)} / ${formatMoney(c.goalAmount)}`;
+    c.kind === "log_one" ? (completed ? "Done" : "0 / 1") : `${formatMoney(c.progress)} / ${formatMoney(c.goalAmount)}`;
 
   return (
     <section
@@ -87,7 +82,7 @@ export function ChallengeCard({ eng }: { eng: Engagement }) {
         </div>
         <div className="flex-1">
           <div className="text-[11px] uppercase tracking-wider text-muted-foreground">
-            This week's challenge
+            Small step for this week
           </div>
           <div className="font-display text-base font-bold text-foreground">{goalText}</div>
         </div>
@@ -95,7 +90,7 @@ export function ChallengeCard({ eng }: { eng: Engagement }) {
           <button
             onClick={() => setPicking(true)}
             className="rounded-full p-1 text-muted-foreground hover:bg-secondary"
-            aria-label="Change"
+            aria-label="Change focus"
           >
             <X className="h-4 w-4" />
           </button>
@@ -110,7 +105,7 @@ export function ChallengeCard({ eng }: { eng: Engagement }) {
         </div>
         <div className="mt-2 flex justify-between text-xs">
           <span className="text-muted-foreground">{progressLabel}</span>
-          {completed && <span className="font-semibold text-success">Completed 🎉</span>}
+          {completed && <span className="font-semibold text-success">You showed up</span>}
         </div>
       </div>
       {picking && (
@@ -131,7 +126,7 @@ export function ChallengeCard({ eng }: { eng: Engagement }) {
             }}
             className="rounded-xl border border-border bg-muted/20 p-3 text-left text-sm font-medium text-muted-foreground hover:border-primary/40 hover:text-foreground"
           >
-            Pay an extra $50
+            Extra $50 focus
           </button>
         </div>
       )}

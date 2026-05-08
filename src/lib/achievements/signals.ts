@@ -55,6 +55,7 @@ export function recordSimulatorRun(): void {
 }
 
 /** Call once per calendar day when user opens the dashboard. */
+// TODO(analytics): derive reopen after 7+ day gap from last visit vs today; emit cohort events.
 export function recordDashboardVisit(): void {
   const today = new Date();
   const iso = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;

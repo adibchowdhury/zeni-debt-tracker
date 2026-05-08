@@ -118,8 +118,8 @@ function AchievementRow({
               {WINS_SECTION_TITLE[section]}
             </h2>
           </div>
-          <p className="text-sm font-semibold text-[#64748B]">
-            {sectionUnlocks} of {inSection.length} unlocked
+          <p className="text-sm font-medium text-[#64748B]">
+            {sectionUnlocks} of {inSection.length} earned here
           </p>
         </div>
       </div>
@@ -275,10 +275,10 @@ function MilestonesPage() {
   const remaining = total - unlocked;
   const collectionMotivation =
     unlocked === total
-      ? "Collection complete. You crushed it."
+      ? "You've seen every badge here — that's a quiet kind of triumph."
       : remaining === 1
-        ? "You're close. Unlock 1 more to complete your next collection."
-        : `You're close. Unlock ${remaining} more to complete your next collection.`;
+        ? "There's one more acknowledgment waiting when you're ready — no rush."
+        : `${remaining} milestones still ahead — locked means 'not yet,' not 'failed.'`;
 
   const [popIds, setPopIds] = useState<Set<string>>(new Set());
   const [burst, setBurst] = useState(false);
@@ -354,10 +354,11 @@ function MilestonesPage() {
       >
         <div className="space-y-2">
           <h1 className="font-display text-3xl font-bold tracking-tight text-heading sm:text-4xl">
-            Achievements
+            Milestones & acknowledgments
           </h1>
           <p className="max-w-xl text-base text-muted-foreground">
-            Celebrate every step toward debt freedom.
+            Progress you&apos;ve already earned — small wins that prove you&apos;re still moving.
+            Milestones are reminders, not pressure.
           </p>
         </div>
 
@@ -367,7 +368,7 @@ function MilestonesPage() {
               {unlocked} / {total}
             </p>
             <p className="mt-0.5 text-sm font-semibold uppercase tracking-wide text-muted-foreground">
-              unlocked
+              milestones so far
             </p>
           </div>
         </div>
