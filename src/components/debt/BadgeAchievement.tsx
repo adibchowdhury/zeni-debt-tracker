@@ -355,7 +355,7 @@ export function BadgeAchievement({
         )}
       </motion.div>
 
-      <h3 className="mt-5 max-w-[148px] text-balance text-sm font-bold leading-snug text-[#0F172A] dark:text-zinc-100">
+      <h3 className="mt-5 max-w-[148px] text-balance text-sm font-bold leading-snug text-[#0F172A]">
         {displayName}
       </h3>
       <p className={`mt-1 max-w-[160px] text-balance text-xs leading-snug ${supportingClass}`}>

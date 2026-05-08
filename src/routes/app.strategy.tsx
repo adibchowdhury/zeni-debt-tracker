@@ -1,10 +1,11 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { recordStrategyPlanView } from "@/lib/achievements/signals";
-import { Snowflake, Mountain, Check } from "lucide-react";
+import { Snowflake, Mountain, Check, Info } from "lucide-react";
 import { useDebtStore, type Strategy } from "@/lib/storage";
 import { simulatePayoff, formatMoney, formatMonths } from "@/lib/debt-math";
 import { PayoffRoadmap } from "@/components/debt/PayoffRoadmap";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 
 export const Route = createFileRoute("/app/strategy")({
   component: StrategyPage,
@@ -96,6 +97,7 @@ function StrategyCard({
   tagline,
   icon: Icon,
   description,
+  id,
   result,
   selected,
   recommended,
@@ -127,7 +129,10 @@ function StrategyCard({
           <Icon className="h-5 w-5" />
         </div>
         <div className="flex-1">
-          <h3 className="font-display text-lg font-bold">{title}</h3>
+          <div className="flex items-center gap-2">
+            <h3 className="font-display text-lg font-bold">{title}</h3>
+            <StrategyInfoPopover strategy={id} />
+          </div>
           <p className="text-xs text-muted-foreground">{tagline}</p>
         </div>
         {selected && (
@@ -163,5 +168,64 @@ function StrategyCard({
         {selected ? "Selected" : `Use ${title}`}
       </button>
     </div>
+  );
+}
+
+function StrategyInfoPopover({ strategy }: { strategy: Strategy }) {
+  const [open, setOpen] = useState(false);
+
+  const content =
+    strategy === "avalanche"
+      ? {
+          title: "Debt Avalanche (highest interest first)",
+          body: [
+            "You focus extra money on the debt with the highest APR while paying minimums on the rest.",
+            "When that debt is paid off, you roll that payment into the next-highest APR debt.",
+            "Best when you want the most interest saved over time (math-optimal).",
+          ],
+        }
+      : {
+          title: "Debt Snowball (smallest balance first)",
+          body: [
+            "You focus extra money on the smallest balance while paying minimums on the rest.",
+            "When it’s paid off, you roll that payment into the next-smallest balance.",
+            "Best when quick wins keep you motivated and consistent.",
+          ],
+        };
+
+  return (
+    <Popover open={open} onOpenChange={setOpen}>
+      <PopoverTrigger asChild>
+        <button
+          type="button"
+          aria-label={`More info about ${strategy}`}
+          className="inline-flex h-7 w-7 items-center justify-center rounded-full text-blue-600 transition-colors hover:bg-blue-50 hover:text-blue-700"
+          onMouseEnter={() => setOpen(true)}
+          onMouseLeave={() => setOpen(false)}
+        >
+          <Info className="h-4 w-4" />
+        </button>
+      </PopoverTrigger>
+      <PopoverContent
+        align="start"
+        side="bottom"
+        sideOffset={8}
+        className="w-[340px] rounded-2xl border border-border bg-card p-4 shadow-md"
+        onMouseEnter={() => setOpen(true)}
+        onMouseLeave={() => setOpen(false)}
+      >
+        <div className="space-y-2">
+          <div className="font-display text-sm font-bold text-foreground">{content.title}</div>
+          <ul className="space-y-1.5 text-sm text-muted-foreground">
+            {content.body.map((line) => (
+              <li key={line} className="flex gap-2">
+                <span className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-blue-500" />
+                <span>{line}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </PopoverContent>
+    </Popover>
   );
 }

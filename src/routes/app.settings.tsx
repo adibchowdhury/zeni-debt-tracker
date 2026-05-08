@@ -7,7 +7,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
-import { applyTheme, persistTheme, readStoredTheme } from "@/lib/theme";
 
 export const Route = createFileRoute("/app/settings")({
   component: SettingsPage,
@@ -63,11 +62,6 @@ function SettingsPage() {
   const [savingPassword, setSavingPassword] = useState(false);
 
   const [prefs, setPrefs] = useState<UserPreferences>(() => loadPreferences());
-  const [darkMode, setDarkMode] = useState(false);
-
-  useEffect(() => {
-    setDarkMode(readStoredTheme() === "dark");
-  }, []);
 
   useEffect(() => {
     if (!user) return;
@@ -188,14 +182,6 @@ function SettingsPage() {
     setPrefs(next);
     savePreferences(next);
     toast.success("Preference saved.");
-  };
-
-  const setAppearanceDark = (dark: boolean) => {
-    const theme = dark ? "dark" : "light";
-    setDarkMode(dark);
-    applyTheme(theme);
-    persistTheme(theme);
-    toast.success("Appearance saved.");
   };
 
   if (authLoading || !user) {
@@ -356,28 +342,6 @@ function SettingsPage() {
             >
               Cancel subscription
             </Button>
-          </div>
-        </div>
-      </section>
-
-      {/* Appearance */}
-      <section className="rounded-3xl border border-border bg-card p-6 shadow-sm sm:p-7">
-        <h2 className="font-display text-lg font-bold text-heading">Appearance</h2>
-        <p className="mt-1 text-sm text-muted-foreground">
-          Theme is saved in this browser and applies to both the public site and the app when you’re
-          signed in.
-        </p>
-
-        <div className="mt-6 rounded-2xl border border-border">
-          <div className="flex items-center justify-between gap-4 p-4 sm:p-5">
-            <div className="min-w-0">
-              <p className="text-sm font-semibold text-foreground">Dark mode</p>
-              <p className="mt-0.5 text-xs text-muted-foreground">
-                Use a darker palette across Zeni. Same setting as the sun/moon control on the public
-                site.
-              </p>
-            </div>
-            <Switch checked={darkMode} onCheckedChange={setAppearanceDark} aria-label="Dark mode" />
           </div>
         </div>
       </section>

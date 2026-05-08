@@ -126,7 +126,7 @@ function DebtsPage() {
         <>
           <div className="grid gap-4 sm:grid-cols-3">
             <div className="flex gap-4 rounded-2xl border border-border bg-card p-4 shadow-sm">
-              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[#FFF7ED] text-[#FF6A00] dark:bg-muted/50">
+              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[#FFF7ED] text-[#FF6A00]">
                 <Wallet className="h-5 w-5" aria-hidden />
               </div>
               <div className="min-w-0">
@@ -142,7 +142,7 @@ function DebtsPage() {
               </div>
             </div>
             <div className="flex gap-4 rounded-2xl border border-border bg-card p-4 shadow-sm">
-              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-muted/60 dark:bg-muted/40">
+              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-muted/60">
                 <CalendarDays className="h-5 w-5 text-foreground/80" aria-hidden />
               </div>
               <div className="min-w-0">
@@ -156,7 +156,7 @@ function DebtsPage() {
               </div>
             </div>
             <div className="flex gap-4 rounded-2xl border border-border bg-card p-4 shadow-sm">
-              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-muted/60 dark:bg-muted/40">
+              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-muted/60">
                 <Percent className="h-5 w-5 text-foreground/80" aria-hidden />
               </div>
               <div className="min-w-0">

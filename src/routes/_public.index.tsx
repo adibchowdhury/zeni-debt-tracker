@@ -1541,7 +1541,7 @@ function PricingSection() {
             </Link>
           </div>
 
-          <div className="relative overflow-hidden rounded-[2rem] border border-primary/25 bg-gradient-to-br from-accent via-background to-accent p-8 shadow-[0_14px_35px_rgba(255,106,0,0.14)] sm:p-10 dark:shadow-[0_14px_35px_rgba(251,146,60,0.12)]">
+          <div className="relative overflow-hidden rounded-[2rem] border border-primary/25 bg-gradient-to-br from-accent via-background to-accent p-8 shadow-[0_14px_35px_rgba(255,106,0,0.14)] sm:p-10">
             <div className="pointer-events-none absolute right-0 top-0 h-32 w-32 rounded-full bg-primary/10 blur-3xl" />
             <div className="pointer-events-none absolute bottom-0 left-0 h-32 w-32 rounded-full bg-[#FACC15]/15 blur-3xl" />
 

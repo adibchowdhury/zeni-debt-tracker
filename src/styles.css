@@ -4,8 +4,6 @@
 @source "../src";
 @import "tw-animate-css";
 
-@custom-variant dark (&:is(.dark *));
-
 @theme inline {
   --font-sans: "Figtree", ui-sans-serif, system-ui, sans-serif;
   --font-display: "Outfit", "Figtree", ui-sans-serif, system-ui, sans-serif;
@@ -155,36 +153,6 @@
   --heading-shadow: 0 1px 2px rgb(0 0 0 / 0.1);
 }
 
-.dark {
-  --background: #0f172a;
-  --foreground: #f8fafc;
-  --heading-foreground: #f8fafc;
-  --heading-shadow: 0 1px 2px rgb(0 0 0 / 0.45);
-  --card: #1e293b;
-  --card-foreground: #f8fafc;
-  --popover: #1e293b;
-  --popover-foreground: #f8fafc;
-  --primary: #fb923c;
-  --primary-foreground: #0f172a;
-  --primary-soft: rgba(251, 146, 60, 0.18);
-  --secondary: #334155;
-  --secondary-foreground: #f8fafc;
-  --muted: #1e293b;
-  --muted-foreground: #94a3b8;
-  --accent: rgba(251, 146, 60, 0.15);
-  --accent-foreground: #fdba74;
-  --success: #facc15;
-  --success-foreground: #422006;
-  --success-soft: rgba(250, 204, 21, 0.12);
-  --teal: #60a5fa;
-  --teal-foreground: #0f172a;
-  --destructive: #f87171;
-  --destructive-foreground: #0f172a;
-  --border: rgba(248, 250, 252, 0.12);
-  --input: rgba(248, 250, 252, 0.14);
-  --ring: #fb923c;
-}
-
 @layer base {
   * {
     border-color: var(--color-border);
@@ -253,13 +221,6 @@
       rgb(255 255 255 / 0.97) 0%,
       rgb(255 247 237 / 0.55) 42%,
       transparent 68%
-    );
-  }
-  .dark .heading-hero-pop::before {
-    background: radial-gradient(
-      ellipse 95% 75% at 50% 45%,
-      rgb(15 23 42 / 0.65) 0%,
-      transparent 70%
     );
   }
 }

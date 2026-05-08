@@ -65,7 +65,7 @@ export function PaymentActivityStrip({
           const h = Math.round((s.total / max) * 100);
           const intensity =
             s.total <= 0
-              ? "bg-muted-foreground/30 dark:bg-muted-foreground/[0.26]"
+              ? "bg-muted-foreground/30"
               : h < 38
                 ? "bg-[#FFB380] shadow-[inset_0_-2px_0_rgb(234_88_12/0.12)] ring-1 ring-[#FF6A00]/20"
                 : h < 72
@@ -74,7 +74,7 @@ export function PaymentActivityStrip({
           return (
             <div key={i} className="flex min-w-0 flex-1 flex-col items-center gap-1">
               <div
-                className="relative flex h-[4.5rem] w-full items-end justify-center rounded-lg bg-muted/45 pb-1 pt-0.5 dark:bg-muted/30 sm:h-[4.875rem]"
+                className="relative flex h-[4.5rem] w-full items-end justify-center rounded-lg bg-muted/45 pb-1 pt-0.5 sm:h-[4.875rem]"
                 title={`${s.label}: ${formatMoney(s.total)}`}
               >
                 <div

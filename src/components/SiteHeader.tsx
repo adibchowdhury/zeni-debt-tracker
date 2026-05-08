@@ -2,7 +2,6 @@ import { Link } from "@tanstack/react-router";
 import { Logo } from "@/components/Logo";
 import { Menu, X } from "lucide-react";
 import { useState } from "react";
-import { ThemeToggle } from "@/components/ThemeToggle";
 
 export function SiteHeader() {
   const [open, setOpen] = useState(false);
@@ -12,8 +11,7 @@ export function SiteHeader() {
       <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-5 py-4">
         <Logo to="/" size="md" />
 
-        <div className="flex flex-1 items-center justify-end gap-1 sm:gap-2">
-          <ThemeToggle className="md:order-none" />
+        <div className="flex flex-1 items-center justify-end gap-2">
           {/* Desktop buttons */}
           <div className="hidden items-center gap-2 md:flex">
             <Link

@@ -220,7 +220,7 @@ function Dashboard() {
               nextDebt={nextDebt}
               streak={eng.weeklyStreak}
               active={eng.thisWeekHasExtra}
-              className="ring-1 ring-[#FF6A00]/10 bg-[#FFFCFA] dark:bg-zinc-950/40 dark:ring-primary/15"
+              className="ring-1 ring-[#FF6A00]/10 bg-[#FFFCFA]"
             />
           </div>
 
@@ -228,7 +228,7 @@ function Dashboard() {
             <NextStepCard eng={eng} totalRemaining={countdown.totalRemaining} />
             <PaymentActivityStrip
               payments={payments}
-              className="ring-1 ring-primary/25 shadow-sm dark:ring-primary/30"
+              className="ring-1 ring-primary/25 shadow-sm"
             />
           </div>
 
@@ -238,7 +238,7 @@ function Dashboard() {
               countdown={countdown}
               eng={eng}
               insights={insights}
-              className="bg-muted/20 dark:bg-muted/10"
+              className="bg-muted/20"
             />
           </div>
 
@@ -306,7 +306,7 @@ function CurrentTargetCard({
         {formatMoney(focusDebt.balance)}
       </div>
       <div className="mt-5 grid grid-cols-3 gap-2">
-        <div className="rounded-xl border border-border/80 bg-muted/25 px-2.5 py-2.5 dark:bg-muted/15">
+        <div className="rounded-xl border border-border/80 bg-muted/25 px-2.5 py-2.5">
           <div className="text-[9px] font-semibold uppercase tracking-wider text-muted-foreground">
             Min
           </div>
@@ -314,7 +314,7 @@ function CurrentTargetCard({
             {formatMoney(focusDebt.minPayment)}
           </div>
         </div>
-        <div className="rounded-xl border border-border/80 bg-muted/25 px-2.5 py-2.5 dark:bg-muted/15">
+        <div className="rounded-xl border border-border/80 bg-muted/25 px-2.5 py-2.5">
           <div className="text-[9px] font-semibold uppercase tracking-wider text-muted-foreground">
             APR
           </div>
@@ -322,7 +322,7 @@ function CurrentTargetCard({
             {focusDebt.interestRate}%
           </div>
         </div>
-        <div className="rounded-xl border border-border/80 bg-muted/25 px-2.5 py-2.5 dark:bg-muted/15">
+        <div className="rounded-xl border border-border/80 bg-muted/25 px-2.5 py-2.5">
           <div className="text-[9px] font-semibold uppercase tracking-wider text-muted-foreground">
             Payoff
           </div>
@@ -403,9 +403,9 @@ function NextDebtStreakCard({
   }
 
   const streakTone = active
-    ? "border-[#FF6A00]/35 bg-[#FFF7ED]/95 dark:bg-[#FFF7ED]/10"
+    ? "border-[#FF6A00]/35 bg-[#FFF7ED]/95"
     : hot
-      ? "border-border bg-[#FFFCF9] dark:bg-muted/20"
+      ? "border-border bg-[#FFFCF9]"
       : "border-border bg-muted/15";
 
   return (
@@ -519,8 +519,8 @@ function SnapshotInsightsCard({
         Snapshot
       </h3>
       <div className="mt-4 grid gap-x-6 gap-y-4 sm:grid-cols-2">
-        <div className="flex gap-4 rounded-xl border border-border/80 bg-muted/15 p-4 dark:bg-muted/10">
-          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[#FFF7ED] text-[#FF6A00] dark:bg-muted/60 dark:text-orange-400">
+        <div className="flex gap-4 rounded-xl border border-border/80 bg-muted/15 p-4">
+          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[#FFF7ED] text-[#FF6A00]">
             <Wallet className="h-[1.0625rem] w-[1.0625rem]" />
           </div>
           <div className="min-w-0">
@@ -532,7 +532,7 @@ function SnapshotInsightsCard({
             </div>
           </div>
         </div>
-        <div className="flex gap-4 rounded-xl border border-border/80 bg-muted/15 p-4 dark:bg-muted/10">
+        <div className="flex gap-4 rounded-xl border border-border/80 bg-muted/15 p-4">
           <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-success-soft/55 text-success">
             <TrendingDown className="h-[1.0625rem] w-[1.0625rem]" />
           </div>
@@ -587,7 +587,7 @@ function SimulatorTeaser() {
   return (
     <Link
       to="/app/simulator"
-      className="group flex items-center gap-3 rounded-xl border border-border bg-card px-3 py-2.5 shadow-sm transition-all duration-200 ease-out hover:-translate-y-0.5 hover:border-primary/35 hover:bg-[#FFF7ED]/45 hover:shadow-md active:translate-y-0 dark:hover:bg-muted/35"
+      className="group flex items-center gap-3 rounded-xl border border-border bg-card px-3 py-2.5 shadow-sm transition-all duration-200 ease-out hover:-translate-y-0.5 hover:border-primary/35 hover:bg-[#FFF7ED]/45 hover:shadow-md active:translate-y-0"
     >
       <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-primary text-primary-foreground shadow-sm">
         <Zap className="h-[1.0625rem] w-[1.0625rem]" />

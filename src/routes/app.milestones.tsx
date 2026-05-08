@@ -118,7 +118,7 @@ function AchievementRow({
               {WINS_SECTION_TITLE[section]}
             </h2>
           </div>
-          <p className="text-sm font-semibold text-[#64748B] dark:text-zinc-500">
+          <p className="text-sm font-semibold text-[#64748B]">
             {sectionUnlocks} of {inSection.length} unlocked
           </p>
         </div>

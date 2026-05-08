@@ -69,11 +69,11 @@ export function CountdownHero({
     : null;
 
   return (
-    <section className="relative overflow-hidden rounded-2xl border-2 border-[#FF6A00]/25 bg-gradient-to-br from-[#FFF7ED] via-white to-white p-5 shadow-sm sm:p-6 dark:border-[#FF6A00]/20 dark:from-zinc-900 dark:via-zinc-900 dark:to-zinc-900">
-      <div className="pointer-events-none absolute -right-12 -top-12 h-48 w-48 rounded-full bg-[#FF6A00]/10 blur-3xl dark:bg-[#FF6A00]/8" />
+    <section className="relative overflow-hidden rounded-2xl border-2 border-[#FF6A00]/25 bg-gradient-to-br from-[#FFF7ED] via-white to-white p-5 shadow-sm sm:p-6">
+      <div className="pointer-events-none absolute -right-12 -top-12 h-48 w-48 rounded-full bg-[#FF6A00]/10 blur-3xl" />
 
       <div className="relative">
-        <div className="inline-flex items-center gap-1.5 text-[10px] font-medium uppercase tracking-wider text-muted-foreground/85 dark:text-muted-foreground/70">
+        <div className="inline-flex items-center gap-1.5 text-[10px] font-medium uppercase tracking-wider text-muted-foreground/85">
           <Sparkles className="h-3 w-3 shrink-0 opacity-80" aria-hidden />
           {done ? "You did it" : "Debt-free countdown"}
         </div>

@@ -109,7 +109,7 @@ export function PayoffRoadmap({ debts, payments, strategy, extraMonthly }: Payof
                   )}
                 </div>
 
-                <div className="min-w-0 flex-1 rounded-2xl border border-[#E5E7EB] bg-[#FAFAFA] p-4 shadow-sm sm:p-5 dark:border-zinc-700 dark:bg-zinc-900/40">
+                <div className="min-w-0 flex-1 rounded-2xl border border-[#E5E7EB] bg-[#FAFAFA] p-4 shadow-sm sm:p-5">
                   <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
                     <div className="min-w-0 flex-1 space-y-2">
                       <div className="font-display text-base font-semibold sm:text-lg">
@@ -167,21 +167,21 @@ function DebtFreeMilestone({
         </div>
       </div>
 
-      <div className="min-w-0 flex-1 rounded-2xl border-2 border-success/55 bg-success-soft/50 p-4 shadow-sm dark:border-success/50 dark:bg-success/15 sm:p-5">
+      <div className="min-w-0 flex-1 rounded-2xl border-2 border-success/55 bg-success-soft/50 p-4 shadow-sm sm:p-5">
         <div className="font-display text-lg font-bold text-success sm:text-xl">Debt-free</div>
         {allPaid ? (
-          <p className="mt-3 text-sm leading-relaxed text-muted-foreground dark:text-success-foreground/85">
+          <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
             You’ve cleared everything on your plan. Aim your cash flow toward an emergency fund,
             retirement, or other goals.
           </p>
         ) : redirectMonthly > 0 ? (
-          <p className="mt-3 text-sm leading-relaxed text-muted-foreground dark:text-success-foreground/85">
+          <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
             At that point, you could redirect{" "}
             <span className="font-semibold text-foreground">{formatMoney(redirectMonthly)}</span>
             /mo toward investments and savings.
           </p>
         ) : (
-          <p className="mt-3 text-sm leading-relaxed text-muted-foreground dark:text-success-foreground/85">
+          <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
             When the last balance hits zero, you’ll free up the payments you’d been stacking toward
             debt.
           </p>

@@ -82,8 +82,8 @@ export function AppLayout() {
   }
 
   return (
-    <div className="min-h-screen bg-muted dark:bg-background px-4 sm:px-6 lg:px-12">
-      <div className="mx-auto flex min-h-screen w-full max-w-[1320px] bg-background dark:bg-card lg:border lg:border-border lg:shadow-sm">
+    <div className="min-h-screen bg-muted px-4 sm:px-6 lg:px-12">
+      <div className="mx-auto flex min-h-screen w-full max-w-[1320px] bg-background lg:border lg:border-border lg:shadow-sm">
         {/* Desktop sidebar */}
         <aside className="sticky top-0 hidden h-screen w-[248px] shrink-0 flex-col border-r border-border md:flex">
           <div className="border-b border-border px-4 pb-4 pt-5">
@@ -100,9 +100,9 @@ export function AppLayout() {
                 <Link
                   key={n.to}
                   to={n.to}
-                  className={`flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-bold transition-all ${
+                  className={`flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-bold transition-all${
                     active
-                      ? "border border-primary/30 bg-primary-soft text-primary shadow-[0_8px_20px_rgba(255,106,0,0.10)] dark:shadow-[0_8px_24px_rgba(251,146,60,0.12)]"
+                      ? "border border-primary/30 bg-primary-soft text-primary shadow-[0_8px_20px_rgba(255,106,0,0.10)]"
                       : "border border-transparent text-foreground hover:bg-accent hover:text-primary"
                   }`}
                 >
@@ -120,7 +120,7 @@ export function AppLayout() {
           <div className="mt-auto border-t border-border px-3 pt-3">
             <Link
               to="/app/settings"
-              className={`mb-3 flex w-full items-center justify-center gap-2 rounded-2xl px-4 py-2.5 text-sm font-semibold transition-colors ${
+              className={`mb-3 flex items-center gap-3 rounded-2xl px-4 py-2.5 text-sm font-semibold transition-colors ${
                 isNavActive(location.pathname, "/app/settings", false)
                   ? "border border-primary/25 bg-primary-soft text-primary"
                   : "border border-transparent text-muted-foreground hover:bg-accent hover:text-foreground"
@@ -151,7 +151,7 @@ export function AppLayout() {
         {/* Main column */}
         <div className="flex min-w-0 flex-1 flex-col">
           {/* Mobile top bar */}
-          <header className="sticky top-0 z-30 flex items-center justify-between gap-2 border-b border-border bg-background px-4 py-3 md:hidden dark:bg-card">
+          <header className="sticky top-0 z-30 flex items-center justify-between gap-2 border-b border-border bg-background px-4 py-3 md:hidden">
             <Logo to="/app" size="md" />
             <div className="flex shrink-0 items-center gap-1">
               <Link
@@ -182,7 +182,7 @@ export function AppLayout() {
 
           {/* Mobile bottom nav */}
           <nav
-            className="fixed bottom-0 left-0 right-0 z-30 border-t border-border bg-background/95 backdrop-blur-md md:hidden dark:bg-card/95"
+            className="fixed bottom-0 left-0 right-0 z-30 border-t border-border bg-background/95 backdrop-blur-md md:hidden"
             aria-label="Mobile main"
           >
             <div className="mx-auto flex max-w-lg items-stretch justify-around px-1 py-2 pb-[max(0.5rem,env(safe-area-inset-bottom))]">

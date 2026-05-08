@@ -57,8 +57,8 @@ export function WinsPersonalBestHero({ eng, compact }: Props) {
   }, [bestMonthAmt, monthPaid]);
 
   const shell = compact
-    ? "relative overflow-hidden rounded-2xl border border-[#E5E7EB] bg-white p-4 shadow-sm sm:p-5 dark:border-zinc-700 dark:bg-zinc-900/40"
-    : "relative overflow-hidden rounded-3xl border border-[#FF6A00]/20 bg-gradient-to-br from-[#FFF7ED] via-white to-[#FAFAFA] p-5 shadow-sm sm:p-8 dark:border-zinc-700 dark:from-zinc-900 dark:via-zinc-900 dark:to-zinc-900";
+    ? "relative overflow-hidden rounded-2xl border border-[#E5E7EB] bg-white p-4 shadow-sm sm:p-5"
+    : "relative overflow-hidden rounded-3xl border border-[#FF6A00]/20 bg-gradient-to-br from-[#FFF7ED] via-white to-[#FAFAFA] p-5 shadow-sm sm:p-8";
 
   return (
     <motion.section
@@ -75,19 +75,19 @@ export function WinsPersonalBestHero({ eng, compact }: Props) {
       )}
 
       <div className={`relative ${compact ? "mb-4" : "mb-8"}`}>
-        <div className="inline-flex items-center gap-2 rounded-full border border-[#E5E7EB] bg-white px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-[#EA580C] shadow-sm dark:border-zinc-600 dark:bg-zinc-800 dark:text-orange-400 sm:px-3 sm:py-1 sm:text-[11px]">
+        <div className="inline-flex items-center gap-2 rounded-full border border-[#E5E7EB] bg-white px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-[#EA580C] shadow-sm sm:px-3 sm:py-1 sm:text-[11px]">
           <Trophy className="h-3 w-3 sm:h-3.5 sm:w-3.5" aria-hidden />
           Personal challenge
         </div>
         <h2
-          className={`mt-3 font-display font-bold tracking-tight text-[#0F172A] dark:text-zinc-100 ${
+          className={`mt-3 font-display font-bold tracking-tight text-[#0F172A]${
             compact ? "text-lg sm:text-xl" : "mt-4 text-2xl sm:text-3xl"
           }`}
         >
           Crush your averages
         </h2>
         <p
-          className={`mt-1.5 max-w-xl text-[#475569] dark:text-zinc-400 ${
+          className={`mt-1.5 max-w-xl text-[#475569]${
             compact ? "text-xs leading-relaxed sm:text-sm" : "mt-2 text-sm leading-relaxed"
           }`}
         >
@@ -122,7 +122,7 @@ export function WinsPersonalBestHero({ eng, compact }: Props) {
 
       {eng.weekPaid > eng.prevWeekPaid && eng.prevWeekPaid > 0 && (
         <div
-          className={`relative flex flex-wrap items-center gap-2 rounded-xl border border-[#E5E7EB] bg-white px-3 py-2 text-sm shadow-sm dark:border-zinc-700 dark:bg-zinc-800/80 ${
+          className={`relative flex flex-wrap items-center gap-2 rounded-xl border border-[#E5E7EB] bg-white px-3 py-2 text-sm shadow-sm${
             compact ? "mt-4 text-xs sm:text-sm" : "mt-6 rounded-2xl px-4 py-3"
           }`}
         >
@@ -162,9 +162,9 @@ function HeroStatBlock({
 }) {
   return (
     <div
-      className={`relative rounded-xl border border-[#E5E7EB] bg-white dark:border-zinc-700 dark:bg-zinc-900/90 ${
+      className={`relative rounded-xl border border-[#E5E7EB] bg-white${
         compact ? "p-3.5 sm:p-4" : "rounded-2xl p-5 sm:p-6"
-      } ${hot ? "shadow-[0_14px_35px_rgba(255,106,0,0.14)] ring-2 ring-[#FF6A00]/20" : "shadow-sm"}`}
+      }${hot ? "shadow-[0_14px_35px_rgba(255,106,0,0.14)] ring-2 ring-[#FF6A00]/20" : "shadow-sm"}`}
     >
       <div className={`flex items-start ${compact ? "gap-3" : "gap-4"}`}>
         <div
@@ -176,27 +176,27 @@ function HeroStatBlock({
         </div>
         <div className="min-w-0 flex-1">
           <div
-            className={`font-semibold uppercase tracking-wider text-[#94A3B8] dark:text-zinc-500 ${
+            className={`font-semibold uppercase tracking-wider text-[#94A3B8]${
               compact ? "text-[10px]" : "text-[11px]"
             }`}
           >
             {label}
           </div>
           <div
-            className={`mt-0.5 font-display font-black tabular-nums tracking-tight text-[#0F172A] dark:text-zinc-100 ${
+            className={`mt-0.5 font-display font-black tabular-nums tracking-tight text-[#0F172A]${
               compact ? "text-2xl sm:text-3xl" : "text-3xl sm:text-4xl"
             }`}
           >
             {amount}
           </div>
           <div
-            className={`flex flex-wrap items-baseline justify-between gap-2 border-t border-[#E5E7EB] dark:border-zinc-700 ${
+            className={`flex flex-wrap items-baseline justify-between gap-2 border-t border-[#E5E7EB]${
               compact ? "mt-2 pt-2" : "mt-3 pt-3"
             }`}
           >
             <div>
               <div
-                className={`font-medium uppercase tracking-wider text-[#94A3B8] dark:text-zinc-500 ${
+                className={`font-medium uppercase tracking-wider text-[#94A3B8]${
                   compact ? "text-[10px]" : "text-[11px]"
                 }`}
               >
@@ -219,7 +219,7 @@ function HeroStatBlock({
         </div>
       </div>
       <p
-        className={`font-medium leading-snug text-[#475569] dark:text-zinc-300 ${
+        className={`font-medium leading-snug text-[#475569]${
           compact ? "mt-2 text-xs sm:text-sm" : "mt-4 text-sm"
         }`}
       >
@@ -228,7 +228,7 @@ function HeroStatBlock({
       {progress !== null && (
         <div className={compact ? "mt-2.5" : "mt-4"}>
           <div
-            className={`mb-1.5 flex justify-between font-semibold uppercase tracking-wider text-[#94A3B8] dark:text-zinc-500 ${
+            className={`mb-1.5 flex justify-between font-semibold uppercase tracking-wider text-[#94A3B8]${
               compact ? "text-[10px]" : "text-[11px]"
             }`}
           >

@@ -28,7 +28,7 @@ export function ChallengeCard({ eng }: { eng: Engagement }) {
         <div className="mt-4 grid gap-2 sm:grid-cols-2">
           <button
             onClick={() => eng.acceptChallenge("log_one", 1)}
-            className="rounded-2xl border-2 border-primary bg-primary-soft p-4 text-left shadow-sm ring-1 ring-primary/15 transition-all hover:-translate-y-0.5 dark:ring-primary/25"
+            className="rounded-2xl border-2 border-primary bg-primary-soft p-4 text-left shadow-sm ring-1 ring-primary/15 transition-all hover:-translate-y-0.5"
           >
             <div className="text-[10px] font-bold uppercase tracking-wide text-primary">
               Recommended
