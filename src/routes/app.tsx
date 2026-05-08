@@ -13,6 +13,8 @@ import {
 import { useAuth } from "@/lib/auth";
 import { Logo } from "@/components/Logo";
 import { supabase } from "@/integrations/supabase/client";
+import { MilestoneEarnedDialog } from "@/components/debt/MilestoneEarnedDialog";
+import { useEngagement } from "@/lib/engagement";
 
 export const Route = createFileRoute("/app")({
   component: AppLayout,
@@ -45,6 +47,7 @@ export function AppLayout() {
   const { user, loading, signOut } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
+  useEngagement();
 
   useEffect(() => {
     if (loading) return;
@@ -176,6 +179,7 @@ export function AppLayout() {
 
           <main className="w-full flex-1 px-4 py-6 pb-24 md:px-6 md:py-8 md:pb-8 lg:px-10">
             <div className="mx-auto w-full max-w-6xl">
+              <MilestoneEarnedDialog />
               <Outlet />
             </div>
           </main>

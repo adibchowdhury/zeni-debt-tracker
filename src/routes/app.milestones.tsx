@@ -215,7 +215,7 @@ function unlockSupportingFor(
 }
 
 function MilestonesPage() {
-  const reduce = useReducedMotion();
+  const reduce = useReducedMotion() ?? false;
   const store = useDebtStore();
   const eng = useEngagement();
   const { debts, payments, strategy, extraMonthly } = store;

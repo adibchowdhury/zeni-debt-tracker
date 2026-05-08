@@ -248,6 +248,19 @@ export function useEngagement(): Engagement {
       if (unlocked.has(m.key)) continue;
       if (m.check(achCtx)) newlyUnlocked.push(m.key);
     }
+
+    // Show celebration immediately (don't wait for network + reload).
+    if (typeof window !== "undefined" && newlyUnlocked.length > 0) {
+      window.dispatchEvent(
+        new CustomEvent("debtfree:milestone-earned", { detail: { keys: newlyUnlocked } }),
+      );
+    }
+
+    // Optimistically mark as unlocked locally so we don't re-fire while the insert is in-flight.
+    if (newlyUnlocked.length > 0) {
+      setUnlocked((prev) => new Set([...prev, ...newlyUnlocked]));
+    }
+
     if (newlyUnlocked.length > 0) {
       tasks.push(
         supabase
@@ -282,7 +295,9 @@ export function useEngagement(): Engagement {
     }
 
     if (tasks.length > 0) {
-      void Promise.all(tasks).then(() => load());
+      void Promise.all(tasks).then(() => {
+        load();
+      });
     }
   }, [
     stats.weekPaid,
