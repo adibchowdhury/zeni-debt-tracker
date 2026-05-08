@@ -59,6 +59,7 @@ function Landing() {
       <PreviewSection />
       <SocialProof />
       <FAQSection />
+      <PricingSection />
       <FinalCTA />
     </div>
   );
@@ -77,7 +78,7 @@ function Hero() {
   const d = (ms: number) => (reduce ? 0 : ms);
 
   return (
-    <section className="relative overflow-hidden bg-white lg:min-h-[calc(100vh-73px)]">
+    <section className="relative overflow-hidden bg-background lg:min-h-[calc(100vh-73px)]">
       {/* Soft brand accents — energetic, not beige */}
       <div className="pointer-events-none absolute -top-24 -left-24 h-72 w-72 rounded-full bg-primary/12 blur-3xl" />
       <div className="pointer-events-none absolute -bottom-32 -right-24 h-80 w-80 rounded-full bg-[#FACC15]/20 blur-3xl" />
@@ -163,7 +164,7 @@ function SellingBar() {
 
   return (
     <section className="relative z-10 px-5 pb-20 sm:pb-24">
-      <div className="mx-auto -mt-8 grid max-w-6xl gap-4 rounded-[2rem] border border-border bg-white p-4 shadow-sm sm:grid-cols-2 lg:grid-cols-4 lg:p-5">
+      <div className="mx-auto -mt-8 grid max-w-6xl gap-4 rounded-[2rem] border border-border bg-card p-4 shadow-sm sm:grid-cols-2 lg:grid-cols-4 lg:p-5">
         {items.map((item) => (
           <div
             key={item.title}
@@ -625,7 +626,7 @@ function FeatureTabsSection() {
   const reverse = activeIndex % 2 === 1;
 
   return (
-    <section className="bg-gradient-to-b from-white to-[#FAFAFA] py-20 sm:py-24">
+    <section className="bg-gradient-to-b from-background to-muted py-20 sm:py-24">
       <div className="mx-auto max-w-6xl px-5">
         <div className="mx-auto max-w-2xl text-center">
           <h2 className="font-display text-3xl font-bold leading-[1.08] tracking-[-0.03em] sm:text-4xl sm:leading-[1.1] lg:text-5xl">
@@ -648,7 +649,9 @@ function FeatureTabsSection() {
                   type="button"
                   onClick={() => setActive(tab.key)}
                   className={`inline-flex shrink-0 items-center gap-3 rounded-xl border px-6 py-3.5 text-base font-semibold shadow-sm transition ${
-                    selected ? "text-foreground" : "border-border bg-white text-[#475569] hover:bg-[#FAFAFA] hover:text-[#0F172A]"
+                    selected
+                      ? "text-foreground"
+                      : "border-border bg-card text-muted-foreground hover:bg-secondary hover:text-foreground"
                   }`}
                   style={
                     selected
@@ -681,7 +684,7 @@ function FeatureTabsSection() {
             transition={reduce ? { duration: 0.15 } : { duration: 0.5, ease: "easeOut" }}
           >
             <div
-              className="inline-flex items-center gap-2 rounded-full border bg-white px-3 py-1 text-xs font-semibold"
+              className="inline-flex items-center gap-2 rounded-full border bg-card px-3 py-1 text-xs font-semibold"
               style={{ borderColor: theme.border, color: theme.accent }}
             >
               <t.icon className="h-4 w-4" style={{ color: theme.accent }} />
@@ -694,7 +697,7 @@ function FeatureTabsSection() {
 
             <ul className="mt-6 space-y-3">
               {t.bullets.map((b) => (
-                <li key={b} className="flex items-start gap-3 text-sm text-[#475569]">
+                <li key={b} className="flex items-start gap-3 text-sm text-muted-foreground">
                   <Check className="mt-0.5 h-4 w-4 shrink-0" style={{ color: theme.accent }} />
                   <span>{b}</span>
                 </li>
@@ -735,7 +738,12 @@ function FeaturePreview({ tab }: { tab: FeatureTabKey }) {
 
   if (tab === "dashboard") {
     return (
-      <div className={shell} style={{ background: `linear-gradient(135deg, #ffffff 0%, #ffffff 55%, ${theme.tint} 100%)` }}>
+      <div
+        className={shell}
+        style={{
+          background: `linear-gradient(135deg, var(--card) 0%, var(--card) 55%, ${theme.tint} 100%)`,
+        }}
+      >
         <div className="flex items-center justify-between">
           <div
             className="text-[11px] font-semibold uppercase tracking-wider"
@@ -743,7 +751,7 @@ function FeaturePreview({ tab }: { tab: FeatureTabKey }) {
           >
             Overall progress
           </div>
-          <div className="text-xs font-semibold text-[#475569]">Debt-free by Jun 2029</div>
+          <div className="text-xs font-semibold text-muted-foreground">Debt-free by Jun 2029</div>
         </div>
         <div className="mt-4 grid grid-cols-3 gap-3">
           {[
@@ -751,7 +759,7 @@ function FeaturePreview({ tab }: { tab: FeatureTabKey }) {
             { k: "Remaining", v: "$11,120" },
             { k: "Paid", v: "$7,180" },
           ].map((x) => (
-            <div key={x.k} className="rounded-2xl border border-border bg-white/80 p-4">
+            <div key={x.k} className="rounded-2xl border border-border bg-background/80 p-4">
               <div className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
                 {x.k}
               </div>
@@ -788,7 +796,11 @@ function FeaturePreview({ tab }: { tab: FeatureTabKey }) {
           </div>
           <div
             className="rounded-full px-3 py-1 text-xs font-semibold"
-            style={{ backgroundColor: theme.tint, color: theme.accent, border: `1px solid ${theme.border}` }}
+            style={{
+              backgroundColor: theme.tint,
+              color: theme.accent,
+              border: `1px solid ${theme.border}`,
+            }}
           >
             5 weeks 🔥
           </div>
@@ -800,11 +812,9 @@ function FeaturePreview({ tab }: { tab: FeatureTabKey }) {
               <div
                 key={i}
                 className={`flex h-9 items-center justify-center rounded-xl border ${
-                  on ? "" : "border-border bg-white"
+                  on ? "" : "border-border bg-secondary"
                 }`}
-                style={
-                  on ? { borderColor: theme.border, backgroundColor: theme.tint } : undefined
-                }
+                style={on ? { borderColor: theme.border, backgroundColor: theme.tint } : undefined}
               >
                 {on && <Check className="h-4 w-4" style={{ color: theme.accent }} />}
               </div>
@@ -820,7 +830,12 @@ function FeaturePreview({ tab }: { tab: FeatureTabKey }) {
 
   if (tab === "whatif") {
     return (
-      <div className={shell} style={{ background: `linear-gradient(135deg, #ffffff 0%, #ffffff 55%, ${theme.tint} 100%)` }}>
+      <div
+        className={shell}
+        style={{
+          background: `linear-gradient(135deg, var(--card) 0%, var(--card) 55%, ${theme.tint} 100%)`,
+        }}
+      >
         <div className="flex items-center justify-between">
           <div
             className="text-[11px] font-semibold uppercase tracking-wider"
@@ -828,9 +843,9 @@ function FeaturePreview({ tab }: { tab: FeatureTabKey }) {
           >
             What-if
           </div>
-          <div className="text-xs font-semibold text-[#475569]">+ $50 / month</div>
+          <div className="text-xs font-semibold text-muted-foreground">+ $50 / month</div>
         </div>
-        <div className="mt-5 rounded-2xl border border-border bg-white/85 p-5">
+        <div className="mt-5 rounded-2xl border border-border bg-card/85 p-5">
           <div className="flex items-baseline justify-between">
             <div>
               <div className="text-xs font-semibold text-muted-foreground">You save</div>
@@ -847,7 +862,10 @@ function FeaturePreview({ tab }: { tab: FeatureTabKey }) {
             </div>
           </div>
           <div className="mt-4 h-2.5 w-full overflow-hidden rounded-full bg-secondary">
-            <div className="h-full w-[62%] rounded-full" style={{ backgroundColor: theme.accent }} />
+            <div
+              className="h-full w-[62%] rounded-full"
+              style={{ backgroundColor: theme.accent }}
+            />
           </div>
         </div>
         <div className="mt-4 rounded-2xl border border-border bg-muted/20 p-4 text-sm text-muted-foreground">
@@ -867,7 +885,7 @@ function FeaturePreview({ tab }: { tab: FeatureTabKey }) {
           >
             Payment history
           </div>
-          <div className="text-xs font-semibold text-[#475569]">$420 this month</div>
+          <div className="text-xs font-semibold text-muted-foreground">$420 this month</div>
         </div>
         <div className="mt-5 space-y-3">
           {[
@@ -877,13 +895,16 @@ function FeaturePreview({ tab }: { tab: FeatureTabKey }) {
           ].map((x) => (
             <div
               key={x.d}
-              className="flex items-center justify-between rounded-2xl border border-border bg-white p-4"
+              className="flex items-center justify-between rounded-2xl border border-border bg-card p-4"
             >
               <div className="min-w-0">
                 <div className="text-sm font-semibold text-foreground">{x.a}</div>
                 <div className="text-xs text-muted-foreground">{x.d}</div>
               </div>
-              <div className="font-display text-sm font-bold tabular-nums" style={{ color: theme.accent }}>
+              <div
+                className="font-display text-sm font-bold tabular-nums"
+                style={{ color: theme.accent }}
+              >
                 {x.v}
               </div>
             </div>
@@ -895,7 +916,12 @@ function FeaturePreview({ tab }: { tab: FeatureTabKey }) {
 
   if (tab === "celebrations") {
     return (
-      <div className={shell} style={{ background: `linear-gradient(135deg, #ffffff 0%, #ffffff 55%, ${theme.tint} 100%)` }}>
+      <div
+        className={shell}
+        style={{
+          background: `linear-gradient(135deg, var(--card) 0%, var(--card) 55%, ${theme.tint} 100%)`,
+        }}
+      >
         <div className="flex items-center justify-between">
           <div
             className="text-[11px] font-semibold uppercase tracking-wider"
@@ -907,7 +933,10 @@ function FeaturePreview({ tab }: { tab: FeatureTabKey }) {
             10% milestone
           </div>
         </div>
-        <div className="mt-5 rounded-3xl p-5" style={{ border: `1px solid ${theme.border}`, backgroundColor: theme.tint }}>
+        <div
+          className="mt-5 rounded-3xl p-5"
+          style={{ border: `1px solid ${theme.border}`, backgroundColor: theme.tint }}
+        >
           <div className="flex items-center gap-3">
             <div
               className="flex h-12 w-12 items-center justify-center rounded-2xl text-white"
@@ -927,7 +956,7 @@ function FeaturePreview({ tab }: { tab: FeatureTabKey }) {
           {["First payment", "$500 paid", "Halfway"].map((x) => (
             <div
               key={x}
-              className="flex-1 rounded-2xl border border-border bg-white p-4 text-center"
+              className="flex-1 rounded-2xl border border-border bg-card p-4 text-center"
             >
               <div className="text-xs font-semibold text-muted-foreground">Badge</div>
               <div className="mt-1 text-sm font-semibold text-foreground">{x}</div>
@@ -948,7 +977,7 @@ function FeaturePreview({ tab }: { tab: FeatureTabKey }) {
         >
           Debts
         </div>
-        <div className="text-xs font-semibold text-[#475569]">6 accounts</div>
+        <div className="text-xs font-semibold text-muted-foreground">6 accounts</div>
       </div>
       <div className="mt-5 grid gap-3">
         {[
@@ -958,7 +987,7 @@ function FeaturePreview({ tab }: { tab: FeatureTabKey }) {
         ].map((x) => (
           <div
             key={x.n}
-            className="flex items-center justify-between rounded-2xl border border-border bg-white p-4"
+            className="flex items-center justify-between rounded-2xl border border-border bg-card p-4"
           >
             <div className="min-w-0">
               <div className="text-sm font-semibold text-foreground">{x.n}</div>
@@ -996,7 +1025,7 @@ function SolutionSection() {
   ];
 
   return (
-    <section className="bg-gradient-to-b from-white to-[#FAFAFA] py-20 sm:py-24">
+    <section className="bg-gradient-to-b from-background to-muted py-20 sm:py-24">
       <div className="mx-auto max-w-6xl px-5">
         <div className="mx-auto max-w-2xl text-center">
           <h2 className="font-display text-3xl font-bold leading-[1.08] tracking-[-0.03em] sm:text-4xl sm:leading-[1.1] lg:text-5xl">
@@ -1091,7 +1120,8 @@ function HowItWorks() {
           Your debt-free plan in 3 simple steps.
         </h2>
         <p className="mt-3 text-muted-foreground">
-          A calm workflow that keeps you focused, consistent, and motivated as the balance goes down.
+          A calm workflow that keeps you focused, consistent, and motivated as the balance goes
+          down.
         </p>
       </div>
 
@@ -1148,7 +1178,7 @@ function HowItWorks() {
 
 function PreviewSection() {
   return (
-    <section className="bg-gradient-to-b from-[#FAFAFA] to-white py-20 sm:py-24">
+    <section className="bg-gradient-to-b from-muted to-background py-20 sm:py-24">
       <div className="mx-auto max-w-6xl px-5">
         <div className="mx-auto max-w-2xl text-center">
           <h2 className="font-display text-3xl font-bold leading-[1.08] tracking-[-0.03em] sm:text-4xl sm:leading-[1.1] lg:text-5xl">
@@ -1275,7 +1305,7 @@ function SocialProof() {
 
   return (
     <section className="px-5 py-20 sm:py-24">
-      <div className="mx-auto max-w-6xl rounded-[2rem] border border-border bg-white p-6 shadow-sm sm:p-10">
+      <div className="mx-auto max-w-6xl rounded-[2rem] border border-border bg-card p-6 shadow-sm sm:p-10">
         <div className="grid gap-10 lg:grid-cols-[0.75fr_1.25fr] lg:items-start">
           <div className="text-center lg:text-left">
             <div className="mb-3 inline-flex rounded-full bg-primary-soft px-3 py-1 text-xs font-semibold uppercase tracking-wider text-primary">
@@ -1382,7 +1412,7 @@ function FAQSection() {
   const [openIndex, setOpenIndex] = useState<number | null>(0);
 
   return (
-    <section className="bg-gradient-to-b from-white to-[#FAFAFA] px-5 py-20 sm:py-24">
+    <section className="bg-gradient-to-b from-background to-muted px-5 py-20 sm:py-24">
       <div className="mx-auto max-w-3xl">
         <div className="text-center">
           <div className="mb-3 inline-flex rounded-full bg-primary-soft px-3 py-1 text-xs font-semibold uppercase tracking-wider text-primary">
@@ -1438,6 +1468,162 @@ function FAQSection() {
 }
 
 /* -------------------------------------------------------------------------- */
+/* Pricing                                                                    */
+/* -------------------------------------------------------------------------- */
+
+const PRICING_FEATURES = [
+  "Debt payoff dashboard",
+  "Debt-free date tracking",
+  "Progress milestones and badges",
+  "Weekly payment streaks",
+  "What-if extra payment calculator",
+  "Debt payoff motivation feed",
+  "Payment history",
+  "Secure account access",
+  "Cancel anytime",
+];
+
+function PricingSection() {
+  return (
+    <section id="pricing" className="bg-background px-5 py-20 sm:py-24">
+      <div className="mx-auto max-w-6xl">
+        <div className="mx-auto mb-10 max-w-4xl rounded-3xl border border-primary/25 bg-gradient-to-br from-accent via-background to-background px-6 py-5 shadow-sm">
+          <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
+            <p className="text-sm font-semibold text-heading">Zeni is free during beta.</p>
+            <p className="text-sm text-muted-foreground">
+              Full access for now — paid plans will go live later.
+            </p>
+          </div>
+        </div>
+
+        <div className="mx-auto max-w-3xl text-center">
+          <h2 className="font-display text-3xl font-bold leading-[1.08] tracking-[-0.03em] sm:text-4xl sm:leading-[1.1] md:text-5xl">
+            Simple pricing for staying motivated with debt.
+          </h2>
+          <p className="mx-auto mt-5 max-w-2xl text-base leading-7 text-muted-foreground sm:text-lg">
+            Start free, build your payoff plan, and keep turning debt progress into small wins. No
+            confusing tiers. No pressure.
+          </p>
+        </div>
+
+        <div className="mx-auto mt-12 grid max-w-5xl gap-6 md:grid-cols-2">
+          <div className="relative rounded-[2rem] border border-border bg-card p-8 shadow-sm sm:p-10">
+            <div className="mb-6">
+              <h3 className="font-display text-xl font-semibold text-heading">Monthly</h3>
+              <p className="mt-1 text-sm text-muted-foreground">
+                Flexible access after your free month.
+              </p>
+            </div>
+
+            <div className="rounded-2xl border border-border bg-secondary p-5">
+              <div className="flex items-end gap-1">
+                <span className="text-5xl font-semibold tracking-tight text-foreground">$5</span>
+                <span className="pb-1 text-sm text-muted-foreground">/month</span>
+              </div>
+              <p className="mt-2 text-sm text-muted-foreground">Billed monthly. Cancel anytime.</p>
+            </div>
+
+            <ul className="mt-8 space-y-3">
+              {PRICING_FEATURES.map((feature) => (
+                <li key={feature} className="flex items-start gap-3 text-sm text-muted-foreground">
+                  <Check className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
+                  <span>{feature}</span>
+                </li>
+              ))}
+            </ul>
+
+            <Link
+              to="/signup"
+              className="group mt-8 flex w-full items-center justify-center gap-2 rounded-full border border-border bg-background px-6 py-3.5 text-sm font-semibold text-foreground shadow-sm transition hover:bg-secondary"
+            >
+              Start free
+              <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+            </Link>
+          </div>
+
+          <div className="relative overflow-hidden rounded-[2rem] border border-primary/25 bg-gradient-to-br from-accent via-background to-accent p-8 shadow-[0_14px_35px_rgba(255,106,0,0.14)] sm:p-10 dark:shadow-[0_14px_35px_rgba(251,146,60,0.12)]">
+            <div className="pointer-events-none absolute right-0 top-0 h-32 w-32 rounded-full bg-primary/10 blur-3xl" />
+            <div className="pointer-events-none absolute bottom-0 left-0 h-32 w-32 rounded-full bg-[#FACC15]/15 blur-3xl" />
+
+            <div className="relative">
+              <div className="mb-6 flex items-center justify-between gap-4">
+                <div>
+                  <h3 className="font-display text-xl font-semibold text-heading">Yearly</h3>
+                  <p className="mt-1 text-sm text-muted-foreground">
+                    Best for staying committed longer.
+                  </p>
+                </div>
+                <div className="rounded-full bg-primary px-3 py-1 text-xs font-semibold text-primary-foreground">
+                  Save $24
+                </div>
+              </div>
+
+              <div className="rounded-2xl border border-border bg-card/90 p-5 backdrop-blur-sm">
+                <div className="flex items-end gap-1">
+                  <span className="text-5xl font-semibold tracking-tight text-foreground">$3</span>
+                  <span className="pb-1 text-sm text-muted-foreground">/month</span>
+                </div>
+                <p className="mt-2 text-sm text-muted-foreground">
+                  Billed as <span className="font-semibold text-foreground">$36/year</span> instead
+                  of <span className="line-through">$60/year</span>.
+                </p>
+              </div>
+
+              <ul className="mt-8 space-y-3">
+                {PRICING_FEATURES.map((feature) => (
+                  <li
+                    key={`y-${feature}`}
+                    className="flex items-start gap-3 text-sm text-muted-foreground"
+                  >
+                    <Check className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
+                    <span>{feature}</span>
+                  </li>
+                ))}
+              </ul>
+
+              <Link
+                to="/signup"
+                className="group mt-8 flex w-full items-center justify-center gap-2 rounded-full bg-primary px-6 py-3.5 text-sm font-semibold text-primary-foreground shadow-sm transition hover:bg-[#EA580C]"
+              >
+                Start free
+                <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+              </Link>
+
+              <div className="mt-4 flex items-center justify-center gap-2 text-xs text-muted-foreground">
+                <ShieldCheck className="h-4 w-4 text-primary" />
+                No credit card required. Cancel anytime.
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="mx-auto mt-16 grid max-w-4xl gap-4 md:grid-cols-3">
+          {[
+            {
+              q: "Is the first month really free?",
+              a: "Yes. You can try Zeni before deciding if you want to keep using it.",
+            },
+            {
+              q: "What happens after the free month?",
+              a: "You can choose monthly billing or save with yearly billing.",
+            },
+            {
+              q: "Can I cancel anytime?",
+              a: "Yes. You are never locked in, and there are no confusing contracts.",
+            },
+          ].map((item) => (
+            <div key={item.q} className="rounded-3xl border border-border bg-card p-6 shadow-sm">
+              <h4 className="font-display text-sm font-semibold text-heading">{item.q}</h4>
+              <p className="mt-2 text-sm leading-6 text-muted-foreground">{item.a}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* -------------------------------------------------------------------------- */
 /* Final CTA                                                                  */
 /* -------------------------------------------------------------------------- */
 
@@ -1463,7 +1649,7 @@ function FinalCTA() {
           <div className="mt-7 flex flex-col items-center justify-center gap-3 sm:flex-row">
             <Link
               to="/signup"
-              className="group inline-flex w-full items-center justify-center gap-2 rounded-full bg-white px-7 py-3.5 text-base font-semibold text-[#0F172A] shadow-sm transition-transform hover:-translate-y-0.5 hover:bg-[#FAFAFA] sm:w-auto"
+              className="group inline-flex w-full items-center justify-center gap-2 rounded-full bg-background px-7 py-3.5 text-base font-semibold text-foreground shadow-sm transition-transform hover:-translate-y-0.5 hover:bg-secondary sm:w-auto"
             >
               Start My Debt-Free Plan
               <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />

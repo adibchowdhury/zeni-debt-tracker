@@ -128,7 +128,7 @@ function AchievementRow({
         <button
           type="button"
           onClick={() => carousel.scrollByCards(-1)}
-          className={`absolute -left-3 top-1/2 z-20 hidden -translate-y-1/2 items-center justify-center rounded-full border border-border bg-white/90 p-2 shadow-sm backdrop-blur transition-opacity sm:flex ${
+          className={`absolute -left-3 top-1/2 z-20 hidden -translate-y-1/2 items-center justify-center rounded-full border border-border bg-card/90 p-2 shadow-sm backdrop-blur transition-opacity sm:flex ${
             carousel.canLeft ? "opacity-100" : "pointer-events-none opacity-0"
           }`}
           aria-label={`Scroll ${WINS_SECTION_TITLE[section]} left`}
@@ -139,7 +139,7 @@ function AchievementRow({
         <button
           type="button"
           onClick={() => carousel.scrollByCards(1)}
-          className={`absolute -right-3 top-1/2 z-20 hidden -translate-y-1/2 items-center justify-center rounded-full border border-border bg-white/90 p-2 shadow-sm backdrop-blur transition-opacity sm:flex ${
+          className={`absolute -right-3 top-1/2 z-20 hidden -translate-y-1/2 items-center justify-center rounded-full border border-border bg-card/90 p-2 shadow-sm backdrop-blur transition-opacity sm:flex ${
             carousel.canRight ? "opacity-100" : "pointer-events-none opacity-0"
           }`}
           aria-label={`Scroll ${WINS_SECTION_TITLE[section]} right`}
@@ -325,16 +325,16 @@ function MilestonesPage() {
     return (
       <div className="mx-auto max-w-6xl space-y-8 pb-8">
         <div className="space-y-3">
-          <div className="h-8 max-w-xs animate-pulse rounded-lg bg-[#E5E7EB]" />
-          <div className="h-4 max-w-md animate-pulse rounded bg-[#E5E7EB]" />
-          <div className="h-2 max-w-lg animate-pulse rounded-full bg-[#E5E7EB]" />
+          <div className="h-8 max-w-xs animate-pulse rounded-lg bg-muted" />
+          <div className="h-4 max-w-md animate-pulse rounded bg-muted" />
+          <div className="h-2 max-w-lg animate-pulse rounded-full bg-muted" />
         </div>
         <div className="grid grid-cols-2 gap-6 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
           {Array.from({ length: 24 }).map((_, i) => (
             <div key={i} className="flex flex-col items-center gap-2">
-              <div className="h-[88px] w-[88px] animate-pulse rounded-full bg-[#E5E7EB] sm:h-[104px] sm:w-[104px]" />
-              <div className="h-3 w-20 animate-pulse rounded bg-[#E5E7EB]" />
-              <div className="h-2 w-16 animate-pulse rounded bg-[#E5E7EB]" />
+              <div className="h-[88px] w-[88px] animate-pulse rounded-full bg-muted sm:h-[104px] sm:w-[104px]" />
+              <div className="h-3 w-20 animate-pulse rounded bg-muted" />
+              <div className="h-2 w-16 animate-pulse rounded bg-muted" />
             </div>
           ))}
         </div>
@@ -343,20 +343,20 @@ function MilestonesPage() {
   }
 
   return (
-    <div className="relative mx-auto max-w-6xl bg-white px-5 pb-8">
+    <div className="relative mx-auto max-w-6xl bg-background px-5 pb-8">
       <WinsPageConfetti active={!reduce && burst} />
 
       <motion.header
         initial={reduce ? { opacity: 1 } : { opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
         transition={reduce ? { duration: 0.15 } : { duration: 0.45, ease: "easeOut" }}
-        className="border-b border-[#E5E7EB] pb-7 dark:border-zinc-800 sm:pb-7"
+        className="border-b border-border pb-7 sm:pb-7"
       >
         <div className="space-y-2">
           <h1 className="font-display text-3xl font-bold tracking-tight text-heading sm:text-4xl">
             Achievements
           </h1>
-          <p className="max-w-xl text-base text-[#475569] dark:text-zinc-400">
+          <p className="max-w-xl text-base text-muted-foreground">
             Celebrate every step toward debt freedom.
           </p>
         </div>
@@ -366,13 +366,13 @@ function MilestonesPage() {
             <p className="font-display text-4xl font-black tabular-nums tracking-tight text-[#FF6A00] sm:text-5xl">
               {unlocked} / {total}
             </p>
-            <p className="mt-0.5 text-sm font-semibold uppercase tracking-wide text-[#64748B] dark:text-zinc-500">
+            <p className="mt-0.5 text-sm font-semibold uppercase tracking-wide text-muted-foreground">
               unlocked
             </p>
           </div>
         </div>
 
-        <p className="mt-4 max-w-2xl text-sm font-medium leading-relaxed text-[#475569] dark:text-zinc-400">
+        <p className="mt-4 max-w-2xl text-sm font-medium leading-relaxed text-muted-foreground">
           {collectionMotivation}
         </p>
       </motion.header>

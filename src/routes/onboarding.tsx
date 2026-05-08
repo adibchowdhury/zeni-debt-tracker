@@ -163,14 +163,14 @@ function OnboardingPage() {
 
   if (loading || checking) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-white">
+      <div className="flex min-h-screen items-center justify-center bg-background">
         <div className="text-sm text-muted-foreground">Loading…</div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-white px-4 py-8 sm:py-12">
+    <div className="min-h-screen bg-background px-4 py-8 sm:py-12">
       <div className="mx-auto w-full max-w-md">
         <div className="mb-6">
           <div className="mb-2 flex items-center justify-between text-xs font-semibold uppercase tracking-wider text-muted-foreground">

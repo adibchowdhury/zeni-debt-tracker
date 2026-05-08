@@ -11,13 +11,15 @@ export function ChallengeCard({ eng }: { eng: Engagement }) {
 
   if (!eng.challenge) {
     return (
-      <section className="rounded-3xl border border-[#E5E7EB] bg-white p-6 shadow-sm ring-1 ring-[#FF6A00]/10">
+      <section className="rounded-3xl border border-border bg-card p-6 shadow-sm ring-1 ring-primary/10">
         <div className="flex items-start gap-3">
           <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary text-primary-foreground">
             <Target className="h-4 w-4" />
           </div>
           <div className="flex-1">
-            <div className="font-display text-base font-bold">Pick a challenge for this week</div>
+            <div className="font-display text-base font-bold text-foreground">
+              Pick a challenge for this week
+            </div>
             <p className="mt-0.5 text-sm text-muted-foreground">
               Optional — but small wins build big habits.
             </p>
@@ -26,17 +28,23 @@ export function ChallengeCard({ eng }: { eng: Engagement }) {
         <div className="mt-4 grid gap-2 sm:grid-cols-2">
           <button
             onClick={() => eng.acceptChallenge("log_one", 1)}
-            className="rounded-2xl border-2 border-primary bg-[#FFF7ED] p-4 text-left shadow-sm ring-1 ring-primary/15 transition-all hover:-translate-y-0.5"
+            className="rounded-2xl border-2 border-primary bg-primary-soft p-4 text-left shadow-sm ring-1 ring-primary/15 transition-all hover:-translate-y-0.5 dark:ring-primary/25"
           >
-            <div className="text-[10px] font-bold uppercase tracking-wide text-primary">Recommended</div>
-            <div className="mt-1 font-display text-sm font-bold">Log at least 1 payment</div>
+            <div className="text-[10px] font-bold uppercase tracking-wide text-primary">
+              Recommended
+            </div>
+            <div className="mt-1 font-display text-sm font-bold text-foreground">
+              Log at least 1 payment
+            </div>
             <div className="mt-0.5 text-xs text-muted-foreground">Build the habit</div>
           </button>
           <button
             onClick={() => eng.acceptChallenge("extra_payment", 50)}
             className="rounded-2xl border border-border/80 bg-muted/20 p-4 text-left transition-all hover:border-primary/40 hover:bg-card"
           >
-            <div className="font-display text-sm font-bold text-foreground/90">Pay an extra $50</div>
+            <div className="font-display text-sm font-bold text-foreground/90">
+              Pay an extra $50
+            </div>
             <div className="mt-0.5 text-xs text-muted-foreground">Beyond your minimums</div>
           </button>
         </div>
@@ -69,7 +77,7 @@ export function ChallengeCard({ eng }: { eng: Engagement }) {
 
   return (
     <section
-      className={`rounded-3xl border p-6 shadow-sm transition-colors ${completed ? "border-success/40 bg-success-soft/40" : "border-[#E5E7EB] bg-white"}`}
+      className={`rounded-3xl border p-6 shadow-sm transition-colors ${completed ? "border-success/40 bg-success-soft/40" : "border-border bg-card"}`}
     >
       <div className="flex items-start gap-3">
         <div
@@ -81,7 +89,7 @@ export function ChallengeCard({ eng }: { eng: Engagement }) {
           <div className="text-[11px] uppercase tracking-wider text-muted-foreground">
             This week's challenge
           </div>
-          <div className="font-display text-base font-bold">{goalText}</div>
+          <div className="font-display text-base font-bold text-foreground">{goalText}</div>
         </div>
         {!completed && (
           <button
@@ -112,7 +120,7 @@ export function ChallengeCard({ eng }: { eng: Engagement }) {
               eng.acceptChallenge("log_one", 1);
               setPicking(false);
             }}
-            className="rounded-xl border-2 border-primary bg-[#FFF7ED] p-3 text-left text-sm font-semibold hover:bg-[#FFF7ED]/90"
+            className="rounded-xl border-2 border-primary bg-primary-soft p-3 text-left text-sm font-semibold hover:bg-primary-soft/90"
           >
             Log 1 payment
           </button>
