@@ -23,31 +23,35 @@ function SignupPage() {
     if (loading) return;
     if (!email || !password) return;
     setLoading(true);
-    const redirectUrl = typeof window !== "undefined" ? `${window.location.origin}/app` : undefined;
-    const { error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        emailRedirectTo: redirectUrl,
-        data: { display_name: name || undefined },
-      },
-    });
-    setLoading(false);
+    try {
+      const redirectUrl =
+        typeof window !== "undefined" ? `${window.location.origin}/app` : undefined;
+      const { error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          emailRedirectTo: redirectUrl,
+          data: { display_name: name || undefined },
+        },
+      });
 
-    if (error) {
-      const message = error.message.toLowerCase();
+      if (error) {
+        const message = error.message.toLowerCase();
 
-      if (message.includes("rate") || message.includes("too many") || message.includes("429")) {
-        toast.error("Too many attempts. Please wait a minute and try again.");
+        if (message.includes("rate") || message.includes("too many") || message.includes("429")) {
+          toast.error("Too many attempts. Please wait a minute and try again.");
+          return;
+        }
+
+        toast.error("Unable to create account. Try a different email or password.");
         return;
       }
 
-      toast.error("Unable to create account. Try a different email or password.");
-      return;
+      toast.success("Check your email to finish creating your account.");
+      navigate({ to: "/login" });
+    } finally {
+      setLoading(false);
     }
-
-    toast.success("Check your email to finish creating your account.");
-    navigate({ to: "/login" });
   };
 
   return (

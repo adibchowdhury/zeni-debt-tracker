@@ -68,7 +68,7 @@ function OnboardingPage() {
         setChecking(false);
       }
     })();
-  }, [user, loading, navigate]);
+  }, [user?.id, loading, navigate]);
 
   const totalSteps = 4;
 

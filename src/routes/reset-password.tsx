@@ -17,7 +17,8 @@ function ResetPasswordPage() {
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
-    // Supabase fires PASSWORD_RECOVERY when the recovery link is processed
+    // Narrow listener for reset UX (PASSWORD_RECOVERY). AuthProvider also listens globally —
+    // both unsubscribe on unmount; avoid adding more listeners elsewhere without need.
     const { data: sub } = supabase.auth.onAuthStateChange((event) => {
       if (event === "PASSWORD_RECOVERY" || event === "SIGNED_IN") {
         setReady(true);
@@ -41,14 +42,17 @@ function ResetPasswordPage() {
       return;
     }
     setLoading(true);
-    const { error } = await supabase.auth.updateUser({ password });
-    setLoading(false);
-    if (error) {
-      toast.error(error.message);
-      return;
+    try {
+      const { error } = await supabase.auth.updateUser({ password });
+      if (error) {
+        toast.error(error.message);
+        return;
+      }
+      toast.success("Password updated! You're signed in.");
+      navigate({ to: "/app" });
+    } finally {
+      setLoading(false);
     }
-    toast.success("Password updated! You're signed in.");
-    navigate({ to: "/app" });
   };
 
   return (

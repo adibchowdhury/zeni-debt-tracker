@@ -130,7 +130,7 @@ export function DebtStoreProvider({ children }: { children: ReactNode }) {
       extraMonthly: Number(profileRes.data?.extra_monthly ?? 0),
       loading: false,
     });
-  }, [user]);
+  }, [user?.id]);
 
   useEffect(() => {
     refresh();

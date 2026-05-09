@@ -171,7 +171,7 @@ function useEngagementValue() {
     setUnlocked(new Set((milestonesRes.data ?? []).map((m) => m.milestone_key)));
 
     setLoading(false);
-  }, [user, stats.weekStart]);
+  }, [user?.id, stats.weekStart]);
 
   useEffect(() => {
     load();
@@ -322,7 +322,7 @@ function useEngagementValue() {
     store.strategy,
     store.extraMonthly,
     store.loading,
-    user,
+    user?.id,
     refreshTick,
     unlocked,
     bestWeek,
@@ -331,7 +331,7 @@ function useEngagementValue() {
 
   const acceptChallenge = useCallback(
     async (kind: WeeklyChallenge["kind"], goal: number) => {
-      if (!user) return;
+      if (!user?.id) return;
       await supabase.from("challenges").upsert(
         {
           user_id: user.id,
@@ -345,11 +345,11 @@ function useEngagementValue() {
       );
       load();
     },
-    [user, stats.weekStart, load],
+    [user?.id, stats.weekStart, load],
   );
 
   const skipChallenge = useCallback(async () => {
-    if (!user) return;
+    if (!user?.id) return;
     await supabase.from("challenges").upsert(
       {
         user_id: user.id,
@@ -362,7 +362,7 @@ function useEngagementValue() {
       { onConflict: "user_id,week_start" },
     );
     load();
-  }, [user, stats.weekStart, load]);
+  }, [user?.id, stats.weekStart, load]);
 
   const beatLastWeek = stats.weekPaid > stats.prevWeekPaid && stats.prevWeekPaid > 0;
   const newWeekBest =

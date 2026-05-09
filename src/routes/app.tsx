@@ -54,21 +54,23 @@ export function AppLayout() {
       navigate({ to: "/login" });
       return;
     }
+    const uid = user.id;
     let cancelled = false;
     (async () => {
       const { data } = await supabase
         .from("profiles")
         .select("onboarding_completed")
-        .eq("id", user.id)
+        .eq("id", uid)
         .maybeSingle();
-      if (!cancelled && data && !data.onboarding_completed) {
+      if (cancelled) return;
+      if (data && !data.onboarding_completed && !location.pathname.startsWith("/onboarding")) {
         navigate({ to: "/onboarding" });
       }
     })();
     return () => {
       cancelled = true;
     };
-  }, [loading, user, navigate]);
+  }, [loading, user?.id, navigate, location.pathname]);
 
   const logout = async () => {
     await signOut();
