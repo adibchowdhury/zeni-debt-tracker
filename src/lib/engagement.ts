@@ -1,4 +1,5 @@
-import { useEffect, useMemo, useState, useCallback } from "react";
+import { createElement, createContext, useContext, useEffect, useMemo, useState, useCallback } from "react";
+import type { ReactNode } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
 import { useDebtStore, type Payment } from "@/lib/storage";
@@ -40,7 +41,18 @@ export interface Engagement {
   skipChallenge: () => Promise<void>;
 }
 
-export function useEngagement(): Engagement {
+const EngagementContext = createContext<Engagement | null>(null);
+
+/**
+ * One engagement instance for the /app shell so child routes don’t each re-fetch Supabase
+ * and re-run milestone sync (slow Achievements / duplicate work).
+ */
+export function EngagementProvider({ children }: { children: ReactNode }) {
+  const value = useEngagementValue();
+  return createElement(EngagementContext.Provider, { value }, children);
+}
+
+function useEngagementValue() {
   const { user } = useAuth();
   const store = useDebtStore();
   const [loading, setLoading] = useState(true);
@@ -381,4 +393,12 @@ export function useEngagement(): Engagement {
     acceptChallenge,
     skipChallenge,
   };
+}
+
+export function useEngagement(): Engagement {
+  const ctx = useContext(EngagementContext);
+  if (!ctx) {
+    throw new Error("useEngagement must be used within EngagementProvider");
+  }
+  return ctx;
 }

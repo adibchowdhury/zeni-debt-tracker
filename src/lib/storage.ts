@@ -1,4 +1,12 @@
-import { useEffect, useState, useCallback } from "react";
+import {
+  createElement,
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+  useCallback,
+  type ReactNode,
+} from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
 
@@ -61,7 +69,13 @@ function bump() {
   if (typeof window !== "undefined") window.dispatchEvent(new CustomEvent(EVT));
 }
 
-export function useDebtStore(): DebtStore & DebtStoreActions {
+const DebtStoreContext = createContext<(DebtStore & DebtStoreActions) | null>(null);
+
+/**
+ * Single shared debt/payment store for the whole app. Without this, every component calling
+ * useDebtStore() had its own empty state until fetch — causing false "add first debt" on tab change.
+ */
+export function DebtStoreProvider({ children }: { children: ReactNode }) {
   const { user } = useAuth();
   const [state, setState] = useState<DebtStore>({
     debts: [],
@@ -100,12 +114,15 @@ export function useDebtStore(): DebtStore & DebtStoreActions {
       debtType: ((r as { debt_type?: string }).debt_type as DebtType) ?? "Other",
       dueDay: (r as { due_day?: number | null }).due_day ?? null,
     }));
-    const payments: Payment[] = (paymentsRes.data ?? []).map((r) => ({
-      id: r.id,
-      debtId: r.debt_id,
-      amount: Number(r.amount),
-      date: new Date(r.paid_at).getTime(),
-    }));
+    const payments: Payment[] = (paymentsRes.data ?? []).map((r) => {
+      const t = r.paid_at != null ? new Date(r.paid_at as string).getTime() : NaN;
+      return {
+        id: r.id,
+        debtId: r.debt_id,
+        amount: Number(r.amount),
+        date: Number.isFinite(t) ? t : 0,
+      };
+    });
     setState({
       debts,
       payments,
@@ -199,7 +216,7 @@ export function useDebtStore(): DebtStore & DebtStoreActions {
     bump();
   };
 
-  return {
+  const value: DebtStore & DebtStoreActions = {
     ...state,
     addDebt,
     updateDebt,
@@ -209,6 +226,16 @@ export function useDebtStore(): DebtStore & DebtStoreActions {
     setExtraMonthly,
     refresh,
   };
+
+  return createElement(DebtStoreContext.Provider, { value }, children);
+}
+
+export function useDebtStore(): DebtStore & DebtStoreActions {
+  const ctx = useContext(DebtStoreContext);
+  if (!ctx) {
+    throw new Error("useDebtStore must be used within DebtStoreProvider");
+  }
+  return ctx;
 }
 
 // Backwards-compat shim used by a few places — same shape as the v1 hook

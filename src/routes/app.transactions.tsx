@@ -1,12 +1,48 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useMemo } from "react";
 import { Receipt } from "lucide-react";
-import { useDebtStore } from "@/lib/storage";
+import { useDebtStore, type Payment } from "@/lib/storage";
 import { formatMoney } from "@/lib/debt-math";
 
 export const Route = createFileRoute("/app/transactions")({
   component: TransactionsPage,
 });
+
+function safePaymentTime(p: Payment): number {
+  const raw = p.date;
+  const n = typeof raw === "number" && !Number.isNaN(raw) ? raw : Number(raw);
+  if (Number.isFinite(n) && n > 0) return n;
+  return 0;
+}
+
+function formatMonthGroupLabel(ms: number): string {
+  const d = new Date(ms);
+  if (!Number.isFinite(d.getTime()) || ms <= 0) return "Unknown month";
+  try {
+    return d.toLocaleDateString(undefined, {
+      month: "long",
+      year: "numeric",
+    });
+  } catch {
+    return "Unknown month";
+  }
+}
+
+function formatPaymentDetail(ms: number): string {
+  const d = new Date(ms);
+  if (!Number.isFinite(d.getTime()) || ms <= 0) return "Date unavailable";
+  try {
+    return d.toLocaleDateString(undefined, {
+      weekday: "short",
+      month: "short",
+      day: "numeric",
+      hour: "numeric",
+      minute: "2-digit",
+    });
+  } catch {
+    return "Date unavailable";
+  }
+}
 
 function TransactionsPage() {
   const { payments, debts, loading } = useDebtStore();
@@ -17,19 +53,25 @@ function TransactionsPage() {
     return map;
   }, [debts]);
 
-  // newest first
-  const sorted = useMemo(() => [...payments].sort((a, b) => b.date - a.date), [payments]);
+  const sorted = useMemo(() => {
+    const list = payments.map((p) => ({ ...p, _ts: safePaymentTime(p) }));
+    list.sort((a, b) => b._ts - a._ts);
+    return list;
+  }, [payments]);
 
-  const total = useMemo(() => sorted.reduce((sum, p) => sum + p.amount, 0), [sorted]);
+  const total = useMemo(
+    () =>
+      sorted.reduce((sum, p) => {
+        const amt = Number(p.amount);
+        return sum + (Number.isFinite(amt) ? amt : 0);
+      }, 0),
+    [sorted],
+  );
 
-  // Group by month label
   const groups = useMemo(() => {
     const g: Record<string, typeof sorted> = {};
     sorted.forEach((p) => {
-      const key = new Date(p.date).toLocaleDateString(undefined, {
-        month: "long",
-        year: "numeric",
-      });
+      const key = formatMonthGroupLabel(p._ts);
       (g[key] ||= []).push(p);
     });
     return Object.entries(g);
@@ -65,7 +107,10 @@ function TransactionsPage() {
       ) : (
         <div className="space-y-6">
           {groups.map(([month, items]) => {
-            const monthTotal = items.reduce((s, p) => s + p.amount, 0);
+            const monthTotal = items.reduce((s, p) => {
+              const amt = Number(p.amount);
+              return s + (Number.isFinite(amt) ? amt : 0);
+            }, 0);
             return (
               <section key={month}>
                 <div className="mb-2 flex items-baseline justify-between px-1">
@@ -80,17 +125,11 @@ function TransactionsPage() {
                           {debtNameById.get(p.debtId) ?? "Unknown debt"}
                         </div>
                         <div className="text-xs text-muted-foreground">
-                          {new Date(p.date).toLocaleDateString(undefined, {
-                            weekday: "short",
-                            month: "short",
-                            day: "numeric",
-                            hour: "numeric",
-                            minute: "2-digit",
-                          })}
+                          {formatPaymentDetail(p._ts)}
                         </div>
                       </div>
                       <div className="font-display text-base font-semibold text-primary">
-                        +{formatMoney(p.amount)}
+                        +{formatMoney(Number.isFinite(Number(p.amount)) ? Number(p.amount) : 0)}
                       </div>
                     </li>
                   ))}

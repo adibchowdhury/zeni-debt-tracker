@@ -14,7 +14,7 @@ import { useAuth } from "@/lib/auth";
 import { Logo } from "@/components/Logo";
 import { supabase } from "@/integrations/supabase/client";
 import { MilestoneEarnedDialog } from "@/components/debt/MilestoneEarnedDialog";
-import { useEngagement } from "@/lib/engagement";
+import { EngagementProvider } from "@/lib/engagement";
 
 export const Route = createFileRoute("/app")({
   component: AppLayout,
@@ -47,7 +47,6 @@ export function AppLayout() {
   const { user, loading, signOut } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
-  useEngagement();
 
   useEffect(() => {
     if (loading) return;
@@ -85,7 +84,8 @@ export function AppLayout() {
   }
 
   return (
-    <div className="min-h-screen bg-muted px-4 sm:px-6 lg:px-12">
+    <EngagementProvider>
+      <div className="min-h-screen bg-muted px-4 sm:px-6 lg:px-12">
       <div className="mx-auto flex min-h-screen w-full max-w-[1320px] bg-background lg:border lg:border-border lg:shadow-sm">
         {/* Desktop sidebar */}
         <aside className="sticky top-0 hidden h-screen w-[248px] shrink-0 flex-col border-r border-border md:flex">
@@ -214,5 +214,6 @@ export function AppLayout() {
         </div>
       </div>
     </div>
+    </EngagementProvider>
   );
 }

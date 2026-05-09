@@ -2,6 +2,7 @@ import { Outlet, Link, createRootRoute, HeadContent, Scripts } from "@tanstack/r
 import { Button } from "@/components/ui/button";
 import { Toaster } from "@/components/ui/sonner";
 import { AuthProvider } from "@/lib/auth";
+import { DebtStoreProvider } from "@/lib/storage";
 import { Analytics } from "@vercel/analytics/react";
 import faviconUrl from "@/assets/logo_coin.png?url";
 
@@ -88,11 +89,13 @@ function RootShell({ children }: { children: React.ReactNode }) {
 function RootComponent() {
   return (
     <AuthProvider>
-      <>
-        <Outlet />
-        <Analytics />
-      </>
-      <Toaster />
+      <DebtStoreProvider>
+        <>
+          <Outlet />
+          <Analytics />
+        </>
+        <Toaster />
+      </DebtStoreProvider>
     </AuthProvider>
   );
 }
