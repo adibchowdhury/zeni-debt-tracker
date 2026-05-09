@@ -1,4 +1,13 @@
-import { createElement, createContext, useContext, useEffect, useMemo, useState, useCallback } from "react";
+import {
+  createElement,
+  createContext,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+  useCallback,
+  useRef,
+} from "react";
 import type { ReactNode } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
@@ -61,6 +70,34 @@ function useEngagementValue() {
   const [challenge, setChallenge] = useState<WeeklyChallenge | null>(null);
   const [unlocked, setUnlocked] = useState<Set<string>>(new Set());
   const [refreshTick, setRefreshTick] = useState(0);
+
+  /** Same logical data → same fingerprint → avoids sync effect storms when only array references change */
+  const debtsFingerprint = useMemo(
+    () =>
+      store.debts
+        .map((d) => `${d.id}:${d.balance}:${d.initialBalance}:${d.minPayment}:${d.interestRate}`)
+        .sort()
+        .join("|"),
+    [store.debts],
+  );
+  const paymentsFingerprint = useMemo(
+    () =>
+      store.payments
+        .map((p) => `${p.id}:${p.amount}:${p.date}:${p.debtId}`)
+        .sort()
+        .join("|"),
+    [store.payments],
+  );
+  const unlockedFingerprint = useMemo(() => [...unlocked].sort().join(","), [unlocked]);
+  const bestWeekSig = bestWeek ? `${bestWeek.amount}:${bestWeek.periodStart}` : "";
+  const bestMonthSig = bestMonth ? `${bestMonth.amount}:${bestMonth.periodStart}` : "";
+  const challengeSig = challenge
+    ? `${challenge.id}:${challenge.progress}:${challenge.status}:${challenge.weekStart}`
+    : "";
+
+  /** Stop hammering Supabase when upsert keeps failing (e.g. schema mismatch) until inputs change */
+  const personalBestsFailedKeyRef = useRef<string | null>(null);
+  const lastPersonalBestsOkKeyRef = useRef<string>("");
 
   // Compute payment stats
   const stats = useMemo(() => {
@@ -183,42 +220,91 @@ function useEngagementValue() {
     return () => window.removeEventListener("debtfree:refresh", handler);
   }, [load]);
 
-  // Side-effects: persist personal bests + check milestones + update challenge progress
+  useEffect(() => {
+    personalBestsFailedKeyRef.current = null;
+    lastPersonalBestsOkKeyRef.current = "";
+  }, [user?.id]);
+
+  /**
+   * personal_bests upserts isolated: never call load() here (load() mutates bestWeek/bestMonth and
+   * would retrigger the milestone sync effect → request storm when upsert errors).
+   */
+  useEffect(() => {
+    if (!user?.id || store.loading) return;
+
+    const thisWeekStart = isoDate(stats.weekStart);
+    const thisMonthStart = isoDate(stats.monthStart);
+    const attemptKey = `${user.id}:${thisWeekStart}:${thisMonthStart}:${stats.weekPaid}:${stats.monthPaid}`;
+
+    if (personalBestsFailedKeyRef.current === attemptKey) return;
+    if (attemptKey === lastPersonalBestsOkKeyRef.current) return;
+
+    type PbRow = {
+      user_id: string;
+      period: "week" | "month";
+      period_start: string;
+      total_amount: number;
+    };
+    const rows: PbRow[] = [];
+    if (stats.weekPaid > 0) {
+      rows.push({
+        user_id: user.id,
+        period: "week",
+        period_start: thisWeekStart,
+        total_amount: Math.round(stats.weekPaid * 100) / 100,
+      });
+    }
+    if (stats.monthPaid > 0) {
+      rows.push({
+        user_id: user.id,
+        period: "month",
+        period_start: thisMonthStart,
+        total_amount: Math.round(stats.monthPaid * 100) / 100,
+      });
+    }
+    if (rows.length === 0) return;
+
+    let cancelled = false;
+    void (async () => {
+      const { error } = await supabase.from("personal_bests").upsert(rows, {
+        onConflict: "user_id,period,period_start",
+      });
+      if (cancelled) return;
+      if (error) {
+        personalBestsFailedKeyRef.current = attemptKey;
+        if (import.meta.env.DEV) {
+          console.warn("[zeni engagement] personal_bests upsert failed — stopping retries for this key", {
+            message: error.message,
+            code: error.code,
+            details: error.details,
+            hint: error.hint,
+            rows,
+            attemptKey,
+          });
+        }
+        return;
+      }
+      personalBestsFailedKeyRef.current = null;
+      lastPersonalBestsOkKeyRef.current = attemptKey;
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [
+    user?.id,
+    store.loading,
+    stats.weekPaid,
+    stats.monthPaid,
+    stats.weekStart,
+    stats.monthStart,
+  ]);
+
+  // Milestones + challenges only (personal_bests handled above).
   useEffect(() => {
     if (!user || store.loading) return;
 
-    const tasks: PromiseLike<unknown>[] = [];
-
-    // Upsert this week / month best when current totals exceed them
-    const thisWeekStart = isoDate(stats.weekStart);
-    const thisMonthStart = isoDate(stats.monthStart);
-
-    if (stats.weekPaid > 0) {
-      tasks.push(
-        supabase.from("personal_bests").upsert(
-          {
-            user_id: user.id,
-            period: "week",
-            period_start: thisWeekStart,
-            total_amount: stats.weekPaid,
-          },
-          { onConflict: "user_id,period,period_start" },
-        ),
-      );
-    }
-    if (stats.monthPaid > 0) {
-      tasks.push(
-        supabase.from("personal_bests").upsert(
-          {
-            user_id: user.id,
-            period: "month",
-            period_start: thisMonthStart,
-            total_amount: stats.monthPaid,
-          },
-          { onConflict: "user_id,period,period_start" },
-        ),
-      );
-    }
+    const tasks: Promise<{ error: { message: string } | null }>[] = [];
 
     // Milestone checks
     const totalPaid = store.payments.reduce((s, p) => s + p.amount, 0);
@@ -307,9 +393,20 @@ function useEngagementValue() {
     }
 
     if (tasks.length > 0) {
-      void Promise.all(tasks).then(() => {
-        load();
-      });
+      void (async () => {
+        for (const task of tasks) {
+          const { error } = await task;
+          if (error) {
+            if (import.meta.env.DEV) {
+              console.warn("[zeni engagement] milestone/challenge sync failed — not calling load()", {
+                message: error.message,
+              });
+            }
+            return;
+          }
+        }
+        await load();
+      })();
     }
   }, [
     stats.weekPaid,
@@ -317,16 +414,17 @@ function useEngagementValue() {
     stats.streak,
     stats.weekStart,
     stats.monthStart,
-    store.debts,
-    store.payments,
+    debtsFingerprint,
+    paymentsFingerprint,
     store.strategy,
     store.extraMonthly,
     store.loading,
     user?.id,
     refreshTick,
-    unlocked,
-    bestWeek,
-    bestMonth,
+    unlockedFingerprint,
+    bestWeekSig,
+    bestMonthSig,
+    challengeSig,
   ]);
 
   const acceptChallenge = useCallback(
